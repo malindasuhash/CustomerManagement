@@ -8,6 +8,8 @@ namespace StateManager.Models
 {
     public class MessageEnvelop
     {
+        private EntityState defaultState = EntityState.NEW;
+
         public ChangeType Change { get; set; }
         public EntityName Name { get; set; }
 
@@ -15,5 +17,11 @@ namespace StateManager.Models
         public int DraftVersion { get; set; }
         public int SubmittedVersion { get; set; }
         public bool Submitted { get; set; }
+        public EntityState State => defaultState;
+
+        public void SetState(EntityState targetState)
+        {
+            defaultState = targetState;
+        }
     }
 }

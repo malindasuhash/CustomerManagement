@@ -6,4 +6,13 @@
         Contact,
         BankAccount,
     }
+
+    public enum EntityState
+    {
+        None,
+        NEW,
+        EVALUATING,
+        IN_PROGRESS,
+        SYNCHONISED
+    }
 }

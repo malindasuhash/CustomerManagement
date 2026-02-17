@@ -7,7 +7,7 @@ namespace StateManager.Tests
     public class StateManagerTests
     {
         [Fact]
-        public void StateManager_WhenChangeIsProcessed_ThenEvents()
+        public async Task ProcessChangeAsync_WhenChangeIsNew_ThenAddsItAsDraft()
         {
             // Arrange
             var envelop = new MessageEnvelop
@@ -19,19 +19,19 @@ namespace StateManager.Tests
                 SubmittedVersion = 0,
                 Submitted = false
             };
-            var eventManager = Substitute.For<IEventManager>();
+            var changeHandler = Substitute.For<IChangeHandler>();
 
-            var stateManager = new StateManager(eventManager);
+            var stateManager = new StateManager(changeHandler);
 
             // Act
-            stateManager.ProcessChange(envelop);
+            await stateManager.ProcessChangeAsync(envelop);
 
             // Assert
-            eventManager.Received(1).Publish(Arg.Any<ChangeDetected>());
+            changeHandler.Received(1).Draft(envelop);
         }
 
         [Fact]
-        public void StateManager_WhenChangeIsSubmitted_ThenEvents()
+        public async Task ProcessChangeAsync_WhenChangeIsSubmitted_ThenAddsItAsDraftAndSubmitted()
         {
             // Arrange
             var respository = Substitute.For<IRepository>();
@@ -45,15 +45,72 @@ namespace StateManager.Tests
                 Submitted = true
             };
 
-            var eventManager = Substitute.For<IEventManager>();
-            var stateManager = new StateManager(eventManager);
+            var changeHandler = Substitute.For<IChangeHandler>();
+
+            var stateManager = new StateManager(changeHandler);
 
             // Act
-            stateManager.ProcessChange(envelop);
+            await stateManager.ProcessChangeAsync(envelop);
 
             // Assert
-            eventManager.Received(1).Publish(Arg.Any<ChangeDetected>());
-            eventManager.Received(1).Publish(Arg.Is<ChangeSubmitted>(x => x.MessageEnvelop.DraftVersion == 1 && x.MessageEnvelop.SubmittedVersion == 1));
+            changeHandler.Received(1).Draft(envelop);
+            changeHandler.Received(1).Submitted(Arg.Is<MessageEnvelop>(x => x.DraftVersion == 1 && x.SubmittedVersion == 1));
+        }
+
+        [Fact]
+        public async Task ProcessChangeAsync_WhenUpdatedButNotSubmitted_ThenAddsItAsDraft()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Update,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 2,
+                SubmittedVersion = 1,
+                Submitted = false
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            
+            changeHandler.TryDraft(envelop, out _).Returns(true);
+
+            var stateManager = new StateManager(changeHandler);
+
+            // Act
+            var result = await stateManager.ProcessChangeAsync(envelop);
+
+            // Assert
+            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<ProcessOutcome>(p => p == null));
+        }
+
+        [Fact]
+        public async Task ProcessChangeAsync_WhenUpdatedAndSubmitted_ThenAddsItAsDraftAndSubmitedOnlyIfDraftSucceeds()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Update,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 2,
+                SubmittedVersion = 1,
+                Submitted = true
+            };
+            var changeHandler = Substitute.For<IChangeHandler>();
+            var stateManager = new StateManager(changeHandler);
+            
+
+            changeHandler.TryDraft(envelop, out _).Returns(true);
+            changeHandler.TrySubmitted(envelop, out _).Returns(true);
+
+
+            // Act
+            await stateManager.ProcessChangeAsync(envelop);
+
+            // Assert
+            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<ProcessOutcome>(p => p == null));
+            changeHandler.Received(1).TrySubmitted(Arg.Any<MessageEnvelop>(), out Arg.Is<ProcessOutcome>(p => p == null));
         }
     }
 }
