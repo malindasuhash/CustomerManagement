@@ -46,15 +46,17 @@ namespace StateManager.Tests
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
+            var orchestrator = Substitute.For<IOrchestrator>();
 
-            var stateManager = new StateManager(changeHandler);
+            var stateManager = new StateManager(changeHandler, orchestrator);
 
             // Act
             await stateManager.ProcessChangeAsync(envelop);
 
             // Assert
             changeHandler.Received(1).Draft(envelop);
-            changeHandler.Received(1).Submitted(Arg.Is<MessageEnvelop>(x => x.DraftVersion == 1 && x.SubmittedVersion == 1));
+            changeHandler.Received(1).Submitted(Arg.Any<MessageEnvelop>());
+            await orchestrator.Received(1).EvaluateAsync(Arg.Any<MessageEnvelop>());
         }
 
         [Fact]
@@ -72,7 +74,7 @@ namespace StateManager.Tests
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            
+
             changeHandler.TryDraft(envelop, out _).Returns(true);
 
             var stateManager = new StateManager(changeHandler);
@@ -81,7 +83,7 @@ namespace StateManager.Tests
             var result = await stateManager.ProcessChangeAsync(envelop);
 
             // Assert
-            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<ProcessOutcome>(p => p == null));
+            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<ChangeOutcome>(p => p == null));
         }
 
         [Fact]
@@ -98,19 +100,73 @@ namespace StateManager.Tests
                 Submitted = true
             };
             var changeHandler = Substitute.For<IChangeHandler>();
-            var stateManager = new StateManager(changeHandler);
-            
+            var orchestrator = Substitute.For<IOrchestrator>();
+            var stateManager = new StateManager(changeHandler, orchestrator);
+
 
             changeHandler.TryDraft(envelop, out _).Returns(true);
-            changeHandler.TrySubmitted(envelop, out _).Returns(true);
+            changeHandler.TryLockSubmitted(envelop, out _).Returns(true);
 
 
             // Act
             await stateManager.ProcessChangeAsync(envelop);
 
             // Assert
-            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<ProcessOutcome>(p => p == null));
-            changeHandler.Received(1).TrySubmitted(Arg.Any<MessageEnvelop>(), out Arg.Is<ProcessOutcome>(p => p == null));
+            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<ChangeOutcome>(p => p == null));
+            changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>(), out Arg.Is<ChangeOutcome>(p => p == null));
+            await orchestrator.Received(1).EvaluateAsync(envelop);
+        }
+
+        [Fact]
+        public async Task ProcessChangeAsync_WhenUpdatedAndSubmittedButDraftFails_ThenDoesNotSubmit()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Update,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 2,
+                SubmittedVersion = 1,
+                Submitted = true
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            var stateManager = new StateManager(changeHandler);
+            changeHandler.TryDraft(envelop, out _).Returns(false);
+
+            // Act
+            await stateManager.ProcessChangeAsync(envelop);
+
+            // Assert
+            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<ChangeOutcome>(p => p == null));
+            changeHandler.DidNotReceive().TryLockSubmitted(Arg.Any<MessageEnvelop>(), out Arg.Any<ChangeOutcome>());
+        }
+
+        [Fact]
+        public async Task ProcessUpdateAsync_WhenSubmittedVersionsDoNotMatch_ThenRestartsEvaluation()
+        {
+            var orchestrationEnvelop = new OrchestrationEnvelop
+            {
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 2,
+                SubmittedVersion = 1,
+                Status = RuntimeStatus.EVALUATION_STARTED
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            var orchestrator = Substitute.For<IOrchestrator>();
+
+            var stateManager = new StateManager(changeHandler, orchestrator);
+
+            // Act
+            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+
+            // Assert
+            await changeHandler.Received(1).TakeEntityLock(orchestrationEnvelop.EntityId);
+            await changeHandler.Received(1).ReleaseEntityLock(orchestrationEnvelop.EntityId);
+            await orchestrator.Received(1).EvaluateAsync(Arg.Any<MessageEnvelop>());
         }
     }
 }

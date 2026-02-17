@@ -11,51 +11,60 @@ namespace StateManager
     public class StateManager
     {
         private readonly IChangeHandler changeHandler;
+        private IOrchestrator orchestrator;
 
-        public StateManager(IChangeHandler changeHandler)
+        public StateManager(IChangeHandler changeHandler, IOrchestrator orchestrator = null) 
         {
+            this.orchestrator = orchestrator;
             this.changeHandler = changeHandler;
         }
-        public Task<ProcessOutcome> ProcessChangeAsync(MessageEnvelop envelop)
+
+        public Task<ChangeOutcome> ProcessChangeAsync(MessageEnvelop envelop)
         {
             // When change is created, add to repository
             if (envelop.Change == ChangeType.Create && !envelop.Submitted)
             {
                 changeHandler.Draft(envelop);
-                return Task.FromResult(ProcessOutcome.OK);
+                return Task.FromResult(ChangeOutcome.OK);
             }
 
             if (envelop.Change == ChangeType.Create && envelop.Submitted)
             {
                 changeHandler.Draft(envelop);
-
-                envelop.SubmittedVersion = envelop.DraftVersion;
                 changeHandler.Submitted(envelop);
+                orchestrator.EvaluateAsync(envelop); // Start evalutation
 
-                return Task.FromResult(ProcessOutcome.OK);
+                return Task.FromResult(ChangeOutcome.OK);
             }
 
             if (envelop.Change == ChangeType.Update && !envelop.Submitted)
             {
-                changeHandler.TryDraft(envelop, out ProcessOutcome outcome);
+                changeHandler.TryDraft(envelop, out ChangeOutcome outcome);
                 return Task.FromResult(outcome);
             }
 
             if (envelop.Change == ChangeType.Update && envelop.Submitted)
             {
-                if (changeHandler.TryDraft(envelop, out ProcessOutcome outcome))
+                if (changeHandler.TryDraft(envelop, out ChangeOutcome outcome))
                 {
                     // Consider what will happen if someone is taking a copy of submitted version
                     // whilst I am trying to update it. Should I ask for a lock at this point?
                     // If cannot take the lock, should I error out?
-                    changeHandler.TrySubmitted(envelop, out ProcessOutcome submitOutcome);
+                    changeHandler.TryLockSubmitted(envelop, out ChangeOutcome submitOutcome);
+                    orchestrator.EvaluateAsync(envelop); // Start evalutation
+
                     return Task.FromResult(submitOutcome);
                 }
 
                 return Task.FromResult(outcome);
             }
 
-            return Task.FromResult(ProcessOutcome.OK);
+            return Task.FromResult(ChangeOutcome.OK);
+        }
+
+        public async Task ProcessUpdateAsync(OrchestrationEnvelop orchestrationEnvelop)
+        {
+            throw new NotImplementedException();
         }
     }
 }

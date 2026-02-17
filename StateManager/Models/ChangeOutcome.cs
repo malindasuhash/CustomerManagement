@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace StateManager.Models
 {
-    public class ProcessOutcome
+    public class ChangeOutcome
     {
-        public static readonly ProcessOutcome OK = new(true);
+        public static readonly ChangeOutcome OK = new(true);
 
         public bool Successful { get; }
 
-        private ProcessOutcome(bool success)
+        private ChangeOutcome(bool success)
         {
             Successful = success;
         }
