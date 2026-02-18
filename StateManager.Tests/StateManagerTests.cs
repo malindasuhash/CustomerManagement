@@ -42,14 +42,20 @@ namespace StateManager.Tests
                 Name = EntityName.Contact,
                 EntityId = "123",
                 DraftVersion = 1,
-                SubmittedVersion = 0,
+                SubmittedVersion = 5,
                 Submitted = true
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
+            changeHandler.TakeEntityLock(envelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
+
             var orchestrator = Substitute.For<IOrchestrator>();
 
-            var stateManager = new StateManager(changeHandler, orchestrator);
+            var dataRetriever = Substitute.For<IDataRetriever>();
+            dataRetriever.GetEntityBasics(envelop.EntityId, envelop.Name)
+                .Returns(new EntityBasics { State = EntityState.NEW, SubmittedVersion = 5 });
+
+            var stateManager = new StateManager(changeHandler, orchestrator, dataRetriever);
 
             // Act
             await stateManager.ProcessChangeAsync(envelop);
@@ -262,6 +268,40 @@ namespace StateManager.Tests
             await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATION_RESTARTING);
 
             await orchestrator.Received(1).EvaluateAsync(Arg.Is<MessageEnvelop>(me => returnThis.EntityId.Equals(me.EntityId)));
+        }
+
+        [Fact]
+        public async Task ProcessUpdateAsync_WhenTransitionIsNotSupported_ThenReturnsTransitionNotSupportedResponse()
+        {
+            // Arrange
+            var orchestrationEnvelop = new OrchestrationEnvelop
+            {
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 10,
+                SubmittedVersion = 5,
+                Status = RuntimeStatus.EVALUATION_STARTED
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
+
+            var dataRetriever = Substitute.For<IDataRetriever>();
+            dataRetriever.GetEntityBasics(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name)
+                .Returns(new EntityBasics { State = EntityState.None, SubmittedVersion = 6 });
+
+            MessageEnvelop returnThis = new() { EntityId = orchestrationEnvelop.EntityId, Name = orchestrationEnvelop.Name };
+            dataRetriever.GetEntityEnvelop(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name)
+                .Returns(returnThis);
+
+            var orchestrator = Substitute.For<IOrchestrator>();
+            var stateManager = new StateManager(changeHandler, orchestrator, dataRetriever);
+
+            // Act
+            var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+
+            // Assert
+            result.Should().Be(TaskOutcome.TRANSITION_NOT_SUPPORTED);
         }
     }
 }

@@ -3,8 +3,9 @@
     public enum RuntimeStatus
     {
         None,
+        INITIATE,
         EVALUATION_STARTED,
         EVALUATION_COMPLETED,
-        EVALUATION_FAILED
+        EVALUATION_FAILED,
     }
 }

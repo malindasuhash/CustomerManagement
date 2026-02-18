@@ -34,9 +34,16 @@ namespace StateManager
             {
                 changeHandler.Draft(envelop);
                 changeHandler.Submitted(envelop);
-                orchestrator.EvaluateAsync(envelop); // Start evalutation
+                var result = ProcessUpdateAsync(new OrchestrationEnvelop 
+                { 
+                    EntityId = envelop.EntityId, 
+                    Name = envelop.Name, 
+                    DraftVersion = envelop.DraftVersion, 
+                    SubmittedVersion = envelop.SubmittedVersion, 
+                    Status = RuntimeStatus.INITIATE
+                });
 
-                return Task.FromResult(TaskOutcome.OK);
+                return result;
             }
 
             if (envelop.Change == ChangeType.Update && !envelop.Submitted)
@@ -76,6 +83,13 @@ namespace StateManager
 
                 switch (entity.State)
                 {
+                    case EntityState.NEW when orchestrationEnvelop.Status == RuntimeStatus.INITIATE:
+                        if (submittedVersionCompare)
+                        {
+                            var entityEnvelop = await dataRetriever.GetEntityEnvelop(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
+                            await orchestrator.EvaluateAsync(entityEnvelop);
+                        }
+                        break;
                     case EntityState.NEW when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_STARTED:
                         if (submittedVersionCompare)
                         {
@@ -91,6 +105,9 @@ namespace StateManager
                         }
 
                         break;
+
+                    default:
+                        return TaskOutcome.TRANSITION_NOT_SUPPORTED;
                 }
 
             }
