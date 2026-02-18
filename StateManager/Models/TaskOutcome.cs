@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace StateManager.Models
 {
-    public class ChangeOutcome
+    public class TaskOutcome
     {
-        public static readonly ChangeOutcome OK = new(true);
+        public static readonly TaskOutcome OK = new(true);
+        public static readonly TaskOutcome LOCK_UNAVAILABLE = new(false);
 
         public bool Successful { get; }
 
-        private ChangeOutcome(bool success)
+        private TaskOutcome(bool success)
         {
             Successful = success;
         }

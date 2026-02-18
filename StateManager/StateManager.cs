@@ -11,21 +11,23 @@ namespace StateManager
     public class StateManager
     {
         private readonly IChangeHandler changeHandler;
-        private IOrchestrator orchestrator;
+        private readonly IOrchestrator orchestrator;
+        private readonly IDataRetriever dataRetriever;
 
-        public StateManager(IChangeHandler changeHandler, IOrchestrator orchestrator = null) 
+        public StateManager(IChangeHandler changeHandler, IOrchestrator orchestrator, IDataRetriever dataRetriever = null) 
         {
             this.orchestrator = orchestrator;
+            this.dataRetriever = dataRetriever;
             this.changeHandler = changeHandler;
         }
 
-        public Task<ChangeOutcome> ProcessChangeAsync(MessageEnvelop envelop)
+        public Task<TaskOutcome> ProcessChangeAsync(MessageEnvelop envelop)
         {
             // When change is created, add to repository
             if (envelop.Change == ChangeType.Create && !envelop.Submitted)
             {
                 changeHandler.Draft(envelop);
-                return Task.FromResult(ChangeOutcome.OK);
+                return Task.FromResult(TaskOutcome.OK);
             }
 
             if (envelop.Change == ChangeType.Create && envelop.Submitted)
@@ -34,23 +36,23 @@ namespace StateManager
                 changeHandler.Submitted(envelop);
                 orchestrator.EvaluateAsync(envelop); // Start evalutation
 
-                return Task.FromResult(ChangeOutcome.OK);
+                return Task.FromResult(TaskOutcome.OK);
             }
 
             if (envelop.Change == ChangeType.Update && !envelop.Submitted)
             {
-                changeHandler.TryDraft(envelop, out ChangeOutcome outcome);
+                changeHandler.TryDraft(envelop, out TaskOutcome outcome);
                 return Task.FromResult(outcome);
             }
 
             if (envelop.Change == ChangeType.Update && envelop.Submitted)
             {
-                if (changeHandler.TryDraft(envelop, out ChangeOutcome outcome))
+                if (changeHandler.TryDraft(envelop, out TaskOutcome outcome))
                 {
                     // Consider what will happen if someone is taking a copy of submitted version
                     // whilst I am trying to update it. Should I ask for a lock at this point?
                     // If cannot take the lock, should I error out?
-                    changeHandler.TryLockSubmitted(envelop, out ChangeOutcome submitOutcome);
+                    changeHandler.TryLockSubmitted(envelop, out TaskOutcome submitOutcome);
                     orchestrator.EvaluateAsync(envelop); // Start evalutation
 
                     return Task.FromResult(submitOutcome);
@@ -59,12 +61,45 @@ namespace StateManager
                 return Task.FromResult(outcome);
             }
 
-            return Task.FromResult(ChangeOutcome.OK);
+            return Task.FromResult(TaskOutcome.OK);
         }
 
-        public async Task ProcessUpdateAsync(OrchestrationEnvelop orchestrationEnvelop)
+        public async Task<TaskOutcome> ProcessUpdateAsync(OrchestrationEnvelop orchestrationEnvelop)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entityLockResult = await changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId);
+                if (!entityLockResult.Successful) return entityLockResult;
+
+                var entity = await dataRetriever.GetEntityBasics(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
+                var submittedVersionCompare = entity.SubmittedVersion == orchestrationEnvelop.SubmittedVersion;
+
+                switch (entity.State)
+                {
+                    case EntityState.NEW when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_STARTED:
+                        if (submittedVersionCompare)
+                        {
+                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATING);
+                        }
+                        if (entity.SubmittedVersion > orchestrationEnvelop.SubmittedVersion)
+                        {
+                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATION_RESTARTING);
+
+                            var entityEnvelop = await dataRetriever.GetEntityEnvelop(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
+
+                            await orchestrator.EvaluateAsync(entityEnvelop);
+                        }
+
+                        break;
+                }
+
+            }
+            finally
+            {
+                await changeHandler.ReleaseEntityLock(orchestrationEnvelop.EntityId);
+            }
+            
+            return TaskOutcome.OK;
         }
     }
 }

@@ -10,6 +10,6 @@ namespace StateManager.Events
     public interface IEventManager
     {
         void Publish(IStateManagerEvent stateManagerEvent);
-        void TryDraft(MessageEnvelop envelop, out ChangeOutcome outcome);
+        void TryDraft(MessageEnvelop envelop, out TaskOutcome outcome);
     }
 }

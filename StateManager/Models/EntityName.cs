@@ -12,7 +12,8 @@
         None,
         NEW,
         EVALUATING,
+        EVALUATION_RESTARTING,
         IN_PROGRESS,
-        SYNCHONISED
+        SYNCHONISED,
     }
 }
