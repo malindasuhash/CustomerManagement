@@ -66,12 +66,14 @@ namespace StateManager
                         }
                         break;
                     case EntityState.EVALUATING when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_INCOMPLETE:
+                    case EntityState.IN_REVIEW when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_INCOMPLETE:
+                    case EntityState.IN_PROGRESS when orchestrationEnvelop.Status == RuntimeStatus.CHANGE_FAILED:
                         if (submittedVersionCompare)
                         {
                             await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Messages);
                         }
                         break;
-                    case EntityState.EVALUATING when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_REQUIRES_REVIEW:
+                    case EntityState.EVALUATING when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_REQUIRES_MANUAL_REVIEW:
                         if (submittedVersionCompare)
                         {
                             await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_REVIEW, orchestrationEnvelop.Messages);

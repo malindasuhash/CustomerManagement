@@ -7,9 +7,9 @@ namespace StateManager.Tests
 {
     public class StateManagerTests
     {
-      
 
-       
+
+
 
         [Fact]
         public async Task ProcessUpdateAsync_WhenEntityLockCannotBeTaken_ThenReturnsCannotTakeLockResponse()
@@ -249,8 +249,8 @@ namespace StateManager.Tests
                 EntityId = "123",
                 DraftVersion = 10,
                 SubmittedVersion = 5,
-                Status = RuntimeStatus.EVALUATION_REQUIRES_REVIEW,
-                Messages = ["NeedsRiskCheckApproval"]
+                Status = RuntimeStatus.EVALUATION_REQUIRES_MANUAL_REVIEW,
+                Messages = ["NeedManagerCheckApproval"]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -292,12 +292,70 @@ namespace StateManager.Tests
             dataRetriever.GetEntityBasics(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name)
                 .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 5 });
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), dataRetriever);
-           
+
             // Act
             var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
-            
+
             // Assert
             result.Should().Be(TaskOutcome.TRANSITION_NOT_SUPPORTED);
+        }
+
+        [Fact]
+        public async Task ProcessUpdateAsync_WhenInReviewAndRequiresAdditionalInput_ThenChangeStatusToAttentionRequired()
+        {
+            // Arrange
+            var orchestrationEnvelop = new OrchestrationEnvelop
+            {
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 10,
+                SubmittedVersion = 6,
+                Status = RuntimeStatus.EVALUATION_INCOMPLETE,
+                Messages = ["NeedAdditionalInformation"]
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
+            var dataRetriever = Substitute.For<IDataRetriever>();
+
+            dataRetriever.GetEntityBasics(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name)
+                .Returns(new EntityBasics { State = EntityState.IN_REVIEW, SubmittedVersion = 6 });
+            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), dataRetriever);
+
+            // Act
+            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+
+            // Assert
+            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Messages);
+        }
+
+        [Fact]
+        public async Task ProcessUpdateAsync_WhenInProgressAndItFails_ThenChangeStatusToAttentionRequired() 
+        {
+            // Arrange
+            var orchestrationEnvelop = new OrchestrationEnvelop
+            {
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 10,
+                SubmittedVersion = 6,
+                Status = RuntimeStatus.CHANGE_FAILED,
+                Messages = ["ServiceUnavailable"]
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
+            var dataRetriever = Substitute.For<IDataRetriever>();
+
+            dataRetriever.GetEntityBasics(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name)
+                .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 6 });
+            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), dataRetriever);
+
+            // Act
+            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+
+            // Assert
+            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Messages);
         }
     }
 }
