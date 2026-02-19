@@ -60,9 +60,16 @@ namespace StateManager
                     // whilst I am trying to update it. Should I ask for a lock at this point?
                     // If cannot take the lock, should I error out?
                     changeHandler.TryLockSubmitted(envelop, out TaskOutcome submitOutcome);
-                    orchestrator.EvaluateAsync(envelop); // Start evalutation
+                    var result = ProcessUpdateAsync(new OrchestrationEnvelop
+                    {
+                        EntityId = envelop.EntityId,
+                        Name = envelop.Name,
+                        DraftVersion = envelop.DraftVersion,
+                        SubmittedVersion = envelop.SubmittedVersion,
+                        Status = RuntimeStatus.INITIATE
+                    });
 
-                    return Task.FromResult(submitOutcome);
+                    return result;
                 }
 
                 return Task.FromResult(outcome);
@@ -84,6 +91,7 @@ namespace StateManager
                 switch (entity.State)
                 {
                     case EntityState.NEW when orchestrationEnvelop.Status == RuntimeStatus.INITIATE:
+                    case EntityState.IN_REVIEW when orchestrationEnvelop.Status == RuntimeStatus.INITIATE:
                         if (submittedVersionCompare)
                         {
                             var entityEnvelop = await dataRetriever.GetEntityEnvelop(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
@@ -91,6 +99,7 @@ namespace StateManager
                         }
                         break;
                     case EntityState.NEW when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_STARTED:
+                    case EntityState.IN_REVIEW when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_STARTED:
                         if (submittedVersionCompare)
                         {
                             await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATING);
@@ -119,7 +128,12 @@ namespace StateManager
                             await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Messages);
                         }
                         break;
-
+                    case EntityState.EVALUATING when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_REQUIRES_REVIEW:
+                        if (submittedVersionCompare)
+                        {
+                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_REVIEW, orchestrationEnvelop.Messages);
+                        }
+                        break;
                     default:
                         return TaskOutcome.TRANSITION_NOT_SUPPORTED;
                 }

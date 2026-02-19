@@ -93,8 +93,10 @@ namespace StateManager.Tests
             changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<TaskOutcome>(p => p == null));
         }
 
-        [Fact]
-        public async Task ProcessChangeAsync_WhenUpdatedAndSubmitted_ThenAddsItAsDraftAndSubmitedOnlyIfDraftSucceeds()
+        [Theory]
+        [InlineData(EntityState.NEW)]
+        [InlineData(EntityState.IN_REVIEW)]
+        public async Task ProcessChangeAsync_WhenUpdatedAndSubmitted_ThenInitiatesNewOrchestration(EntityState currentState)
         {
             // Arrange
             var envelop = new MessageEnvelop
@@ -108,7 +110,18 @@ namespace StateManager.Tests
             };
             var changeHandler = Substitute.For<IChangeHandler>();
             var orchestrator = Substitute.For<IOrchestrator>();
-            var stateManager = new StateManager(changeHandler, orchestrator);
+
+            changeHandler.TakeEntityLock(envelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
+            var dataRetriever = Substitute.For<IDataRetriever>();
+
+            dataRetriever.GetEntityBasics(envelop.EntityId, envelop.Name)
+               .Returns(new EntityBasics { State = currentState, SubmittedVersion = 1 });
+
+            MessageEnvelop returnThis = new() { EntityId = envelop.EntityId, Name = envelop.Name };
+            dataRetriever.GetEntityEnvelop(envelop.EntityId, envelop.Name)
+                .Returns(returnThis);
+
+            var stateManager = new StateManager(changeHandler, orchestrator, dataRetriever);
 
 
             changeHandler.TryDraft(envelop, out _).Returns(true);
@@ -121,7 +134,7 @@ namespace StateManager.Tests
             // Assert
             changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<TaskOutcome>(p => p == null));
             changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>(), out Arg.Is<TaskOutcome>(p => p == null));
-            await orchestrator.Received(1).EvaluateAsync(envelop);
+            await orchestrator.Received(1).EvaluateAsync(Arg.Is<MessageEnvelop>(e => e.EntityId == envelop.EntityId));
         }
 
         [Fact]
@@ -206,8 +219,10 @@ namespace StateManager.Tests
             await changeHandler.Received(1).ReleaseEntityLock(orchestrationEnvelop.EntityId);
         }
 
-        [Fact]
-        public async Task ProcessUpdateAsync_WhenEntityIsNEW_ChangeStatusToEvaluating()
+        [Theory]
+        [InlineData(EntityState.NEW)]
+        [InlineData(EntityState.IN_REVIEW)]
+        public async Task ProcessUpdateAsync_WhenEntityIsNEW_ChangeStatusToEvaluating(EntityState currentState)
         {
             var orchestrationEnvelop = new OrchestrationEnvelop
             {
@@ -223,7 +238,7 @@ namespace StateManager.Tests
 
             var dataRetriever = Substitute.For<IDataRetriever>();
             dataRetriever.GetEntityBasics(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name)
-                .Returns(new EntityBasics { State = EntityState.NEW, SubmittedVersion = 5 });
+                .Returns(new EntityBasics { State = currentState, SubmittedVersion = 5 });
 
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), dataRetriever);
 
@@ -386,7 +401,8 @@ namespace StateManager.Tests
                 EntityId = "123",
                 DraftVersion = 10,
                 SubmittedVersion = 5,
-                Status = RuntimeStatus.EVALUATION_REQUIRES_REVIEW
+                Status = RuntimeStatus.EVALUATION_REQUIRES_REVIEW,
+                Messages = ["NeedsRiskCheckApproval"]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -407,7 +423,7 @@ namespace StateManager.Tests
             await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_REVIEW);
+            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_REVIEW, orchestrationEnvelop.Messages);
             await orchestrator.DidNotReceive().ApplyAsync(Arg.Any<MessageEnvelop>());
         }
 
