@@ -7,161 +7,9 @@ namespace StateManager.Tests
 {
     public class StateManagerTests
     {
-        [Fact]
-        public async Task ProcessChangeAsync_WhenChangeIsNew_ThenAddsItAsDraft()
-        {
-            // Arrange
-            var envelop = new MessageEnvelop
-            {
-                Change = ChangeType.Create,
-                Name = EntityName.Contact,
-                EntityId = "123",
-                DraftVersion = 1,
-                SubmittedVersion = 0,
-                Submitted = false
-            };
-            var changeHandler = Substitute.For<IChangeHandler>();
+      
 
-            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>());
-
-            // Act
-            await stateManager.ProcessChangeAsync(envelop);
-
-            // Assert
-            changeHandler.Received(1).Draft(envelop);
-        }
-
-        [Fact]
-        public async Task ProcessChangeAsync_WhenChangeIsSubmitted_ThenAddsItAsDraftAndSubmitted()
-        {
-            // Arrange
-            var respository = Substitute.For<IRepository>();
-            var envelop = new MessageEnvelop
-            {
-                Change = ChangeType.Create,
-                Name = EntityName.Contact,
-                EntityId = "123",
-                DraftVersion = 1,
-                SubmittedVersion = 5,
-                Submitted = true
-            };
-
-            var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TakeEntityLock(envelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
-
-            var orchestrator = Substitute.For<IOrchestrator>();
-
-            var dataRetriever = Substitute.For<IDataRetriever>();
-            dataRetriever.GetEntityBasics(envelop.EntityId, envelop.Name)
-                .Returns(new EntityBasics { State = EntityState.NEW, SubmittedVersion = 5 });
-
-            var stateManager = new StateManager(changeHandler, orchestrator, dataRetriever);
-
-            // Act
-            await stateManager.ProcessChangeAsync(envelop);
-
-            // Assert
-            changeHandler.Received(1).Draft(envelop);
-            changeHandler.Received(1).Submitted(Arg.Any<MessageEnvelop>());
-            await orchestrator.Received(1).EvaluateAsync(Arg.Any<MessageEnvelop>());
-        }
-
-        [Fact]
-        public async Task ProcessChangeAsync_WhenUpdatedButNotSubmitted_ThenAddsItAsDraft()
-        {
-            // Arrange
-            var envelop = new MessageEnvelop
-            {
-                Change = ChangeType.Update,
-                Name = EntityName.Contact,
-                EntityId = "123",
-                DraftVersion = 2,
-                SubmittedVersion = 1,
-                Submitted = false
-            };
-
-            var changeHandler = Substitute.For<IChangeHandler>();
-
-            changeHandler.TryDraft(envelop, out _).Returns(true);
-
-            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>());
-
-            // Act
-            var result = await stateManager.ProcessChangeAsync(envelop);
-
-            // Assert
-            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<TaskOutcome>(p => p == null));
-        }
-
-        [Theory]
-        [InlineData(EntityState.NEW)]
-        [InlineData(EntityState.IN_REVIEW)]
-        public async Task ProcessChangeAsync_WhenUpdatedAndSubmitted_ThenInitiatesNewOrchestration(EntityState currentState)
-        {
-            // Arrange
-            var envelop = new MessageEnvelop
-            {
-                Change = ChangeType.Update,
-                Name = EntityName.Contact,
-                EntityId = "123",
-                DraftVersion = 2,
-                SubmittedVersion = 1,
-                Submitted = true
-            };
-            var changeHandler = Substitute.For<IChangeHandler>();
-            var orchestrator = Substitute.For<IOrchestrator>();
-
-            changeHandler.TakeEntityLock(envelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
-            var dataRetriever = Substitute.For<IDataRetriever>();
-
-            dataRetriever.GetEntityBasics(envelop.EntityId, envelop.Name)
-               .Returns(new EntityBasics { State = currentState, SubmittedVersion = 1 });
-
-            MessageEnvelop returnThis = new() { EntityId = envelop.EntityId, Name = envelop.Name };
-            dataRetriever.GetEntityEnvelop(envelop.EntityId, envelop.Name)
-                .Returns(returnThis);
-
-            var stateManager = new StateManager(changeHandler, orchestrator, dataRetriever);
-
-
-            changeHandler.TryDraft(envelop, out _).Returns(true);
-            changeHandler.TryLockSubmitted(envelop, out _).Returns(true);
-
-
-            // Act
-            await stateManager.ProcessChangeAsync(envelop);
-
-            // Assert
-            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<TaskOutcome>(p => p == null));
-            changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>(), out Arg.Is<TaskOutcome>(p => p == null));
-            await orchestrator.Received(1).EvaluateAsync(Arg.Is<MessageEnvelop>(e => e.EntityId == envelop.EntityId));
-        }
-
-        [Fact]
-        public async Task ProcessChangeAsync_WhenUpdatedAndSubmittedButDraftFails_ThenDoesNotSubmit()
-        {
-            // Arrange
-            var envelop = new MessageEnvelop
-            {
-                Change = ChangeType.Update,
-                Name = EntityName.Contact,
-                EntityId = "123",
-                DraftVersion = 2,
-                SubmittedVersion = 1,
-                Submitted = true
-            };
-
-            var changeHandler = Substitute.For<IChangeHandler>();
-            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>());
-            changeHandler.TryDraft(envelop, out _).Returns(false);
-
-            // Act
-            await stateManager.ProcessChangeAsync(envelop);
-
-            // Assert
-            changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>(), out Arg.Is<TaskOutcome>(p => p == null));
-            changeHandler.DidNotReceive().TryLockSubmitted(Arg.Any<MessageEnvelop>(), out Arg.Any<TaskOutcome>());
-        }
+       
 
         [Fact]
         public async Task ProcessUpdateAsync_WhenEntityLockCannotBeTaken_ThenReturnsCannotTakeLockResponse()
@@ -180,7 +28,7 @@ namespace StateManager.Tests
 
             var orchestrator = Substitute.For<IOrchestrator>();
 
-            var stateManager = new StateManager(changeHandler, orchestrator);
+            var stateManager = new StateManager(changeHandler, orchestrator, Substitute.For<IDataRetriever>());
 
             // Act
             var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);

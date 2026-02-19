@@ -8,74 +8,17 @@ using System.Threading.Tasks;
 
 namespace StateManager
 {
-    public class StateManager
+    public class StateManager : IStateManager
     {
         private readonly IChangeHandler changeHandler;
         private readonly IOrchestrator orchestrator;
         private readonly IDataRetriever dataRetriever;
 
-        public StateManager(IChangeHandler changeHandler, IOrchestrator orchestrator, IDataRetriever dataRetriever = null) 
+        public StateManager(IChangeHandler changeHandler, IOrchestrator orchestrator, IDataRetriever dataRetriever)
         {
             this.orchestrator = orchestrator;
             this.dataRetriever = dataRetriever;
             this.changeHandler = changeHandler;
-        }
-
-        public Task<TaskOutcome> ProcessChangeAsync(MessageEnvelop envelop)
-        {
-            // When change is created, add to repository
-            if (envelop.Change == ChangeType.Create && !envelop.Submitted)
-            {
-                changeHandler.Draft(envelop);
-                return Task.FromResult(TaskOutcome.OK);
-            }
-
-            if (envelop.Change == ChangeType.Create && envelop.Submitted)
-            {
-                changeHandler.Draft(envelop);
-                changeHandler.Submitted(envelop);
-                var result = ProcessUpdateAsync(new OrchestrationEnvelop 
-                { 
-                    EntityId = envelop.EntityId, 
-                    Name = envelop.Name, 
-                    DraftVersion = envelop.DraftVersion, 
-                    SubmittedVersion = envelop.SubmittedVersion, 
-                    Status = RuntimeStatus.INITIATE
-                });
-
-                return result;
-            }
-
-            if (envelop.Change == ChangeType.Update && !envelop.Submitted)
-            {
-                changeHandler.TryDraft(envelop, out TaskOutcome outcome);
-                return Task.FromResult(outcome);
-            }
-
-            if (envelop.Change == ChangeType.Update && envelop.Submitted)
-            {
-                if (changeHandler.TryDraft(envelop, out TaskOutcome outcome))
-                {
-                    // Consider what will happen if someone is taking a copy of submitted version
-                    // whilst I am trying to update it. Should I ask for a lock at this point?
-                    // If cannot take the lock, should I error out?
-                    changeHandler.TryLockSubmitted(envelop, out TaskOutcome submitOutcome);
-                    var result = ProcessUpdateAsync(new OrchestrationEnvelop
-                    {
-                        EntityId = envelop.EntityId,
-                        Name = envelop.Name,
-                        DraftVersion = envelop.DraftVersion,
-                        SubmittedVersion = envelop.SubmittedVersion,
-                        Status = RuntimeStatus.INITIATE
-                    });
-
-                    return result;
-                }
-
-                return Task.FromResult(outcome);
-            }
-
-            return Task.FromResult(TaskOutcome.OK);
         }
 
         public async Task<TaskOutcome> ProcessUpdateAsync(OrchestrationEnvelop orchestrationEnvelop)
@@ -143,7 +86,7 @@ namespace StateManager
             {
                 await changeHandler.ReleaseEntityLock(orchestrationEnvelop.EntityId);
             }
-            
+
             return TaskOutcome.OK;
         }
     }
