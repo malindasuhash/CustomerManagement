@@ -7,5 +7,6 @@
         public int DraftVersion { get; set; }
         public int SubmittedVersion { get; set; }
         public RuntimeStatus Status { get; set; }
+        public string[] Messages { get; set; } = [];
     }
 }

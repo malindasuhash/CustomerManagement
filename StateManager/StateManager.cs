@@ -105,6 +105,20 @@ namespace StateManager
                         }
 
                         break;
+                    case EntityState.EVALUATING when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_COMPLETED:
+                        if (submittedVersionCompare)
+                        {
+                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_PROGRESS);
+                            var entityEnvelop = await dataRetriever.GetEntityEnvelop(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
+                            await orchestrator.ApplyAsync(entityEnvelop);
+                        }
+                        break;
+                    case EntityState.EVALUATING when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_INCOMPLETE:
+                        if (submittedVersionCompare)
+                        {
+                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Messages);
+                        }
+                        break;
 
                     default:
                         return TaskOutcome.TRANSITION_NOT_SUPPORTED;

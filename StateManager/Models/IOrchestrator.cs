@@ -8,10 +8,11 @@ namespace StateManager.Models
 {
     public interface IOrchestrator
     {
-        Task<EvaluationResult> EvaluateAsync(MessageEnvelop messageEnvelop);
+        Task<OrchestrationResult> ApplyAsync(MessageEnvelop messageEnvelop);
+        Task<OrchestrationResult> EvaluateAsync(MessageEnvelop messageEnvelop);
     }
 
-    public class EvaluationResult
+    public class OrchestrationResult
     {
         
     }

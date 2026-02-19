@@ -13,7 +13,9 @@
         NEW,
         EVALUATING,
         EVALUATION_RESTARTING,
+        ATTENTION_REQUIRED,
+        IN_REVIEW,
         IN_PROGRESS,
-        SYNCHONISED,
+        SYNCHONISED
     }
 }
