@@ -19,6 +19,8 @@ namespace StateManagment.Models
         public bool Submitted { get; set; }
         public EntityState State => defaultState;
 
+        public dynamic Draft { get; set; }
+
         public void SetState(EntityState targetState)
         {
             defaultState = targetState;

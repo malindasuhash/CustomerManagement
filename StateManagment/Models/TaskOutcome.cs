@@ -13,6 +13,7 @@ namespace StateManagment.Models
         public static readonly TaskOutcome VERSION_MISMATCH = new(false);
         public static readonly TaskOutcome TRANSITION_NOT_SUPPORTED = new(false);
         public static readonly TaskOutcome CHANGE_NOT_SUPPORTED = new(false);
+        public static readonly TaskOutcome STALE_DRAFT = new(false);
 
         public bool Successful { get; }
 

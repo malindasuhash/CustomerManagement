@@ -10,7 +10,7 @@ namespace StateManagment.Models
     {
         Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, string[]? messages = null);
         void Draft(MessageEnvelop envelop);
-        Task ReleaseEntityLock(string entityId);
+        Task<TaskOutcome> ReleaseEntityLock(string entityId);
         void Submitted(MessageEnvelop envelop);
         Task<TaskOutcome> TakeEntityLock(string entityId);
         Task<TaskOutcome> TryDraft(MessageEnvelop envelop);
