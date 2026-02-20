@@ -7,10 +7,6 @@ namespace StateManager.Tests
 {
     public class StateManagerTests
     {
-
-
-
-
         [Fact]
         public async Task ProcessUpdateAsync_WhenEntityLockCannotBeTaken_ThenReturnsCannotTakeLockResponse()
         {
@@ -356,6 +352,64 @@ namespace StateManager.Tests
 
             // Assert
             await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Messages);
+        }
+
+        private const int StateDoesNotChange = 0;
+        private const int StateChanges = 1;
+        private const int EvaluationStarts = 1;
+        private const int EvaluationDoesNotStart = 0;
+        private const int ApplyStarts = 1;
+        private const int ApplyDoesNotStart = 0;
+        private const int PostApplyDoesNotStart = 0;
+        private const int PostApplyStarts = 1;
+
+
+        [Theory]
+        [InlineData(EntityState.NEW, EntityState.NEW, RuntimeStatus.INITIATE, StateDoesNotChange, EvaluationStarts, ApplyDoesNotStart)]
+        [InlineData(EntityState.NEW, EntityState.EVALUATING, RuntimeStatus.EVALUATION_STARTED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
+        [InlineData(EntityState.EVALUATING, EntityState.ATTENTION_REQUIRED, RuntimeStatus.EVALUATION_INCOMPLETE, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
+        [InlineData(EntityState.EVALUATING, EntityState.IN_REVIEW, RuntimeStatus.EVALUATION_REQUIRES_MANUAL_REVIEW, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
+        [InlineData(EntityState.EVALUATING, EntityState.IN_PROGRESS, RuntimeStatus.EVALUATION_COMPLETED, StateChanges, EvaluationDoesNotStart, ApplyStarts)]
+        [InlineData(EntityState.IN_REVIEW, EntityState.IN_REVIEW, RuntimeStatus.INITIATE, StateDoesNotChange, EvaluationStarts, ApplyDoesNotStart)]
+        [InlineData(EntityState.IN_REVIEW, EntityState.EVALUATING, RuntimeStatus.EVALUATION_STARTED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
+        [InlineData(EntityState.ATTENTION_REQUIRED, EntityState.ATTENTION_REQUIRED, RuntimeStatus.INITIATE, StateDoesNotChange, EvaluationStarts, ApplyDoesNotStart)]
+        [InlineData(EntityState.ATTENTION_REQUIRED, EntityState.EVALUATING, RuntimeStatus.EVALUATION_STARTED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
+        [InlineData(EntityState.IN_PROGRESS, EntityState.ATTENTION_REQUIRED, RuntimeStatus.CHANGE_FAILED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
+        [InlineData(EntityState.IN_PROGRESS, EntityState.SYNCHONISED, RuntimeStatus.CHANGE_APPLIED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart, PostApplyStarts)]
+        [InlineData(EntityState.SYNCHONISED, EntityState.SYNCHONISED, RuntimeStatus.INITIATE, StateDoesNotChange, EvaluationStarts, ApplyDoesNotStart)]
+        [InlineData(EntityState.SYNCHONISED, EntityState.EVALUATING, RuntimeStatus.EVALUATION_STARTED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
+        public async Task ProcessUpdateAsync_VerifyState_Transitions(EntityState currentState, EntityState targetState, RuntimeStatus action, int statusChangeCount, int evalutionCount, int applyCount, int postApplyCount = 0)
+        {
+            // Arrange
+            var orchestrationEnvelop = new OrchestrationEnvelop
+            {
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 10,
+                SubmittedVersion = 6,
+                Status = action,
+                Messages = ["Messages"]
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
+            var dataRetriever = Substitute.For<IDataRetriever>();
+
+            var orchestrator = Substitute.For<IOrchestrator>();
+
+            dataRetriever.GetEntityBasics(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name)
+                .Returns(new EntityBasics { State = currentState, SubmittedVersion = 6 });
+            var stateManager = new StateManager(changeHandler, orchestrator, dataRetriever);
+
+            // Act
+            var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+
+            // Assert
+            await changeHandler.Received(statusChangeCount).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, targetState, orchestrationEnvelop.Messages);
+            await orchestrator.Received(evalutionCount).EvaluateAsync(Arg.Any<MessageEnvelop>());
+            await orchestrator.Received(applyCount).ApplyAsync(Arg.Any<MessageEnvelop>());
+            await orchestrator.Received(postApplyCount).PostApplyAsync(Arg.Any<MessageEnvelop>());
+            result.Should().Be(TaskOutcome.OK);
         }
     }
 }

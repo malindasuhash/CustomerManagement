@@ -35,6 +35,8 @@ namespace StateManager
                 {
                     case EntityState.NEW when orchestrationEnvelop.Status == RuntimeStatus.INITIATE:
                     case EntityState.IN_REVIEW when orchestrationEnvelop.Status == RuntimeStatus.INITIATE:
+                    case EntityState.ATTENTION_REQUIRED when orchestrationEnvelop.Status == RuntimeStatus.INITIATE:
+                    case EntityState.SYNCHONISED when orchestrationEnvelop.Status == RuntimeStatus.INITIATE:
                         if (submittedVersionCompare)
                         {
                             var entityEnvelop = await dataRetriever.GetEntityEnvelop(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
@@ -43,9 +45,11 @@ namespace StateManager
                         break;
                     case EntityState.NEW when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_STARTED:
                     case EntityState.IN_REVIEW when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_STARTED:
+                    case EntityState.ATTENTION_REQUIRED when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_STARTED:
+                    case EntityState.SYNCHONISED when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_STARTED:
                         if (submittedVersionCompare)
                         {
-                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATING);
+                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATING, orchestrationEnvelop.Messages);
                         }
                         if (entity.SubmittedVersion > orchestrationEnvelop.SubmittedVersion)
                         {
@@ -60,7 +64,7 @@ namespace StateManager
                     case EntityState.EVALUATING when orchestrationEnvelop.Status == RuntimeStatus.EVALUATION_COMPLETED:
                         if (submittedVersionCompare)
                         {
-                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_PROGRESS);
+                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_PROGRESS, orchestrationEnvelop.Messages);
                             var entityEnvelop = await dataRetriever.GetEntityEnvelop(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
                             await orchestrator.ApplyAsync(entityEnvelop);
                         }
@@ -77,6 +81,14 @@ namespace StateManager
                         if (submittedVersionCompare)
                         {
                             await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_REVIEW, orchestrationEnvelop.Messages);
+                        }
+                        break;
+                    case EntityState.IN_PROGRESS when orchestrationEnvelop.Status == RuntimeStatus.CHANGE_APPLIED:
+                        if (submittedVersionCompare)
+                        {
+                            await changeHandler.ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.SYNCHONISED, orchestrationEnvelop.Messages);
+                            var entityEnvelop = await dataRetriever.GetEntityEnvelop(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
+                            await orchestrator.PostApplyAsync(entityEnvelop);
                         }
                         break;
                     default:
