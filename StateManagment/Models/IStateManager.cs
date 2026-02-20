@@ -1,6 +1,6 @@
 ﻿using StateManager.Models;
 
-namespace StateManager
+namespace StateManagment.Models
 {
     public interface IStateManager
     {

@@ -2,6 +2,7 @@
 using NSubstitute;
 using StateManager.Events;
 using StateManager.Models;
+using StateManagment.Models;
 
 namespace StateManager.Tests
 {
