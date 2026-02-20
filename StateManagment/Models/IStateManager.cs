@@ -1,6 +1,4 @@
-﻿using StateManager.Models;
-
-namespace StateManagment.Models
+﻿namespace StateManagment.Models
 {
     public interface IStateManager
     {

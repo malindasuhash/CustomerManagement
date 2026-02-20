@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StateManager.Models
+namespace StateManagment.Models
 {
     public class TaskOutcome
     {

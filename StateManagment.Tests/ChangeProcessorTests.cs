@@ -1,10 +1,9 @@
 ﻿using FluentAssertions;
 using NSubstitute;
-using StateManager.Events;
-using StateManager.Models;
+using StateManagment;
 using StateManagment.Models;
 
-namespace StateManager.Tests
+namespace StateManagment.Tests
 {
     public class ChangeProcessorTests
     {

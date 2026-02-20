@@ -1,4 +1,4 @@
-﻿namespace StateManager.Events
+﻿namespace StateManagment.Events
 {
     public interface IStateManagerEvent
     {

@@ -1,7 +1,6 @@
-﻿using StateManager.Models;
-using StateManagment.Models;
+﻿using StateManagment.Models;
 
-namespace StateManager
+namespace StateManagment
 {
     public class ChangeProcessor
     {

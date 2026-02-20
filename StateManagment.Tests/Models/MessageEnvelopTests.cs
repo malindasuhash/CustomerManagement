@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using NSubstitute;
-using StateManager.Models;
+using StateManagment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StateManager.Tests.Models
+namespace StateManagment.Tests.Models
 {
     public class MessageEnvelopTests
     {

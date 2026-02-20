@@ -1,7 +1,6 @@
-﻿using StateManager.Models;
-using StateManagment.Models;
+﻿using StateManagment.Models;
 
-namespace StateManager
+namespace StateManagment
 {
     public class StateManager : IStateManager
     {
@@ -27,7 +26,7 @@ namespace StateManager
                 var submittedVersionCompare = storedEntity.SubmittedVersion == operationalEntity.SubmittedVersion;
 
                 // If processed storedEntity version is different from the submitted version, then we have to re-evaluate the change. This is to make sure that we are not missing any changes which were submitted while the orchestration was in progress. If versions are same, then we can continue with the orchestration as is.
-                if (!submittedVersionCompare && (storedEntity.SubmittedVersion > operationalEntity.SubmittedVersion))
+                if (!submittedVersionCompare && storedEntity.SubmittedVersion > operationalEntity.SubmittedVersion)
                 {
                     await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.EVALUATION_RESTARTING);
 

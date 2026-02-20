@@ -1,4 +1,4 @@
-﻿namespace StateManager.Models
+﻿namespace StateManagment.Models
 {
     public enum ChangeType
     {
