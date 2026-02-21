@@ -21,6 +21,8 @@ namespace StateManagment.Models
 
         public dynamic Draft { get; set; }
 
+        public string UpdateUser { get; set; }
+
         public void SetState(EntityState targetState)
         {
             defaultState = targetState;
