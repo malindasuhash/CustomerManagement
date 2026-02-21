@@ -44,17 +44,22 @@ namespace InMemory
 
         public void UpdateContactSubmitted(string entityId, IEntity entity, int latestDraftVersion, string updatedUser)
         {
+            var contact = (Contact)entity;
             var contactDocument = Contacts[entityId];
             contactDocument.SubmittedVersion = latestDraftVersion;
             contactDocument.UpdatedUser = updatedUser;
-            contactDocument.Submitted = entity;
+            contactDocument.Submitted = new Contact()
+            {
+                LastName = contact.LastName,
+                FirstName = contact.FirstName
+            };
         }
 
         internal void UpdateContactStateAndMessages(string entityId, EntityState targetState, string[] messages)
         {
             var contactDocument = Contacts[entityId];
             contactDocument.State = targetState;
-            contactDocument.Messages = messages;
+            contactDocument.Messages = [.. messages];
         }
     }
 }
