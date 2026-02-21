@@ -23,6 +23,8 @@ namespace StateManagment.Models
 
         public dynamic Submitted { get; set; }
 
+        public dynamic Applied { get; set; }
+
         public string UpdateUser { get; set; }
         public DateTime UpdateTimestamp { get; set; }
 
@@ -36,7 +38,7 @@ namespace StateManagment.Models
 
         override public string ToString()
         {
-            return $"Change: {Change}, Name: {Name}, EntityId: {EntityId}, DraftVersion: {DraftVersion}, SubmittedVersion: {SubmittedVersion}, IsSubmitted: {IsSubmitted}, State: {State}, CreatedUser: {CreatedUser}, CreatedDate: {CreatedTimestamp}";
+            return $"Change: {Change}, Name: {Name}, EntityId: {EntityId}, DraftVersion: {DraftVersion}, SubmittedVersion: {SubmittedVersion}, IsSubmitted: {IsSubmitted}, State: {State}, CreatedUser: {CreatedUser}, CreatedDate: {CreatedTimestamp}, Draft: <<{Draft}>>, Submitted: <<{Submitted}>>; Applied: <<{Applied}>>";
         }
     }
 }

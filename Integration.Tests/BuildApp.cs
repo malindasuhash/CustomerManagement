@@ -4,6 +4,7 @@ using StateManagment.Entity;
 using StateManagment.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace Integration.Tests
 {
     internal class BuildApp
     {
-        public async Task Run() 
+        public async Task Run()
         {
             var database = new CustomerDatabase();
             var distributedLock = new DictionaryLock();
@@ -37,9 +38,46 @@ namespace Integration.Tests
 
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            var contact = database.GetEntityDocument(EntityName.Contact, envelop.EntityId);
+            var contactDocument = database.GetEntityDocument(EntityName.Contact, envelop.EntityId);
 
-            Console.WriteLine($"Contact: {contact}");
+            Console.WriteLine($"-> Before orchestration - Contact: {contactDocument}"); Console.WriteLine();
+
+            Console.WriteLine($"--> Sent EVALUATION_STARTED"); Console.WriteLine();
+
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED)).Wait();
+
+            contactDocument = database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
+            Console.WriteLine($" Contact: {contactDocument}"); Console.WriteLine();
+
+            Console.WriteLine($"--> Sent EVALUATION_COMPLETED"); Console.WriteLine();
+
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED)).Wait();
+
+            contactDocument = database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
+            Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
+
+
+            Console.WriteLine($"--> Sent CHANGE_APPLIED"); Console.WriteLine();
+
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED)).Wait();
+
+            contactDocument = database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
+            Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
+
+            Console.ReadKey();
+        }
+
+        private static OrchestrationEnvelop StepToSend(string entityId, int submittedVersion, RuntimeStatus runtimeStatus)
+        {
+            var step = new OrchestrationEnvelop
+            {
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                SubmittedVersion = submittedVersion,
+                Status = runtimeStatus
+            };
+
+            return step;
         }
     }
 }
