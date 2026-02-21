@@ -18,8 +18,6 @@ namespace InMemory
                 DraftVersion = document.DraftVersion,
                 SubmittedVersion = document.SubmittedVersion
             };
-
-            throw new NotImplementedException();
         }
 
         public MessageEnvelop GetEntityDocument(EntityName entityName, string entityId)
@@ -44,54 +42,29 @@ namespace InMemory
             }
         }
 
-        public void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, int latestDraftVersion)
+        public void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, int latestDraftVersion, string updatedUser)
         {
-            throw new NotImplementedException();
+            switch (entityName)
+            {
+                case EntityName.Contact:
+                    entityCollection.UpdateContactSubmitted(entityId, entity, latestDraftVersion, updatedUser);
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Entity type {entityName} is not supported.");
+            }
         }
 
         public void UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages)
         {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class EntityCollection
-    {
-        public Dictionary<string, EntityDocument> Contacts { get; set; } = new Dictionary<string, EntityDocument>();
-
-        public void AddOrUpdateContact(MessageEnvelop messageEnvelop, int draftVersion)
-        {
-            var contact = (Contact)messageEnvelop.Draft;
-            if (Contacts.ContainsKey(messageEnvelop.EntityId))
+            switch (entityName)
             {
-                Contacts[messageEnvelop.EntityId] = new EntityDocument
-                {
-                    EntityId = messageEnvelop.EntityId,
-                    Draft = contact,
-                    DraftVersion = draftVersion,
-                    State = messageEnvelop.State,
-                    CreatedUser = messageEnvelop.CreatedUser,
-                    CreatedDate = DateTime.UtcNow,
-                };
+                case EntityName.Contact:
+                    entityCollection.UpdateContactStateAndMessages(entityId, targetState, messages);
+                    break;
+                default:
+                    throw new NotSupportedException($"Entity type {entityName} is not supported.");
             }
-        }
-
-        public MessageEnvelop GetContact(string entityId)
-        {
-            if (Contacts.TryGetValue(entityId, out var document))
-            {
-                var message = new MessageEnvelop()
-                {
-                    EntityId = document.EntityId,
-                    Name = EntityName.Contact,
-                    Draft = document.Draft,
-                    CreatedUser = document.CreatedUser,
-                    CreatedDate = document.CreatedDate,
-                };
-                message.SetState(document.State);
-            }
-
-            throw new KeyNotFoundException($"Contact with ID {entityId} not found.");
         }
     }
 }

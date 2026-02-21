@@ -43,14 +43,15 @@ namespace StateManagment.Tests
                 EntityId = "entity1",
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
-                DraftVersion = 3
+                DraftVersion = 3,
+                UpdateUser = "testUser"
             };
 
             // Act
             changeHandler.Submitted(messageEnvelop);
 
             // Assert
-            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", messageEnvelop.DraftVersion);
+            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", messageEnvelop.DraftVersion, messageEnvelop.UpdateUser);
         }
 
         [Fact]
@@ -175,7 +176,8 @@ namespace StateManagment.Tests
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
-                Submitted = true
+                Submitted = true,
+                UpdateUser = "testUser"
             };
 
             var storedDraft = new Contact() { FirstName = "Apple", LastName = "Orange" };
@@ -195,7 +197,7 @@ namespace StateManagment.Tests
             // Assert
             await distributedLock.Received(1).Lock(entityId);
             database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
-            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c == storedDraft), entityId, 2);
+            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c == storedDraft), entityId, 2, messageEnvelop.UpdateUser);
         }
 
         [Fact]

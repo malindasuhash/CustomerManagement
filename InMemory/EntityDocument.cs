@@ -14,6 +14,8 @@ namespace InMemory
         public dynamic Applied { get; set; }
         public int AppliedVersion { get; set; }
 
+        public string[] Messages { get; set; } = Array.Empty<string>();
+
         public EntityState State { get; set; }
 
         public string CreatedUser { get; set; }
