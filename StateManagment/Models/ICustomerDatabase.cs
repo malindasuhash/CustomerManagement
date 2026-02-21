@@ -14,5 +14,6 @@ namespace StateManagment.Models
         void StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion);
         void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, int latestDraftVersion, string updatedUser);
         void UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages);
+        void StoreApplied(EntityName entityName, IEntity entity, string entityId);
     }
 }

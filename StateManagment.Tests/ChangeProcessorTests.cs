@@ -18,11 +18,11 @@ namespace StateManagment.Tests
                 EntityId = "123",
                 DraftVersion = 1,
                 SubmittedVersion = 0,
-                Submitted = false
+                IsSubmitted = false
             };
             var changeHandler = Substitute.For<IChangeHandler>();
 
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IOrchestrator>(), Substitute.For<IStateManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
             await changeProcessor.ProcessChangeAsync(envelop);
@@ -43,16 +43,15 @@ namespace StateManagment.Tests
                 EntityId = "123",
                 DraftVersion = 1,
                 SubmittedVersion = 5,
-                Submitted = true
+                IsSubmitted = true
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TakeEntityLock(envelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
-            var orchestrator = Substitute.For<IOrchestrator>();
             var stateManager = Substitute.For<IStateManager>();
 
-            var change = new ChangeProcessor(changeHandler, orchestrator, stateManager);
+            var change = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             await change.ProcessChangeAsync(envelop);
@@ -75,7 +74,7 @@ namespace StateManagment.Tests
                 EntityId = "123",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
-                Submitted = false
+                IsSubmitted = false
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -83,7 +82,7 @@ namespace StateManagment.Tests
 
             changeHandler.TryDraft(envelop).Returns(TaskOutcome.OK);
 
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IOrchestrator>(), Substitute.For<IStateManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
@@ -103,16 +102,15 @@ namespace StateManagment.Tests
                 EntityId = "123",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
-                Submitted = true
+                IsSubmitted = true
             };
             var changeHandler = Substitute.For<IChangeHandler>();
-            var orchestrator = Substitute.For<IOrchestrator>();
 
             changeHandler.TakeEntityLock(envelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var stateManager = Substitute.For<IStateManager>();
 
-            var changeProcessor = new ChangeProcessor(changeHandler, orchestrator, stateManager);
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             changeHandler.TryDraft(envelop).Returns(TaskOutcome.OK);
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
@@ -138,11 +136,11 @@ namespace StateManagment.Tests
                 EntityId = "123",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
-                Submitted = true
+                IsSubmitted = true
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IOrchestrator>(), Substitute.For<IStateManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
             changeHandler.TryDraft(envelop).Returns(TaskOutcome.VERSION_MISMATCH);
 
             // Act
@@ -164,7 +162,7 @@ namespace StateManagment.Tests
                 EntityId = "123",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
-                Submitted = true
+                IsSubmitted = true
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -172,7 +170,7 @@ namespace StateManagment.Tests
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IOrchestrator>(), stateManager);
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
@@ -195,7 +193,7 @@ namespace StateManagment.Tests
                 EntityId = "123",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
-                Submitted = true
+                IsSubmitted = true
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -203,7 +201,7 @@ namespace StateManagment.Tests
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IOrchestrator>(), stateManager);
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);

@@ -55,6 +55,18 @@ namespace InMemory
             };
         }
 
+        internal void UpdateContactApplied(string entityId, IEntity entity)
+        {
+            var contact = (Contact)entity;
+            var contactDocument = Contacts[entityId];
+            contactDocument.AppliedVersion = contactDocument.SubmittedVersion;
+            contactDocument.Applied = new Contact()
+            {
+                LastName = contact.LastName,
+                FirstName = contact.FirstName
+            };
+        }
+
         internal void UpdateContactStateAndMessages(string entityId, EntityState targetState, string[] messages)
         {
             var contactDocument = Contacts[entityId];

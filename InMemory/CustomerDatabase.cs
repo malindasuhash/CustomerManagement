@@ -29,6 +29,19 @@ namespace InMemory
             };
         }
 
+        public void StoreApplied(EntityName entityName, IEntity entity, string entityId)
+        {
+            switch (entityName)
+            {
+                case EntityName.Contact:
+                    entityCollection.UpdateContactApplied(entityId, entity);
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Entity type {entityName} is not supported.");
+            }
+        }
+
         public void StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion)
         {
             switch (messageEnvelop.Name)

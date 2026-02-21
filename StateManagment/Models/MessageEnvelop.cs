@@ -16,10 +16,12 @@ namespace StateManagment.Models
         public required string EntityId { get; set; }
         public int DraftVersion { get; set; }
         public int SubmittedVersion { get; set; }
-        public bool Submitted { get; set; }
+        public bool IsSubmitted { get; set; }
         public EntityState State => defaultState;
 
         public dynamic Draft { get; set; }
+
+        public dynamic Submitted { get; set; }
 
         public string UpdateUser { get; set; }
 

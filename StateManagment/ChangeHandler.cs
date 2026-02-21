@@ -1,9 +1,4 @@
 ﻿using StateManagment.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StateManagment
 {
@@ -27,6 +22,11 @@ namespace StateManagment
         public Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, string[]? messages = null)
         {
             database.UpdateData(name, entityId, entityState, messages ?? []);
+
+            if (entityState == EntityState.SYNCHRONISED)
+            {
+                database.StoreApplied(name, database.GetEntityDocument(name, entityId).Submitted, entityId);
+            }
 
             var entityDocument = database.GetEntityDocument(name, entityId);
             

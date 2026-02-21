@@ -5,12 +5,10 @@ namespace StateManagment
     public class ChangeProcessor
     {
         private readonly IChangeHandler changeHandler;
-        private readonly IOrchestrator orchestrator;
         private readonly IStateManager stateManager;
 
-        public ChangeProcessor(IChangeHandler changeHandler, IOrchestrator orchestrator, IStateManager stateManager)
+        public ChangeProcessor(IChangeHandler changeHandler, IStateManager stateManager)
         {
-            this.orchestrator = orchestrator;
             this.stateManager = stateManager;
             this.changeHandler = changeHandler;
         }
@@ -18,13 +16,13 @@ namespace StateManagment
         public async Task<TaskOutcome> ProcessChangeAsync(MessageEnvelop envelop)
         {
             // When change is created, add to repository
-            if (envelop.Change == ChangeType.Create && !envelop.Submitted)
+            if (envelop.Change == ChangeType.Create && !envelop.IsSubmitted)
             {
                 changeHandler.Draft(envelop);
                 return TaskOutcome.OK;
             }
 
-            if (envelop.Change == ChangeType.Create && envelop.Submitted)
+            if (envelop.Change == ChangeType.Create && envelop.IsSubmitted)
             {
                 changeHandler.Draft(envelop);
                 changeHandler.Submitted(envelop);
@@ -40,13 +38,13 @@ namespace StateManagment
                 return result;
             }
 
-            if (envelop.Change == ChangeType.Update && !envelop.Submitted)
+            if (envelop.Change == ChangeType.Update && !envelop.IsSubmitted)
             {
                 var outcome = await changeHandler.TryDraft(envelop);
                 return outcome;
             }
 
-            if (envelop.Change == ChangeType.Update && envelop.Submitted)
+            if (envelop.Change == ChangeType.Update && envelop.IsSubmitted)
             {
                 var lockResult = await changeHandler.TryDraft(envelop);
                 if (lockResult == TaskOutcome.OK)

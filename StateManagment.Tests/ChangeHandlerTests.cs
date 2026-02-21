@@ -176,7 +176,7 @@ namespace StateManagment.Tests
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
-                Submitted = true,
+                IsSubmitted = true,
                 UpdateUser = "testUser"
             };
 
@@ -216,7 +216,7 @@ namespace StateManagment.Tests
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
-                Submitted = true               
+                IsSubmitted = true               
             };
             messageEnvelop.SetState(EntityState.EVALUATING);
 
@@ -229,6 +229,35 @@ namespace StateManagment.Tests
             database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
             database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.IN_REVIEW, Arg.Is<string[]>(s => s.Contains("PendingRiskChesks")));
             await eventPublisher.Received(1).PublishStateChangedEvent(messageEnvelop);
+        }
+
+        [Fact]
+        public async Task ChangeStatusTo_WhenStateChangedToSynchronised_ThenCopiesSubmittedToApplied()
+        {
+                       // Arrange
+            var distributedLock = Substitute.For<IDistributedLock>();
+            var eventPublisher = Substitute.For<IEventPublisher>();
+            var database = Substitute.For<ICustomerDatabase>();
+            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher);
+            var entityId = "entity1";
+            var messageEnvelop = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                DraftVersion = 2,
+                IsSubmitted = true
+            };
+            messageEnvelop.SetState(EntityState.EVALUATING);
+
+            database.GetEntityDocument(EntityName.Contact, entityId).Returns(messageEnvelop);
+
+            // Act
+            var result = await changeHandler.ChangeStatusTo(messageEnvelop.EntityId, messageEnvelop.Name, EntityState.SYNCHRONISED);
+
+            // Assert
+            database.Received(1).StoreApplied(EntityName.Contact, Arg.Any<IEntity>(), entityId);
+            database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.SYNCHRONISED, Arg.Is<string[]>(s => s.Length == 0));
         }
     }
 }
