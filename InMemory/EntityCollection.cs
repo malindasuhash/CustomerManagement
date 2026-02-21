@@ -47,6 +47,9 @@ namespace InMemory
                     
                     Submitted = document.Submitted,
                     SubmittedVersion = document.SubmittedVersion,
+
+                    Applied = document.Applied,
+                    AppliedVersion = document.AppliedVersion
                 };
                 message.SetState(document.State);
 
