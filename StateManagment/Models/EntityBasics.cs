@@ -2,8 +2,8 @@
 {
     public class EntityBasics
     {
-        public string Name { get; set; }
-        public string Id { get; set; }
+        public EntityName Name { get; set; }
+        public string EntityId { get; set; }
         public EntityState State { get; set; }
         public int DraftVersion { get; set; }
         public int SubmittedVersion { get; set; }

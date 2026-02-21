@@ -29,7 +29,7 @@ namespace StateManagment.Tests
             changeHandler.Draft(messageEnvelop);
 
             // Assert
-            database.Received(1).StoreDraft(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), messageEnvelop.EntityId, messageEnvelop.DraftVersion + 1);
+            database.Received(1).StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
         }
 
         [Fact]
@@ -126,7 +126,7 @@ namespace StateManagment.Tests
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
             database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
-            database.Received(1).StoreDraft(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), entityId, messageEnvelop.DraftVersion + 1);
+            database.Received(1).StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
         }
 
@@ -155,7 +155,7 @@ namespace StateManagment.Tests
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
             database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
-            database.DidNotReceive().StoreDraft(Arg.Any<EntityName>(), Arg.Any<Contact>(), Arg.Any<string>(), messageEnvelop.DraftVersion + 1);
+            database.DidNotReceive().StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
             result.Should().Be(TaskOutcome.VERSION_MISMATCH);
         }

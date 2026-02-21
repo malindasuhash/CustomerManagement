@@ -23,6 +23,9 @@ namespace StateManagment.Models
 
         public string UpdateUser { get; set; }
 
+        public string CreatedUser { get; set; }
+        public DateTime CreatedDate { get; set; }
+
         public void SetState(EntityState targetState)
         {
             defaultState = targetState;

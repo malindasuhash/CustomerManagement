@@ -39,7 +39,7 @@ namespace StateManagment
         /// </summary>        
         public void Draft(MessageEnvelop envelop)
         {
-            database.StoreDraft(envelop.Name, envelop.Draft, envelop.EntityId, envelop.DraftVersion + 1);
+            database.StoreDraft(envelop, envelop.DraftVersion + 1);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace StateManagment
                     return Task.FromResult(TaskOutcome.VERSION_MISMATCH);
                 }
 
-                database.StoreDraft(envelop.Name, envelop.Draft, envelop.EntityId, envelop.DraftVersion + 1);
+                database.StoreDraft(envelop, envelop.DraftVersion + 1);
             }
             finally
             {
