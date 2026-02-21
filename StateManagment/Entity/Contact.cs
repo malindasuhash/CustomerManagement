@@ -10,6 +10,11 @@ namespace StateManagment.Entity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
+        override public string ToString()
+        {
+            return $"FirstName: {FirstName}, LastName: {LastName}";
+        }
     }
 
     public interface IEntity

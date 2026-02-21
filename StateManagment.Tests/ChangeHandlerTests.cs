@@ -51,7 +51,7 @@ namespace StateManagment.Tests
             changeHandler.Submitted(messageEnvelop);
 
             // Assert
-            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", messageEnvelop.DraftVersion, messageEnvelop.UpdateUser);
+            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", messageEnvelop.UpdateUser);
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace StateManagment.Tests
             // Assert
             await distributedLock.Received(1).Lock(entityId);
             database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
-            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c == storedDraft), entityId, 2, messageEnvelop.UpdateUser);
+            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c == storedDraft), entityId,  messageEnvelop.UpdateUser);
         }
 
         [Fact]

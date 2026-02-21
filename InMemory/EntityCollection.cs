@@ -9,8 +9,11 @@ namespace InMemory
 
         public void AddOrUpdateContact(MessageEnvelop messageEnvelop, int draftVersion)
         {
+            var entityId = Guid.NewGuid().ToString();
+            messageEnvelop.EntityId = entityId;
+
             var contact = (Contact)messageEnvelop.Draft;
-            if (Contacts.ContainsKey(messageEnvelop.EntityId))
+            if (!Contacts.ContainsKey(messageEnvelop.EntityId))
             {
                 Contacts[messageEnvelop.EntityId] = new EntityDocument
                 {
@@ -30,24 +33,37 @@ namespace InMemory
             {
                 var message = new MessageEnvelop()
                 {
+                    Change = ChangeType.Read,
                     EntityId = document.EntityId,
                     Name = EntityName.Contact,
                     Draft = document.Draft,
+                    DraftVersion = document.DraftVersion,
+
+                    UpdateUser = document.UpdatedUser,
+                    UpdateTimestamp = document.UpdatedTimestamp,
+
                     CreatedUser = document.CreatedUser,
-                    CreatedDate = document.CreatedDate,
+                    CreatedTimestamp = document.CreatedDate,
+                    
+                    Submitted = document.Submitted,
+                    SubmittedVersion = document.SubmittedVersion,
                 };
                 message.SetState(document.State);
+
+                return message;
             }
 
             throw new KeyNotFoundException($"Contact with ID {entityId} not found.");
         }
 
-        public void UpdateContactSubmitted(string entityId, IEntity entity, int latestDraftVersion, string updatedUser)
+        public void UpdateContactSubmitted(string entityId, IEntity entity, string updatedUser)
         {
             var contact = (Contact)entity;
             var contactDocument = Contacts[entityId];
-            contactDocument.SubmittedVersion = latestDraftVersion;
+            contactDocument.SubmittedVersion = contactDocument.DraftVersion;
             contactDocument.UpdatedUser = updatedUser;
+            contactDocument.UpdatedTimestamp = DateTime.UtcNow;
+
             contactDocument.Submitted = new Contact()
             {
                 LastName = contact.LastName,

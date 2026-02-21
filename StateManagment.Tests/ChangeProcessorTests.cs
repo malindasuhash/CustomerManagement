@@ -35,7 +35,6 @@ namespace StateManagment.Tests
         public async Task ProcessChangeAsync_WhenChangeIsSubmitted_ThenAddsItAsDraftAndSubmitted()
         {
             // Arrange
-            var respository = Substitute.For<IRepository>();
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
@@ -59,7 +58,7 @@ namespace StateManagment.Tests
             // Assert
             changeHandler.Received(1).Draft(envelop);
             changeHandler.Received(1).Submitted(Arg.Any<MessageEnvelop>());
-            await stateManager.Received(1).ProcessUpdateAsync(Arg.Any<OrchestrationEnvelop>());
+            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
         }
 
 
@@ -115,14 +114,13 @@ namespace StateManagment.Tests
             changeHandler.TryDraft(envelop).Returns(TaskOutcome.OK);
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
 
-
             // Act
             await changeProcessor.ProcessChangeAsync(envelop);
 
             // Assert
             await changeHandler.Received(1).TryDraft(Arg.Any<MessageEnvelop>());
             await changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>());
-            await stateManager.Received(1).ProcessUpdateAsync(Arg.Any<OrchestrationEnvelop>());
+            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
         }
 
         [Fact]

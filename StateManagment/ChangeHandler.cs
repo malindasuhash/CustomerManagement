@@ -59,7 +59,7 @@ namespace StateManagment
         /// </summary>
         public void Submitted(MessageEnvelop envelop)
         {
-            database.StoreSubmitted(envelop.Name, envelop.Draft, envelop.EntityId, envelop.DraftVersion, envelop.UpdateUser);
+            database.StoreSubmitted(envelop.Name, envelop.Draft, envelop.EntityId, envelop.UpdateUser);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace StateManagment
 
                 var storedDraftEntity = database.GetEntityDocument(envelop.Name, envelop.EntityId);
 
-                database.StoreSubmitted(storedDraftEntity.Name, storedDraftEntity.Draft, storedDraftEntity.EntityId, storedDraftEntity.DraftVersion, envelop.UpdateUser);
+                database.StoreSubmitted(storedDraftEntity.Name, storedDraftEntity.Draft, storedDraftEntity.EntityId, envelop.UpdateUser);
             }
             finally
             {

@@ -308,7 +308,7 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task ProcessUpdateAsync_WhenInProgressAndItFails_ThenChangeStatusToAttentionRequired() 
+        public async Task ProcessUpdateAsync_WhenInProgressAndItFails_ThenChangeStatusToAttentionRequired()
         {
             // Arrange
             var orchestrationEnvelop = new OrchestrationEnvelop
@@ -325,7 +325,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
             var database = Substitute.For<ICustomerDatabase>();
 
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId  )
+            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 6 });
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
 
@@ -393,6 +393,40 @@ namespace StateManagment.Tests
             await orchestrator.Received(applyCount).ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             await orchestrator.Received(postApplyCount).PostApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             result.Should().Be(TaskOutcome.OK);
+        }
+
+        [Fact]
+        public async Task Initiate_ReadsLatestData_AndStartsStateManager()
+        {
+            var orchestrationEnvelop = new OrchestrationEnvelop
+            {
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 2,
+                SubmittedVersion = 1,
+                Status = RuntimeStatus.EVALUATION_STARTED
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.LOCK_UNAVAILABLE));
+
+            var orchestrator = Substitute.For<IOrchestrator>();
+            var database = Substitute.For<ICustomerDatabase>();
+            database.GetEntityDocument(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+                .Returns(new MessageEnvelop
+                {
+                    Name = orchestrationEnvelop.Name,
+                    EntityId = orchestrationEnvelop.EntityId,
+                    SubmittedVersion = orchestrationEnvelop.SubmittedVersion
+                });
+
+            var stateManager = new StateManager(changeHandler, orchestrator, database);
+
+            // Act
+            await stateManager.Initiate(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId);
+
+            // Assert
+            database.Received(1).GetEntityDocument(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace StateManagment.Models
         public ChangeType Change { get; set; }
         public EntityName Name { get; set; }
 
-        public required string EntityId { get; set; }
+        public string EntityId { get; set; }
         public int DraftVersion { get; set; }
         public int SubmittedVersion { get; set; }
         public bool IsSubmitted { get; set; }
@@ -24,13 +24,19 @@ namespace StateManagment.Models
         public dynamic Submitted { get; set; }
 
         public string UpdateUser { get; set; }
+        public DateTime UpdateTimestamp { get; set; }
 
         public string CreatedUser { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedTimestamp { get; set; }
 
         public void SetState(EntityState targetState)
         {
             defaultState = targetState;
+        }
+
+        override public string ToString()
+        {
+            return $"Change: {Change}, Name: {Name}, EntityId: {EntityId}, DraftVersion: {DraftVersion}, SubmittedVersion: {SubmittedVersion}, IsSubmitted: {IsSubmitted}, State: {State}, CreatedUser: {CreatedUser}, CreatedDate: {CreatedTimestamp}";
         }
     }
 }

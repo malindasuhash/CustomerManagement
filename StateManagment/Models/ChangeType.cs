@@ -5,6 +5,7 @@
         None,
         Create,
         Update,
-        Delete
+        Delete,
+        Read
     }
 }

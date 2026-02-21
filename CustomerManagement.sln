@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateManagment.Tests", "Sta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemory", "InMemory\InMemory.csproj", "{A88888B6-92A3-483D-94A0-24C03EBAAA12}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration.Tests", "Integration.Tests\Integration.Tests.csproj", "{5122BEB8-5316-4AE6-8301-157717781D74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,12 +31,17 @@ Global
 		{A88888B6-92A3-483D-94A0-24C03EBAAA12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A88888B6-92A3-483D-94A0-24C03EBAAA12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A88888B6-92A3-483D-94A0-24C03EBAAA12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5122BEB8-5316-4AE6-8301-157717781D74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5122BEB8-5316-4AE6-8301-157717781D74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5122BEB8-5316-4AE6-8301-157717781D74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5122BEB8-5316-4AE6-8301-157717781D74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A3B930E1-1906-4961-9B19-4B91419A1625} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5122BEB8-5316-4AE6-8301-157717781D74} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DA7F5F7B-5AC3-446E-84C4-EC61877ED552}

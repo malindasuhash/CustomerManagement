@@ -55,12 +55,12 @@ namespace InMemory
             }
         }
 
-        public void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, int latestDraftVersion, string updatedUser)
+        public void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser)
         {
             switch (entityName)
             {
                 case EntityName.Contact:
-                    entityCollection.UpdateContactSubmitted(entityId, entity, latestDraftVersion, updatedUser);
+                    entityCollection.UpdateContactSubmitted(entityId, entity, updatedUser);
                     break;
 
                 default:

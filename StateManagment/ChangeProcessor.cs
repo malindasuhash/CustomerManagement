@@ -26,14 +26,8 @@ namespace StateManagment
             {
                 changeHandler.Draft(envelop);
                 changeHandler.Submitted(envelop);
-                var result = await stateManager.ProcessUpdateAsync(new OrchestrationEnvelop
-                {
-                    EntityId = envelop.EntityId,
-                    Name = envelop.Name,
-                    DraftVersion = envelop.DraftVersion,
-                    SubmittedVersion = envelop.SubmittedVersion,
-                    Status = RuntimeStatus.INITIATE
-                });
+
+                var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
 
                 return result;
             }
@@ -58,14 +52,7 @@ namespace StateManagment
                         return submitOutcome;
                     }
 
-                    var result = await stateManager.ProcessUpdateAsync(new OrchestrationEnvelop
-                    {
-                        EntityId = envelop.EntityId,
-                        Name = envelop.Name,
-                        DraftVersion = envelop.DraftVersion,
-                        SubmittedVersion = envelop.SubmittedVersion,
-                        Status = RuntimeStatus.INITIATE
-                    });
+                    var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
 
                     return result;
                 }
