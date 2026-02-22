@@ -9,5 +9,6 @@ namespace StateManagment.Models
     public interface IEventPublisher
     {
         Task<TaskOutcome> PublishStateChangedEvent(MessageEnvelop messageEnvelop);
+        Task<TaskOutcome> Send(OrchestrationEnvelop orchestrationEvent);
     }
 }
