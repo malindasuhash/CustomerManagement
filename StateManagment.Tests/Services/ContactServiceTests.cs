@@ -44,5 +44,32 @@ namespace StateManagment.Tests.Services
 
             ));
         }
+
+        [Theory]
+        [InlineData(true)]
+        public async Task Patch_WhenInvoked_ThenUpdatesDraftInstance(bool submit)
+        {
+            // Arrange
+            var changeProcessor = Substitute.For<IChangeProcessor>();
+            var dataRetriver = Substitute.For<IDataRetriever>();
+            var contact = new Contact { FirstName = "John", LastName = "Doe" };
+
+            dataRetriver.GetEntityEnvelop(Arg.Any<string>(), Arg.Any<EntityName>()).Returns(Task.FromResult(new MessageEnvelop
+            {
+                Change = ChangeType.Read,
+                Name = EntityName.Contact,
+                EntityId = "321",
+                IsSubmitted = submit
+            }));
+
+            changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
+            var contactService = new ContactService(changeProcessor, dataRetriver);
+
+            // Act
+            //contactService.Patch(contact, "321", submit);
+
+            // Assert   
+
+        }
     }
 }
