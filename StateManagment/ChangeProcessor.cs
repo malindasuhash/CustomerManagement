@@ -2,7 +2,7 @@
 
 namespace StateManagment
 {
-    public class ChangeProcessor
+    public class ChangeProcessor : IChangeProcessor
     {
         private readonly IChangeHandler changeHandler;
         private readonly IStateManager stateManager;
@@ -13,6 +13,10 @@ namespace StateManagment
             this.changeHandler = changeHandler;
         }
 
+        /// <summary>
+        /// Processes the change based on the type of change and whether it is submitted or not.
+        /// It handles the creation and updating of changes, as well as the submission process.
+        /// </summary>
         public async Task<TaskOutcome> ProcessChangeAsync(MessageEnvelop envelop)
         {
             // When change is created, add to repository
@@ -60,7 +64,7 @@ namespace StateManagment
                 return lockResult;
             }
 
-           return TaskOutcome.CHANGE_NOT_SUPPORTED;
+            return TaskOutcome.CHANGE_NOT_SUPPORTED;
         }
     }
 }
