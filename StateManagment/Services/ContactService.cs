@@ -1,10 +1,5 @@
 ﻿using StateManagment.Entity;
 using StateManagment.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StateManagment.Services
 {
@@ -17,6 +12,40 @@ namespace StateManagment.Services
         {
             this.changeProcessor = changeProcessor;
             this.dataRetriver = dataRetriver;
+        }
+
+        public async Task<TaskOutcome> Delete(string entityId, bool submit)
+        {
+            var envelop = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Change = ChangeType.Delete,
+                Name = EntityName.Contact,
+                IsSubmitted = submit
+            };
+
+            return await changeProcessor.ProcessChangeAsync(envelop);
+        }
+
+        public async Task<MessageEnvelop> Get(string entityId)
+        {
+            return await dataRetriver.GetEntityEnvelop(entityId, EntityName.Contact);
+        }
+
+        public async Task<MessageEnvelop> Patch(Contact contact, string entityId, bool submit)
+        {
+            var envelop = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Change = ChangeType.Update,
+                Name = EntityName.Contact,
+                Draft = contact,
+                IsSubmitted = submit
+            };
+
+            await changeProcessor.ProcessChangeAsync(envelop);
+
+            return await dataRetriver.GetEntityEnvelop(envelop.EntityId, envelop.Name);
         }
 
         public async Task<MessageEnvelop> Post(Contact contact, bool submit)
