@@ -74,9 +74,19 @@ namespace InMemory
             };
         }
 
-        public void MergeContactDraft(MessageEnvelop envelop, int v)
+        public void MergeContactDraft(MessageEnvelop envelop, int latestDraftVersion)
         {
-            throw new NotImplementedException();
+            var contact = GetContact(envelop.EntityId);
+
+            // Apply changes from draft to submitted document
+            var updatedContact = (Contact)envelop.Draft;
+            contact.Draft = new Contact()
+            {
+                LastName = Utility.Coalesce(updatedContact.LastName, contact.Draft.LastName),
+                FirstName = Utility.Coalesce(updatedContact.FirstName, contact.Draft.FirstName)
+            };
+
+            AddOrUpdateContact(envelop, latestDraftVersion);
         }
 
         internal void UpdateContactApplied(string entityId, IEntity entity)

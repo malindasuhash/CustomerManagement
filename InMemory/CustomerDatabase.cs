@@ -29,12 +29,12 @@ namespace InMemory
             };
         }
 
-        public void MergeDraft(MessageEnvelop envelop, int v)
+        public void MergeDraft(MessageEnvelop envelop, int latestDraftVersion)
         {
             switch (envelop.Name)
             {
                 case EntityName.Contact:
-                    entityCollection.MergeContactDraft(envelop, v);
+                    entityCollection.MergeContactDraft(envelop, latestDraftVersion);
                     break;
                 default:
                     throw new NotSupportedException($"Entity type {envelop.Name} is not supported.");
