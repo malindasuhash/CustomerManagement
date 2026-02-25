@@ -77,7 +77,7 @@ namespace StateManagment
         /// Attempts to store a draft for the specified entity, ensuring that the draft version matches the current
         /// version in the database and increments the draft version as it is being updated.
         /// </summary>      
-        public Task<TaskOutcome> TryDraft(MessageEnvelop envelop)
+        public Task<TaskOutcome> TryMergeDraft(MessageEnvelop envelop)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace StateManagment
                     return Task.FromResult(TaskOutcome.VERSION_MISMATCH);
                 }
 
-                database.StoreDraft(envelop, envelop.DraftVersion + 1);
+                database.MergeDraft(envelop, envelop.DraftVersion + 1);
             }
             finally
             {

@@ -38,13 +38,13 @@ namespace StateManagment
 
             if (envelop.Change == ChangeType.Update && !envelop.IsSubmitted)
             {
-                var outcome = await changeHandler.TryDraft(envelop);
+                var outcome = await changeHandler.TryMergeDraft(envelop);
                 return outcome;
             }
 
             if (envelop.Change == ChangeType.Update && envelop.IsSubmitted)
             {
-                var lockResult = await changeHandler.TryDraft(envelop);
+                var lockResult = await changeHandler.TryMergeDraft(envelop);
                 if (lockResult == TaskOutcome.OK)
                 {
                     // Consider what will happen if someone is taking a copy of submitted version

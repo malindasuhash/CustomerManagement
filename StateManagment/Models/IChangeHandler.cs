@@ -13,7 +13,7 @@ namespace StateManagment.Models
         Task<TaskOutcome> ReleaseEntityLock(string entityId);
         void Submitted(MessageEnvelop envelop);
         Task<TaskOutcome> TakeEntityLock(string entityId);
-        Task<TaskOutcome> TryDraft(MessageEnvelop envelop);
+        Task<TaskOutcome> TryMergeDraft(MessageEnvelop envelop);
         Task<TaskOutcome> TryLockSubmitted(MessageEnvelop envelop);
     }
 }

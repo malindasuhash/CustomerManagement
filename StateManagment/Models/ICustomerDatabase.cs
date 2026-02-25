@@ -15,5 +15,6 @@ namespace StateManagment.Models
         void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser);
         void UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages);
         void StoreApplied(EntityName entityName, IEntity entity, string entityId);
+        void MergeDraft(MessageEnvelop envelop, int v);
     }
 }

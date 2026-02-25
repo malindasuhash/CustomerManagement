@@ -74,6 +74,11 @@ namespace InMemory
             };
         }
 
+        public void MergeContactDraft(MessageEnvelop envelop, int v)
+        {
+            throw new NotImplementedException();
+        }
+
         internal void UpdateContactApplied(string entityId, IEntity entity)
         {
             var contact = (Contact)entity;

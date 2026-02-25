@@ -104,7 +104,7 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task TryDraft_ObtainsSpecialDraftLock_And_ThenAddsToDraftIfVersionsAreHigher()
+        public async Task TryMergeDraft_ObtainsSpecialDraftLock_And_ThenAddsToDraftIfVersionsAreHigher()
         {
             // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
@@ -122,17 +122,17 @@ namespace StateManagment.Tests
             database.GetBasicInfo(EntityName.Contact, entityId).Returns(new EntityBasics { DraftVersion = 2 });
 
             // Act  
-            var result = await changeHandler.TryDraft(messageEnvelop);
+            var result = await changeHandler.TryMergeDraft(messageEnvelop);
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
             database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
-            database.Received(1).StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
+            database.Received(1).MergeDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
         }
 
         [Fact]
-        public async Task TryDraft_WhenDraftVersionDoNotMatch_ReturnsVersionMismatch()
+        public async Task TryMergeDraft_WhenDraftVersionDoNotMatch_ReturnsVersionMismatch()
         {
             // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
@@ -151,7 +151,7 @@ namespace StateManagment.Tests
             database.GetBasicInfo(EntityName.Contact, entityId).Returns(new EntityBasics { DraftVersion = 2 });
 
             // Act  
-            var result = await changeHandler.TryDraft(messageEnvelop);
+            var result = await changeHandler.TryMergeDraft(messageEnvelop);
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
