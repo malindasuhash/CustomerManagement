@@ -19,49 +19,52 @@ namespace StateManagment
         /// </summary>
         public async Task<TaskOutcome> ProcessChangeAsync(MessageEnvelop envelop)
         {
-            // When change is created, add to repository
-            if (envelop.Change == ChangeType.Create && !envelop.IsSubmitted)
+            if (envelop.Change == ChangeType.Delete)
             {
-                changeHandler.Draft(envelop);
-                return TaskOutcome.OK;
-            }
+                await changeHandler.Deleted(envelop);
 
-            if (envelop.Change == ChangeType.Create && envelop.IsSubmitted)
-            {
-                changeHandler.Draft(envelop);
-                changeHandler.Submitted(envelop);
-
-                var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
-
-                return result;
-            }
-
-            if (envelop.Change == ChangeType.Update && !envelop.IsSubmitted)
-            {
-                var outcome = await changeHandler.TryMergeDraft(envelop);
-                return outcome;
-            }
-
-            if (envelop.Change == ChangeType.Update && envelop.IsSubmitted)
-            {
-                var lockResult = await changeHandler.TryMergeDraft(envelop);
-                if (lockResult == TaskOutcome.OK)
+                if (envelop.IsSubmitted)
                 {
-                    // Consider what will happen if someone is taking a copy of submitted version
-                    // whilst I am trying to update it. Should I ask for a lock at this point?
-                    // If cannot take the lock, should I error out?
-                    var submitOutcome = await changeHandler.TryLockSubmitted(envelop);
-                    if (submitOutcome != TaskOutcome.OK)
-                    {
-                        return submitOutcome;
-                    }
+                    return await changeHandler.TryLockSubmitted(envelop);
+                }
+            }
+            
+            if (envelop.Change == ChangeType.Create)
+            {
+                changeHandler.Draft(envelop);
 
+                if (envelop.IsSubmitted)
+                {
+                    changeHandler.Submitted(envelop);
                     var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
-
                     return result;
                 }
 
-                return lockResult;
+                return TaskOutcome.OK;
+            }
+
+            if (envelop.Change == ChangeType.Update)
+            {
+                var outcome = await changeHandler.TryMergeDraft(envelop);
+
+                if (envelop.IsSubmitted)
+                {
+                    if (outcome == TaskOutcome.OK)
+                    {
+                        // Consider what will happen if someone is taking a copy of submitted version
+                        // whilst I am trying to update it. Should I ask for a lock at this point?
+                        // If cannot take the lock, should I error out?
+                        var submitOutcome = await changeHandler.TryLockSubmitted(envelop);
+                        if (submitOutcome != TaskOutcome.OK)
+                        {
+                            return submitOutcome;
+                        }
+
+                        var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
+
+                        return result;
+                    }
+                }
             }
 
             return TaskOutcome.CHANGE_NOT_SUPPORTED;

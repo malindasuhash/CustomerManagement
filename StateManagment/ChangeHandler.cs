@@ -122,5 +122,10 @@ namespace StateManagment
 
             return Task.FromResult(TaskOutcome.OK);
         }
+
+        public Task<TaskOutcome> Deleted(MessageEnvelop envelop)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

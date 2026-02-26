@@ -15,5 +15,6 @@ namespace StateManagment.Models
         Task<TaskOutcome> TakeEntityLock(string entityId);
         Task<TaskOutcome> TryMergeDraft(MessageEnvelop envelop);
         Task<TaskOutcome> TryLockSubmitted(MessageEnvelop envelop);
+        Task<TaskOutcome> Deleted(MessageEnvelop envelop);
     }
 }

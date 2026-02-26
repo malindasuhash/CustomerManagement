@@ -8,6 +8,49 @@ namespace StateManagment.Tests
     public class ChangeProcessorTests
     {
         [Fact]
+        public async Task ProcessChangeAsync_WhenDeletedButNotSubmitted_ThenUpdatesDraft()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Delete,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                IsSubmitted = false
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
+
+            // Act
+            await changeProcessor.ProcessChangeAsync(envelop);
+
+            // Assert
+            await changeHandler.Received(1).Deleted(envelop);
+        }
+
+        [Fact]
+        public async Task ProcessChangeAsync_WhenDeletedAndSubmitted_ThenReturnsUnsupported()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Delete,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                IsSubmitted = true
+            };
+            var changeHandler = Substitute.For<IChangeHandler>();
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
+            // Act
+            var result = await changeProcessor.ProcessChangeAsync(envelop);
+
+            // Assert
+            await changeHandler.Received(1).Deleted(envelop);
+            await changeHandler.Received(1).TryLockSubmitted(envelop);
+        }
+
+        [Fact]
         public async Task ProcessChangeAsync_WhenChangeIsNew_ThenAddsItAsDraft()
         {
             // Arrange
