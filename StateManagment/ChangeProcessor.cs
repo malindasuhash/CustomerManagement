@@ -25,8 +25,16 @@ namespace StateManagment
 
                 if (envelop.IsSubmitted)
                 {
-                    return await changeHandler.TryLockSubmitted(envelop);
+                    var lockedResult = await changeHandler.TryLockSubmitted(envelop);
+                    if (lockedResult != TaskOutcome.OK)
+                    {
+                        return lockedResult;
+                    }
+
+                    return await stateManager.Initiate(envelop.Name, envelop.EntityId);
                 }
+
+                return TaskOutcome.OK;
             }
             
             if (envelop.Change == ChangeType.Create)
