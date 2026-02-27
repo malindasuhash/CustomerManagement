@@ -1,10 +1,14 @@
 ## Customer Management
 
-1. Finite State Model - **DONE**
-2. State Model itself - **DONE**
-3. Basic layout of orchestration - **Some elements** 
-4. Sample implementation of Contact, Legal Entity, Product and Trading Location - **Some elements**
-5. In-memory/placeholder implementation of Customer Database, Locks. **DONE**
-6. Integration of pub/sub. **Pending**
-7. Concept of operation data store as an event stream storage. **Pending**
-8. Introduce concept of "touch". **Pending**
+- Submit all endpoint - **IDEA**
+- Abort or reset endpoint - **IDEA**
+- Get all changes endpoint (changed but not submitted) - **IDEA**
+- System data store/concept for other systems to store information - **IDEA**
+- Finite State Model - **DONE**
+- State Model itself - **DONE**
+- Basic layout of orchestration - **Some elements** 
+- Sample implementation of Contact, Legal Entity, Product and Trading Location - **Some elements**
+- In-memory/placeholder implementation of Customer Database, Locks. **DONE**
+- Integration of pub/sub. **Pending**
+- Concept of operation data store as an event stream storage. **Pending**
+- Introduce concept of "touch". **Pending**
