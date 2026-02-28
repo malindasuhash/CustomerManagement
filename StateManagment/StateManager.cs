@@ -17,7 +17,7 @@ namespace StateManagment
 
         public async Task<TaskOutcome> Initiate(EntityName name, string entityId)
         {
-            var latestEntity = dataStore.GetEntityDocument(name, entityId); 
+            var latestEntity = await dataStore.GetEntityDocument(name, entityId); 
 
             return await ProcessUpdateAsync(new OrchestrationEnvelop
             {

@@ -10,6 +10,14 @@ namespace Infrastructure
 {
     public class MongoCustomerDatabase : ICustomerDatabase
     {
+        private readonly IMongoDatabase database;
+
+        public MongoCustomerDatabase()
+        {
+            var client = new MongoClient(Environment.GetEnvironmentVariable("MongoConnectionString"));
+            database = client.GetDatabase("customers");
+        }
+
         static MongoCustomerDatabase()
         {
             var objectSerializer = new ObjectSerializer(ObjectSerializer.AllAllowedTypes);
@@ -21,8 +29,17 @@ namespace Infrastructure
             throw new NotImplementedException();
         }
 
-        public MessageEnvelop GetEntityDocument(EntityName entityName, string entityId)
+        public async Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId)
         {
+            switch (entityName)
+            {
+                case EntityName.Contact:
+                    var contact = await ContactConfig.Get(entityId, database);
+                    contact.Name = entityName;
+                    contact.Change = ChangeType.Read;
+                    return contact;
+            }
+
             throw new NotImplementedException();
         }
 
@@ -38,12 +55,19 @@ namespace Infrastructure
 
         public async Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion)
         {
-            var client = new MongoClient(Environment.GetEnvironmentVariable("MongoConnectionString"));
-            var db = client.GetDatabase("customers");
+            DbEexecutionParams dbEexecution;
 
-            var result = ContactConfig.Add(messageEnvelop, incrementalDraftVersion, db).Result;
+            switch (messageEnvelop.Name)
+            {
+                case EntityName.Contact:
+                    dbEexecution = await ContactConfig.Add(messageEnvelop, incrementalDraftVersion, database);
+                    break;
 
-            await result.Collection.UpdateOneAsync(result.Filter, result.Definition, new UpdateOptions { IsUpsert = true });
+                default:
+                    throw new NotImplementedException();
+            }
+
+            await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition, new UpdateOptions { IsUpsert = true });
 
             return TaskOutcome.OK;
         }

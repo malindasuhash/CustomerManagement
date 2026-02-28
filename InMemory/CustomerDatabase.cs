@@ -9,7 +9,7 @@ namespace InMemory
 
         public EntityBasics GetBasicInfo(EntityName entityName, string entityId)
         {
-            var document = GetEntityDocument(entityName, entityId);
+            var document = GetEntityDocument(entityName, entityId).Result;
             return new EntityBasics
             {
                 EntityId = document.EntityId,
@@ -20,11 +20,11 @@ namespace InMemory
             };
         }
 
-        public MessageEnvelop GetEntityDocument(EntityName entityName, string entityId)
+        public Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId)
         {
             return entityName switch
             {
-                EntityName.Contact => entityCollection.GetContact(entityId),
+                EntityName.Contact => Task.FromResult(entityCollection.GetContact(entityId)),
                 _ => throw new NotSupportedException($"Entity type {entityName} is not supported."),
             };
         }

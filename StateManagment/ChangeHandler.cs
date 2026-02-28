@@ -19,18 +19,19 @@ namespace StateManagment
         /// Changes the status of the specified entity in the database to the provided entity state 
         /// and publishes a state changed event.
         /// </summary>
-        public Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, string[]? messages = null)
+        public async Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, string[]? messages = null)
         {
             database.UpdateData(name, entityId, entityState, messages ?? []);
 
             if (entityState == EntityState.SYNCHRONISED)
             {
-                database.StoreApplied(name, database.GetEntityDocument(name, entityId).Submitted, entityId);
+                var store = await database.GetEntityDocument(name, entityId);
+                database.StoreApplied(name, store.Submitted, entityId);
             }
 
-            var entityDocument = database.GetEntityDocument(name, entityId);
+            var entityDocument = await database.GetEntityDocument(name, entityId);
             
-            return eventPublisher.PublishStateChangedEvent(entityDocument);
+            return await eventPublisher.PublishStateChangedEvent(entityDocument);
         }
 
         /// <summary>
@@ -105,22 +106,22 @@ namespace StateManagment
         /// Attempts to acquire a distributed lock for the specified entity and store its latest draft as submitted data 
         /// along with latest draft version in the database.
         /// </summary>
-        public Task<TaskOutcome> TryLockSubmitted(MessageEnvelop envelop)
+        public async Task<TaskOutcome> TryLockSubmitted(MessageEnvelop envelop)
         {
             try
             {
-                distributedLock.Lock(envelop.EntityId);
+                await distributedLock.Lock(envelop.EntityId);
 
-                var storedDraftEntity = database.GetEntityDocument(envelop.Name, envelop.EntityId);
+                var storedDraftEntity = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
 
-                database.StoreSubmitted(storedDraftEntity.Name, storedDraftEntity.Draft, storedDraftEntity.EntityId, envelop.UpdateUser);
+                await database.StoreSubmitted(storedDraftEntity.Name, storedDraftEntity.Draft, storedDraftEntity.EntityId, envelop.UpdateUser);
             }
             finally
             {
-                distributedLock.Unlock(envelop.EntityId);
+                await distributedLock.Unlock(envelop.EntityId);
             }
 
-            return Task.FromResult(TaskOutcome.OK);
+            return TaskOutcome.OK;
         }
 
         public Task<TaskOutcome> Deleted(MessageEnvelop envelop)

@@ -17,13 +17,16 @@ namespace Infrastructure.EntityConfig
             BsonClassMap.RegisterClassMap<MessageEnvelop>(cm =>
             {
                 cm.AutoMap();
+                cm.MapIdField(a => a.EntityId);
+                cm.MapMember(a => a.Name).SetDefaultValue(EntityName.Contact);
+                cm.MapMember(a => a.Change).SetDefaultValue(ChangeType.Read);
                 cm.UnmapMember(c => c.Change);
                 cm.UnmapMember(c => c.Name);
                 cm.UnmapMember(c => c.IsSubmitted);
             });
         }
 
-        public static async Task<DbEexecutionParams> Add(MessageEnvelop messageEnvelop, int incrementalDraftVersion, IMongoDatabase db)
+        public static Task<DbEexecutionParams> Add(MessageEnvelop messageEnvelop, int incrementalDraftVersion, IMongoDatabase db)
         {
             messageEnvelop.EntityId = Guid.NewGuid().ToString();
             messageEnvelop.DraftVersion = incrementalDraftVersion;
@@ -40,12 +43,21 @@ namespace Infrastructure.EntityConfig
 
             var contacts = db.GetCollection<MessageEnvelop>("contacts");
 
-            return new DbEexecutionParams
+            return Task.FromResult(new DbEexecutionParams
             {
                 Collection = contacts,
                 Definition = onInsert,
                 Filter = filter
-            };
+            });
+        }
+
+        public static Task<MessageEnvelop> Get(string entityId, IMongoDatabase db)
+        {
+            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+
+            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+
+            return contacts.Find(filter).FirstOrDefaultAsync();
         }
     }
 }

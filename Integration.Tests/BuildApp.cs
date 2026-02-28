@@ -39,7 +39,7 @@ namespace Integration.Tests
 
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            var contactDocument = database.GetEntityDocument(EntityName.Contact, envelop.EntityId);
+            var contactDocument = await database.GetEntityDocument(EntityName.Contact, envelop.EntityId);
 
             Console.WriteLine($"-> Before orchestration - Contact: {contactDocument}"); Console.WriteLine();
 
@@ -47,14 +47,14 @@ namespace Integration.Tests
 
             stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED)).Wait();
 
-            contactDocument = database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
+            contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
             Console.WriteLine($" Contact: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED"); Console.WriteLine();
 
             stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED)).Wait();
 
-            contactDocument = database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
+            contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
 
@@ -62,7 +62,7 @@ namespace Integration.Tests
 
             stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED)).Wait();
 
-            contactDocument = database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
+            contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
             Console.ReadKey();
