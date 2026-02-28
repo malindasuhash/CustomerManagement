@@ -7,9 +7,9 @@ namespace InMemory
     {
         private readonly EntityCollection entityCollection = new EntityCollection();
 
-        public EntityBasics GetBasicInfo(EntityName entityName, string entityId)
+        public async Task<EntityBasics> GetBasicInfo(EntityName entityName, string entityId)
         {
-            var document = GetEntityDocument(entityName, entityId).Result;
+            var document = await GetEntityDocument(entityName, entityId);
             return new EntityBasics
             {
                 EntityId = document.EntityId,

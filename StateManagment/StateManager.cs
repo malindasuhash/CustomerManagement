@@ -39,7 +39,7 @@ namespace StateManagment
                 var entityLockResult = await changeHandler.TakeEntityLock(operationalEntity.EntityId);
                 if (!entityLockResult.Successful) return entityLockResult;
 
-                var storedEntity = dataStore.GetBasicInfo(operationalEntity.Name, operationalEntity.EntityId);
+                var storedEntity = await dataStore.GetBasicInfo(operationalEntity.Name, operationalEntity.EntityId);
                 var submittedVersionCompare = storedEntity.SubmittedVersion == operationalEntity.SubmittedVersion;
 
                 // If processed storedEntity version is different from the submitted version, then we have to re-evaluate the change. This is to make sure that we are not missing any changes which were submitted while the orchestration was in progress. If versions are same, then we can continue with the orchestration as is.

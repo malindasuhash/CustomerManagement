@@ -24,8 +24,15 @@ namespace Infrastructure
             BsonSerializer.RegisterSerializer(objectSerializer);
         }
 
-        public EntityBasics GetBasicInfo(EntityName entityName, string entityId)
+        public async Task<EntityBasics> GetBasicInfo(EntityName entityName, string entityId)
         {
+            switch (entityName)
+            {
+                case EntityName.Contact:
+                    var contact = await ContactConfig.GetEntityBasics(entityId, database);
+                    return contact;
+            }
+
             throw new NotImplementedException();
         }
 

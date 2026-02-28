@@ -18,7 +18,14 @@ namespace StateManagment.Models
         public int SubmittedVersion { get; set; }
         public int AppliedVersion { get; set; }
         public bool IsSubmitted { get; set; }
-        public EntityState State => defaultState;
+        public EntityState State
+        {
+            get { return defaultState; }
+            set
+            {
+                defaultState = value;
+            }
+        }
 
         public dynamic Draft { get; set; }
 

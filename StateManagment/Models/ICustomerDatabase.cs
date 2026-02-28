@@ -9,7 +9,7 @@ namespace StateManagment.Models
 {
     public interface ICustomerDatabase
     {
-        EntityBasics GetBasicInfo(EntityName entityName, string entityId);
+        Task<EntityBasics> GetBasicInfo(EntityName entityName, string entityId);
         Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId);
         Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion);
         Task<TaskOutcome> StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser);

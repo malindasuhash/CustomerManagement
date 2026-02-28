@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -18,6 +19,7 @@ namespace Infrastructure.EntityConfig
             {
                 cm.AutoMap();
                 cm.MapIdField(a => a.EntityId);
+                cm.MapMember(a => a.State).SetSerializer(new EnumSerializer<EntityState>(MongoDB.Bson.BsonType.String));
                 cm.MapMember(a => a.Name).SetDefaultValue(EntityName.Contact);
                 cm.MapMember(a => a.Change).SetDefaultValue(ChangeType.Read);
                 cm.UnmapMember(c => c.Change);
@@ -60,6 +62,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.SubmittedVersion, messageEnvelop.SubmittedVersion)
             .Set(a => a.AppliedVersion, messageEnvelop.AppliedVersion)
             .Set(a => a.Draft, (Contact)messageEnvelop.Draft)
+            .Set(a => a.State, messageEnvelop.State)
             .SetOnInsert(a => a.CreatedTimestamp, DateTime.UtcNow)
             .SetOnInsert(a => a.CreatedUser, messageEnvelop.CreatedUser)
             .SetOnInsert(a => a.EntityId, messageEnvelop.EntityId);
@@ -81,6 +84,23 @@ namespace Infrastructure.EntityConfig
             var contacts = db.GetCollection<MessageEnvelop>("contacts");
 
             return contacts.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public static Task<EntityBasics> GetEntityBasics(string entityId, IMongoDatabase db)
+        {
+            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+
+            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+
+            return contacts.Find(filter)
+                .Project(p => new EntityBasics
+                {
+                    DraftVersion = p.DraftVersion,
+                    EntityId = entityId,
+                    Name = EntityName.Contact,
+                    State = p.State,
+                    SubmittedVersion = p.SubmittedVersion,
+                }).FirstOrDefaultAsync();
         }
     }
 }

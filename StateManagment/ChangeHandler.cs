@@ -78,28 +78,28 @@ namespace StateManagment
         /// Attempts to store a draft for the specified entity, ensuring that the draft version matches the current
         /// version in the database and increments the draft version as it is being updated.
         /// </summary>      
-        public Task<TaskOutcome> TryMergeDraft(MessageEnvelop envelop)
+        public async Task<TaskOutcome> TryMergeDraft(MessageEnvelop envelop)
         {
             try
             {
-                distributedLock.Lock($"{envelop.EntityId}_draft");
+                await distributedLock.Lock($"{envelop.EntityId}_draft");
 
-                var basicInfo = database.GetBasicInfo(envelop.Name, envelop.EntityId);
+                var basicInfo = await database.GetBasicInfo(envelop.Name, envelop.EntityId);
 
                 // Draft versions must match to avoid lost updates. If the draft version in the message is different from the one in the database, it means that there has been an update since the draft was created, and we should not overwrite it.
                 if (envelop.DraftVersion != basicInfo.DraftVersion)
                 {
-                    return Task.FromResult(TaskOutcome.VERSION_MISMATCH);
+                    return TaskOutcome.VERSION_MISMATCH;
                 }
 
                 database.MergeDraft(envelop, envelop.DraftVersion + 1);
             }
             finally
             {
-                distributedLock.Unlock($"{envelop.EntityId}_draft");
+                await distributedLock.Unlock($"{envelop.EntityId}_draft");
             }
 
-            return Task.FromResult(TaskOutcome.OK);
+            return TaskOutcome.OK;
         }
 
         /// <summary>
