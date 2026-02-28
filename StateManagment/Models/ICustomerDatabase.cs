@@ -14,7 +14,7 @@ namespace StateManagment.Models
         Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion);
         Task<TaskOutcome> StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser);
         Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages);
-        void StoreApplied(EntityName entityName, IEntity entity, string entityId);
+        Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId);
         void MergeDraft(MessageEnvelop envelop, int latestDraftVersion);
     }
 }

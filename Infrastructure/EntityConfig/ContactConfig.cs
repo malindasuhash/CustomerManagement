@@ -73,6 +73,28 @@ namespace Infrastructure.EntityConfig
             };
         }
 
+        public static async Task<DbEexecutionParams> AddToApplied(string entityId, IEntity entity, IMongoDatabase db, string updatedUser = "SYSTEM")
+        {
+            var contact = await Get(entityId, db);
+
+            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+
+            var onUpdate = Builders<MessageEnvelop>.Update
+            .Set(a => a.AppliedVersion, contact.SubmittedVersion)
+            .Set(a => a.Applied, (Contact)entity)
+              .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
+            .Set(a => a.UpdateUser, updatedUser);
+
+            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+
+            return new DbEexecutionParams
+            {
+                Collection = contacts,
+                Definition = onUpdate,
+                Filter = filter
+            };
+        }
+
         public static Task<DbEexecutionParams> AddToDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion, IMongoDatabase db)
         {
             messageEnvelop.EntityId = Guid.NewGuid().ToString();

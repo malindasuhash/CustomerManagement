@@ -41,7 +41,7 @@ namespace InMemory
             }
         }
 
-        public async void StoreApplied(EntityName entityName, IEntity entity, string entityId)
+        public async Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId)
         {
             switch (entityName)
             {
@@ -53,6 +53,8 @@ namespace InMemory
                 default:
                     throw new NotSupportedException($"Entity type {entityName} is not supported.");
             }
+
+            return TaskOutcome.OK;
         }
 
         public Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion)

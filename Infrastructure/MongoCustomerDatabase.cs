@@ -56,9 +56,23 @@ namespace Infrastructure
             throw new NotImplementedException();
         }
 
-        public void StoreApplied(EntityName entityName, IEntity entity, string entityId)
+        public async Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId)
         {
-            throw new NotImplementedException();
+            DbEexecutionParams dbEexecution;
+
+            switch (entityName)
+            {
+                case EntityName.Contact:
+                    dbEexecution = await ContactConfig.AddToApplied(entityId, entity, database);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
+
+            return TaskOutcome.OK;
         }
 
         public async Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion)
