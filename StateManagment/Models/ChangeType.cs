@@ -6,6 +6,7 @@
         Create,
         Update,
         Delete,
-        Read
+        Read,
+        Submit
     }
 }

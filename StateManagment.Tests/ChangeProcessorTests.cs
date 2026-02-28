@@ -8,6 +8,78 @@ namespace StateManagment.Tests
     public class ChangeProcessorTests
     {
         [Fact]
+        public async Task ProcessChangeAsync_WhenJustSubmittedSpecifically_ThenSubmitsRequest()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                IsSubmitted = false
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
+
+            // Act
+            await changeProcessor.ProcessChangeAsync(envelop);
+
+            // Assert
+            await changeHandler.Received(1).TryLockSubmitted(envelop);
+        }
+
+        [Fact]
+        public async Task ProcessChangeAsync_WhenSubmitCannotBeCompletes_ThenReturnUnavialable()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                IsSubmitted = false
+            };
+
+            var changeHandler = Substitute.For<IChangeHandler>();
+            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
+
+            // Act
+            var result = await changeProcessor.ProcessChangeAsync(envelop);
+
+            // Assert
+            result.Should().Be(TaskOutcome.LOCK_UNAVAILABLE);
+        }
+
+        [Fact]
+        public async Task ProcessChangeAsync_WhenSubmitCompletes_ThenInitiatesStateManager()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                IsSubmitted = false
+            };
+
+            var stateManager = Substitute.For<IStateManager>();
+            var changeHandler = Substitute.For<IChangeHandler>();
+            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
+
+            // Act
+            var result = await changeProcessor.ProcessChangeAsync(envelop);
+
+            // Assert
+            await stateManager.Received(1).Initiate(EntityName.Contact, envelop.EntityId);
+        }
+
+        // TODO: I think I need to check whether there is a very difference and
+        // if there is no, then simply return quickly.
+
+        [Fact]
         public async Task ProcessChangeAsync_WhenDeletedButNotSubmitted_ThenUpdatesDraft()
         {
             // Arrange
