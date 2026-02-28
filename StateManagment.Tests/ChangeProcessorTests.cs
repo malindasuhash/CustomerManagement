@@ -42,7 +42,9 @@ namespace StateManagment.Tests
             };
             var stateManager = Substitute.For<IStateManager>();
             var changeHandler = Substitute.For<IChangeHandler>();
+            changeHandler.TryLockSubmitted(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.OK);
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
+
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
 

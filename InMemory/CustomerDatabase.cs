@@ -54,7 +54,7 @@ namespace InMemory
             }
         }
 
-        public void StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion)
+        public Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion)
         {
             switch (messageEnvelop.Name)
             {
@@ -65,6 +65,8 @@ namespace InMemory
                 default:
                     throw new NotSupportedException($"Entity type {messageEnvelop.Name} is not supported.");
             }
+
+            return Task.FromResult(TaskOutcome.OK);
         }
 
         public void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser)

@@ -39,7 +39,7 @@ namespace StateManagment
             
             if (envelop.Change == ChangeType.Create)
             {
-                changeHandler.Draft(envelop);
+                await changeHandler.Draft(envelop);
 
                 if (envelop.IsSubmitted)
                 {

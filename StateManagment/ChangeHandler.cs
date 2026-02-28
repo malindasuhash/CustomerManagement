@@ -37,9 +37,9 @@ namespace StateManagment
         /// Creates a new draft for the specified entity in the database with the provided data and
         /// increments the draft version.
         /// </summary>        
-        public void Draft(MessageEnvelop envelop)
+        public async Task<TaskOutcome> Draft(MessageEnvelop envelop)
         {
-            database.StoreDraft(envelop, envelop.DraftVersion + 1);
+            return await database.StoreDraft(envelop, envelop.DraftVersion + 1);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using InMemory;
+﻿using Infrastructure;
+using InMemory;
 using StateManagment;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -15,7 +16,7 @@ namespace Integration.Tests
     {
         public async Task Run()
         {
-            var database = new CustomerDatabase();
+            var database = new MongoCustomerDatabase();
             var distributedLock = new DictionaryLock();
             var eventPublisher = new SimpleEventPublisher();
 
