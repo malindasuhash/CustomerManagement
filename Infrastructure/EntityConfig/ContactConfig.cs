@@ -26,7 +26,30 @@ namespace Infrastructure.EntityConfig
             });
         }
 
-        public static Task<DbEexecutionParams> Add(MessageEnvelop messageEnvelop, int incrementalDraftVersion, IMongoDatabase db)
+        public static async Task<DbEexecutionParams> AddToSubmitted(IEntity entity, string entityId, string updatedUser, IMongoDatabase db)
+        {
+            // Read the entity document - I need the latest document here.
+            var contact = await Get(entityId, db);
+
+            // set properties
+            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            var onUpdate = Builders<MessageEnvelop>.Update
+            .Set(a => a.SubmittedVersion, contact.DraftVersion)
+            .Set(a => a.Submitted, (Contact)contact.Draft)
+            .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
+            .Set(a => a.UpdateUser, updatedUser);
+
+            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+
+            return new DbEexecutionParams
+            {
+                Collection = contacts,
+                Definition = onUpdate,
+                Filter = filter
+            };
+        }
+
+        public static Task<DbEexecutionParams> AddToDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion, IMongoDatabase db)
         {
             messageEnvelop.EntityId = Guid.NewGuid().ToString();
             messageEnvelop.DraftVersion = incrementalDraftVersion;

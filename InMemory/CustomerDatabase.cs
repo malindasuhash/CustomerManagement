@@ -41,12 +41,13 @@ namespace InMemory
             }
         }
 
-        public void StoreApplied(EntityName entityName, IEntity entity, string entityId)
+        public async void StoreApplied(EntityName entityName, IEntity entity, string entityId)
         {
             switch (entityName)
             {
                 case EntityName.Contact:
                     entityCollection.UpdateContactApplied(entityId, entity);
+                    await Task.CompletedTask;
                     break;
 
                 default:
@@ -69,17 +70,20 @@ namespace InMemory
             return Task.FromResult(TaskOutcome.OK);
         }
 
-        public void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser)
+        public async Task<TaskOutcome> StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser)
         {
             switch (entityName)
             {
                 case EntityName.Contact:
                     entityCollection.UpdateContactSubmitted(entityId, entity, updatedUser);
+                    await Task.CompletedTask;
                     break;
 
                 default:
                     throw new NotSupportedException($"Entity type {entityName} is not supported.");
             }
+
+            return TaskOutcome.OK;
         }
 
         public void UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages)

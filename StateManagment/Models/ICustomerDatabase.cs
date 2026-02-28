@@ -12,7 +12,7 @@ namespace StateManagment.Models
         EntityBasics GetBasicInfo(EntityName entityName, string entityId);
         Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId);
         Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion);
-        void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser);
+        Task<TaskOutcome> StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser);
         void UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages);
         void StoreApplied(EntityName entityName, IEntity entity, string entityId);
         void MergeDraft(MessageEnvelop envelop, int latestDraftVersion);

@@ -60,7 +60,7 @@ namespace Infrastructure
             switch (messageEnvelop.Name)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.Add(messageEnvelop, incrementalDraftVersion, database);
+                    dbEexecution = await ContactConfig.AddToDraft(messageEnvelop, incrementalDraftVersion, database);
                     break;
 
                 default:
@@ -72,9 +72,23 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public void StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser)
+        public async Task<TaskOutcome> StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser)
         {
-            throw new NotImplementedException();
+            DbEexecutionParams dbEexecution;
+
+            switch (entityName)
+            {
+                case EntityName.Contact:
+                    dbEexecution = await ContactConfig.AddToSubmitted(entity, entityId, updatedUser, database);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
+
+            return TaskOutcome.OK;
         }
 
         public void UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages)
