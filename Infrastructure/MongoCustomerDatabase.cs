@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using SharpCompress.Common;
 using StateManagment.Entity;
 using StateManagment.Models;
 
@@ -98,9 +99,23 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public void UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages)
+        public async Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages)
         {
-            throw new NotImplementedException();
+            DbEexecutionParams dbEexecution;
+
+            switch (entityName)
+            {
+                case EntityName.Contact:
+                    dbEexecution = await ContactConfig.UpdateData(entityId, targetState, database, messages);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
+
+            return TaskOutcome.OK;
         }
     }
 }

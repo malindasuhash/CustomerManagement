@@ -86,16 +86,20 @@ namespace InMemory
             return TaskOutcome.OK;
         }
 
-        public void UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages)
+        public async Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages)
         {
             switch (entityName)
             {
                 case EntityName.Contact:
                     entityCollection.UpdateContactStateAndMessages(entityId, targetState, messages);
+                    await Task.CompletedTask;
                     break;
+
                 default:
                     throw new NotSupportedException($"Entity type {entityName} is not supported.");
             }
+
+            return TaskOutcome.OK;
         }
     }
 }
