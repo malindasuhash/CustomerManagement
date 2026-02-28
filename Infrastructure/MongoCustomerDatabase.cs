@@ -51,9 +51,23 @@ namespace Infrastructure
             throw new NotImplementedException();
         }
 
-        public void MergeDraft(MessageEnvelop envelop, int latestDraftVersion)
+        public async Task<TaskOutcome> MergeDraft(MessageEnvelop envelop, int latestDraftVersion)
         {
-            throw new NotImplementedException();
+            DbEexecutionParams dbEexecution;
+
+            switch (envelop.Name)
+            {
+                case EntityName.Contact:
+                    dbEexecution = await ContactConfig.Patch(envelop, latestDraftVersion, database);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
+
+            return TaskOutcome.OK;
         }
 
         public async Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId)

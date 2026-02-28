@@ -21,7 +21,7 @@ namespace StateManagment
         /// </summary>
         public async Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, string[]? messages = null)
         {
-            database.UpdateData(name, entityId, entityState, messages ?? []);
+            await database.UpdateData(name, entityId, entityState, messages ?? []);
 
             if (entityState == EntityState.SYNCHRONISED)
             {
@@ -86,13 +86,13 @@ namespace StateManagment
 
                 var basicInfo = await database.GetBasicInfo(envelop.Name, envelop.EntityId);
 
-                // Draft versions must match to avoid lost updates. If the draft version in the message is different from the one in the database, it means that there has been an update since the draft was created, and we should not overwrite it.
+                // Draft versions must match to avoid lost updates. If the draft version in the message is different from the one in the database, it means that there has been an update since the draft   was created, and we should not overwrite it.
                 if (envelop.DraftVersion != basicInfo.DraftVersion)
                 {
                     return TaskOutcome.VERSION_MISMATCH;
                 }
 
-                database.MergeDraft(envelop, envelop.DraftVersion + 1);
+                await database.MergeDraft(envelop, envelop.DraftVersion + 1);
             }
             finally
             {

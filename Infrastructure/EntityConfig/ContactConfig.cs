@@ -28,6 +28,40 @@ namespace Infrastructure.EntityConfig
             });
         }
 
+        public static async Task<DbEexecutionParams> Patch(MessageEnvelop messageEnvelop, int latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM")
+        {
+            var stored = await Get(messageEnvelop.EntityId, db);
+
+            var contact = (Contact)messageEnvelop.Draft;
+            var storedContact = (Contact)stored.Draft;
+
+            if (contact.FirstName != null) 
+            {
+                storedContact.FirstName = contact.FirstName;
+            }
+
+            if (contact.LastName != null)
+            {
+                storedContact.LastName = contact.LastName;
+            }
+
+            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, messageEnvelop.EntityId);
+            var onUpdate = Builders<MessageEnvelop>.Update
+            .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
+            .Set(a => a.UpdateUser, updatedUser)
+            .Set(a => a.DraftVersion, latestDraftVersion)
+            .Set(a => a.Draft, storedContact);
+
+            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+
+            return new DbEexecutionParams
+            {
+                Collection = contacts,
+                Definition = onUpdate,
+                Filter = filter
+            };
+        }
+
         public static async Task<DbEexecutionParams> UpdateData(string entityId, EntityState entityState, IMongoDatabase db, string[] messages, string updatedUser = "SYSTEM")
         {
             var contact = await Get(entityId, db);

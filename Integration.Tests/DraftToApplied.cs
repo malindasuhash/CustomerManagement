@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Integration.Tests
 {
-    internal class BuildApp
+    internal class DraftToApplied
     {
-        public async Task Run()
+        public async Task RunToApplied()
         {
             var database = new MongoCustomerDatabase();
             var distributedLock = new DictionaryLock();
