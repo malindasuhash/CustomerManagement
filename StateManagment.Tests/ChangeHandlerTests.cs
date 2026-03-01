@@ -162,6 +162,38 @@ namespace StateManagment.Tests
         }
 
         [Fact]
+        public async Task TryMergeDraft_WhenDeletedActionIsDetected_ReturnsVersionsAreNotChecks()
+        {
+            // Arrange
+            var distributedLock = Substitute.For<IDistributedLock>();
+            var database = Substitute.For<ICustomerDatabase>();
+            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>());
+            var entityId = "entity1";
+
+            var messageEnvelop = new MessageEnvelop
+            {
+                Change = ChangeType.Delete,
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                DraftVersion = 5,
+            };
+
+            var basics = new EntityBasics { DraftVersion = 5 };
+            database.GetBasicInfo(EntityName.Contact, entityId).Returns(basics);
+
+            // Act  
+            var result = await changeHandler.TryMergeDraft(messageEnvelop);
+
+            // Assert
+            await distributedLock.Received(1).Lock($"{entityId}_draft");
+            await database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
+            await database.Received(1).MergeDraft(messageEnvelop, basics.DraftVersion + 1);
+            await distributedLock.Received(1).Unlock($"{entityId}_draft");
+            result.Should().Be(TaskOutcome.OK);
+        }
+
+        [Fact]
         public async Task TryLockSubmitted_WhenBothDraftAndSubmittedVersionsAreTheSame_ThenDoesNotSubmit()
         {
             // Arrange

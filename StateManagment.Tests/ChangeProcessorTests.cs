@@ -76,9 +76,6 @@ namespace StateManagment.Tests
             await stateManager.Received(1).Initiate(EntityName.Contact, envelop.EntityId);
         }
 
-        // TODO: I think I need to check whether there is a very difference and
-        // if there is no, then simply return quickly.
-
         [Fact]
         public async Task ProcessChangeAsync_WhenDeletedButNotSubmitted_ThenUpdatesDraft()
         {
@@ -98,7 +95,7 @@ namespace StateManagment.Tests
             await changeProcessor.ProcessChangeAsync(envelop);
 
             // Assert
-            await changeHandler.Received(1).Deleted(envelop);
+            await changeHandler.Received(1).TryMergeDraft(envelop);
         }
 
         [Fact]
@@ -121,7 +118,7 @@ namespace StateManagment.Tests
             var result = await changeProcessor.ProcessChangeAsync(envelop);
 
             // Assert
-            await changeHandler.Received(1).Deleted(envelop);
+            await changeHandler.Received(1).TryMergeDraft(envelop);
             await changeHandler.Received(1).TryLockSubmitted(envelop);
             await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
         }
@@ -146,7 +143,7 @@ namespace StateManagment.Tests
             var result = await changeProcessor.ProcessChangeAsync(envelop);
 
             // Assert
-            await changeHandler.Received(1).Deleted(envelop);
+            await changeHandler.Received(1).TryMergeDraft(envelop);
             await changeHandler.Received(1).TryLockSubmitted(envelop);
             result.Successful.Should().BeFalse();
             await stateManager.DidNotReceive().Initiate(Arg.Any<EntityName>(), Arg.Any<string>());
@@ -201,7 +198,7 @@ namespace StateManagment.Tests
             await change.ProcessChangeAsync(envelop);
 
             // Assert
-            changeHandler.Received(1).Draft(envelop);
+            await changeHandler.Received(1).Draft(envelop);
             changeHandler.Received(1).Submitted(Arg.Any<MessageEnvelop>());
             await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
         }

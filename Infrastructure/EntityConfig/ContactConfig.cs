@@ -35,14 +35,17 @@ namespace Infrastructure.EntityConfig
             var contact = (Contact)messageEnvelop.Draft;
             var storedContact = (Contact)stored.Draft;
 
-            if (contact.FirstName != null) 
+            if (messageEnvelop.Change != ChangeType.Delete)
             {
-                storedContact.FirstName = contact.FirstName;
-            }
+                if (contact.FirstName != null)
+                {
+                    storedContact.FirstName = contact.FirstName;
+                }
 
-            if (contact.LastName != null)
-            {
-                storedContact.LastName = contact.LastName;
+                if (contact.LastName != null)
+                {
+                    storedContact.LastName = contact.LastName;
+                }
             }
 
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, messageEnvelop.EntityId);
@@ -50,7 +53,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser)
             .Set(a => a.DraftVersion, latestDraftVersion)
-            .Set(a => a.Draft, storedContact);
+            .Set(a => a.Draft, messageEnvelop.Change != ChangeType.Delete ? storedContact : null); // Blank out when deleting
 
             var contacts = db.GetCollection<MessageEnvelop>("contacts");
 

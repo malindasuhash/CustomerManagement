@@ -33,7 +33,7 @@ namespace StateManagment
 
             if (envelop.Change == ChangeType.Delete)
             {
-                await changeHandler.Deleted(envelop);
+                await changeHandler.TryMergeDraft(envelop);
 
                 if (envelop.IsSubmitted)
                 {

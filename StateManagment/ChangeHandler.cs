@@ -86,13 +86,26 @@ namespace StateManagment
 
                 var basicInfo = await database.GetBasicInfo(envelop.Name, envelop.EntityId);
 
-                // Draft versions must match to avoid lost updates. If the draft version in the message is different from the one in the database, it means that there has been an update since the draft   was created, and we should not overwrite it.
-                if (envelop.DraftVersion != basicInfo.DraftVersion)
-                {
-                    return TaskOutcome.VERSION_MISMATCH;
-                }
+                // Draft versions must match to avoid lost updates. If the draft version in the message
+                // is different from the one in the database, it means that there has been an update since the draft
+                // was created, and we should not overwrite it.
 
-                await database.MergeDraft(envelop, envelop.DraftVersion + 1);
+                // Special case for deletes, where we'll consider consumer is intending to remove the latest draft version.
+                // Therefore we'll not be checking requested version against stored version.
+
+                if (envelop.Change != ChangeType.Delete)
+                {
+                    if (envelop.DraftVersion != basicInfo.DraftVersion)
+                    {
+                        return TaskOutcome.VERSION_MISMATCH;
+                    }
+
+                    await database.MergeDraft(envelop, envelop.DraftVersion + 1);
+                }
+                else
+                {
+                    await database.MergeDraft(envelop, basicInfo.DraftVersion + 1);
+                }
             }
             finally
             {
@@ -128,11 +141,6 @@ namespace StateManagment
             }
 
             return TaskOutcome.OK;
-        }
-
-        public Task<TaskOutcome> Deleted(MessageEnvelop envelop)
-        {
-            throw new NotImplementedException();
         }
     }
 }
