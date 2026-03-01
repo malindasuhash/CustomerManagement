@@ -10,14 +10,16 @@ namespace StateManagment.Entity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Telephone { get; set; }
+        public string TelephoneCode { get; set; }
+        public string Email { get; set; }
+        public string AltTelephone { get; set; }
+        public string AltTelephoneCode { get; set; }
+        public Address PostalAddress { get; set; }
 
         override public string ToString()
         {
             return $"FirstName: {FirstName}, LastName: {LastName}";
         }
-    }
-
-    public interface IEntity
-    {   
     }
 }
