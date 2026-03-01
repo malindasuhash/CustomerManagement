@@ -20,7 +20,7 @@ namespace StateManagment.Tests
             };
 
             var stateManager = Substitute.For<IStateManager>();
-            var changeProcessor = new ChangeProcessor(Substitute.For<IChangeHandler>(), stateManager, Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(Substitute.For<IChangeHandler>(), stateManager);
 
             // Act
             await changeProcessor.ProcessChangeAsync(envelop);
@@ -42,7 +42,7 @@ namespace StateManagment.Tests
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>(), Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
             await changeProcessor.ProcessChangeAsync(envelop);
@@ -65,7 +65,7 @@ namespace StateManagment.Tests
 
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>(), Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
@@ -89,7 +89,7 @@ namespace StateManagment.Tests
             var stateManager = Substitute.For<IStateManager>();
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
-            var changeProcessor = new ChangeProcessor(changeHandler, stateManager, Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
@@ -111,7 +111,7 @@ namespace StateManagment.Tests
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>(), Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
             await changeProcessor.ProcessChangeAsync(envelop);
@@ -134,7 +134,7 @@ namespace StateManagment.Tests
             var stateManager = Substitute.For<IStateManager>();
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TryLockSubmitted(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.OK);
-            var changeProcessor = new ChangeProcessor(changeHandler, stateManager, Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
@@ -159,7 +159,7 @@ namespace StateManagment.Tests
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
             var stateManager = Substitute.For<IStateManager>();
-            var changeProcessor = new ChangeProcessor(changeHandler, stateManager, Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
@@ -185,16 +185,14 @@ namespace StateManagment.Tests
                 IsSubmitted = false
             };
             var changeHandler = Substitute.For<IChangeHandler>();
-            var auditManager = Substitute.For<IAuditManager>();
 
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>(), auditManager);
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
             await changeProcessor.ProcessChangeAsync(envelop);
 
             // Assert 
             await changeHandler.Received(1).Draft(envelop);
-            await auditManager.Received(1).Write(envelop);
         }
 
         [Fact]
@@ -216,7 +214,7 @@ namespace StateManagment.Tests
 
             var stateManager = Substitute.For<IStateManager>();
 
-            var change = new ChangeProcessor(changeHandler, stateManager, Substitute.For<IAuditManager>());
+            var change = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             await change.ProcessChangeAsync(envelop);
@@ -247,7 +245,7 @@ namespace StateManagment.Tests
 
             changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
 
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>(), Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
@@ -275,7 +273,7 @@ namespace StateManagment.Tests
 
             var stateManager = Substitute.For<IStateManager>();
 
-            var changeProcessor = new ChangeProcessor(changeHandler, stateManager, Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
@@ -304,7 +302,7 @@ namespace StateManagment.Tests
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>(), Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
             changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.VERSION_MISMATCH);
 
             // Act
@@ -334,7 +332,7 @@ namespace StateManagment.Tests
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();
-            var changeProcessor = new ChangeProcessor(changeHandler, stateManager, Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
@@ -365,7 +363,7 @@ namespace StateManagment.Tests
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();
-            var changeProcessor = new ChangeProcessor(changeHandler, stateManager, Substitute.For<IAuditManager>());
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);

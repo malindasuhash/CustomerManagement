@@ -24,9 +24,8 @@ namespace Integration.Tests
 
             var orchestrator = new BasicOrchestrator();
             var stateManager = new StateManager(changeHandler, orchestrator, database);
-            var auditManager = new AuditManager();
 
-            var changeProcessor = new ChangeProcessor(changeHandler, stateManager, auditManager);
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
             var contact = new Contact { FirstName = "John", LastName = "Doe" };
             // Create new Contact
             var envelop = new MessageEnvelop

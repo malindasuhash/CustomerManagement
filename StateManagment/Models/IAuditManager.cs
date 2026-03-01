@@ -8,6 +8,13 @@ namespace StateManagment.Models
 {
     public interface IAuditManager
     {
-        Task<TaskOutcome> Write(MessageEnvelop after, MessageEnvelop? before = null);
+        Task<TaskOutcome> Write(AuditTarget auditTarget, MessageEnvelop after, MessageEnvelop? before = null);
+    }
+
+    public enum AuditTarget
+    {
+        None = 0,
+        Draft,
+        Submitted
     }
 }

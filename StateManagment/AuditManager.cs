@@ -9,7 +9,7 @@ namespace StateManagment
 {
     public class AuditManager : IAuditManager
     {
-        public Task<TaskOutcome> Write(MessageEnvelop after, MessageEnvelop? before = null)
+        public Task<TaskOutcome> Write(AuditTarget auditTarget, MessageEnvelop after, MessageEnvelop? before = null)
         {
             return Task.FromResult(TaskOutcome.OK);
         }

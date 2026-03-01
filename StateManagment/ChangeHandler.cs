@@ -7,12 +7,14 @@ namespace StateManagment
         private readonly ICustomerDatabase database;
         private readonly IDistributedLock distributedLock;
         private readonly IEventPublisher eventPublisher;
+        private readonly IAuditManager auditManager;
 
-        public ChangeHandler(ICustomerDatabase database, IDistributedLock distributedLock, IEventPublisher eventPublisher)
+        public ChangeHandler(ICustomerDatabase database, IDistributedLock distributedLock, IEventPublisher eventPublisher, IAuditManager auditManager = null)
         {
             this.database = database;
             this.distributedLock = distributedLock;
             this.eventPublisher = eventPublisher;
+            this.auditManager = auditManager;
         }
 
         /// <summary>
@@ -40,7 +42,11 @@ namespace StateManagment
         /// </summary>        
         public async Task<TaskOutcome> Draft(MessageEnvelop envelop)
         {
-            return await database.StoreDraft(envelop, envelop.DraftVersion + 1);
+            await database.StoreDraft(envelop, envelop.DraftVersion + 1);
+
+            var storedEntity = await database.GetEntityDocument(EntityName.Contact, envelop.EntityId);
+
+            return await auditManager.Write(AuditTarget.Draft, storedEntity);
         }
 
         /// <summary>
@@ -58,9 +64,13 @@ namespace StateManagment
         /// This method is called when an entity is submitted, and it updates the database with the latest submitted data 
         /// (from latest draft) and version for that entity.
         /// </summary>
-        public void Submitted(MessageEnvelop envelop)
+        public async Task<TaskOutcome> Submitted(MessageEnvelop envelop)
         {
-            database.StoreSubmitted(envelop.Name, envelop.Draft, envelop.EntityId, envelop.UpdateUser);
+            var before = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+            await database.StoreSubmitted(envelop.Name, envelop.Draft, envelop.EntityId, envelop.UpdateUser);
+            var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+
+            return await auditManager.Write(AuditTarget.Submitted, after, before);
         }
 
         /// <summary>

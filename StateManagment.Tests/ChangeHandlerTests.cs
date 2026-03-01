@@ -13,11 +13,12 @@ namespace StateManagment.Tests
     public class ChangeHandlerTests
     {
         [Fact]
-        public void Draft_WhenEntityIsDrafted_StoresEntityUnderDraft()
+        public async Task Draft_WhenEntityIsDrafted_StoresEntityUnderDraftAndAudits()
         {
             // Arrange
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, Substitute.For<IDistributedLock>(), Substitute.For<IEventPublisher>());
+            var auditManager = Substitute.For<IAuditManager>();
+            var changeHandler = new ChangeHandler(database, Substitute.For<IDistributedLock>(), Substitute.For<IEventPublisher>(), auditManager);
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = "entity1",
@@ -25,19 +26,25 @@ namespace StateManagment.Tests
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" }
             };
 
+            database.GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId).Returns(messageEnvelop);
+
             // Act
-            changeHandler.Draft(messageEnvelop);
+            await changeHandler.Draft(messageEnvelop);
 
             // Assert
-            database.Received(1).StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
+            await database.Received(1).StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
+            await database.Received(1).GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId);
+            await auditManager.Received(1).Write(AuditTarget.Draft, messageEnvelop);
         }
 
         [Fact]
-        public void Submitted_WhenEntityIsSubmitted_ThenStoresInDatastore()
+        public async Task Submitted_WhenEntityIsSubmitted_ThenStoresAuditsAndInDatastore()
         {
             // Arrange
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, Substitute.For<IDistributedLock>(), Substitute.For<IEventPublisher>());
+            var auditManager = Substitute.For<IAuditManager>();
+
+            var changeHandler = new ChangeHandler(database, Substitute.For<IDistributedLock>(), Substitute.For<IEventPublisher>(), auditManager);
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = "entity1",
@@ -47,11 +54,24 @@ namespace StateManagment.Tests
                 UpdateUser = "testUser"
             };
 
+            var messageEnvelop2 = new MessageEnvelop
+            {
+                EntityId = "entity1",
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Pink", LastName = "Blue" },
+                DraftVersion = 3,
+                UpdateUser = "testUser"
+            };
+
+            database.GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId).Returns(messageEnvelop, messageEnvelop2);
+
             // Act
-            changeHandler.Submitted(messageEnvelop);
+            await changeHandler.Submitted(messageEnvelop);
 
             // Assert
-            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", messageEnvelop.UpdateUser);
+            await database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", messageEnvelop.UpdateUser);
+            await database.Received(2).GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId);
+            await auditManager.Received(1).Write(AuditTarget.Submitted, messageEnvelop2, messageEnvelop);
         }
 
         [Fact]
@@ -251,8 +271,8 @@ namespace StateManagment.Tests
             };
 
             var storedDraft = new Contact() { FirstName = "Apple", LastName = "Orange" };
-            database.GetEntityDocument(EntityName.Contact, entityId).Returns(new MessageEnvelop() 
-            { 
+            database.GetEntityDocument(EntityName.Contact, entityId).Returns(new MessageEnvelop()
+            {
                 Name = EntityName.Contact,
                 EntityId = entityId,
                 Draft = storedDraft,
@@ -286,7 +306,7 @@ namespace StateManagment.Tests
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
-                IsSubmitted = true               
+                IsSubmitted = true
             };
             messageEnvelop.SetState(EntityState.EVALUATING);
 
@@ -304,7 +324,7 @@ namespace StateManagment.Tests
         [Fact]
         public async Task ChangeStatusTo_WhenStateChangedToSynchronised_ThenCopiesSubmittedToApplied()
         {
-                       // Arrange
+            // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
             var eventPublisher = Substitute.For<IEventPublisher>();
             var database = Substitute.For<ICustomerDatabase>();

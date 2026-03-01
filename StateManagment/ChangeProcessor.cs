@@ -6,12 +6,10 @@ namespace StateManagment
     {
         private readonly IChangeHandler changeHandler;
         private readonly IStateManager stateManager;
-        private readonly IAuditManager auditManager;
 
-        public ChangeProcessor(IChangeHandler changeHandler, IStateManager stateManager, IAuditManager auditManager)
+        public ChangeProcessor(IChangeHandler changeHandler, IStateManager stateManager)
         {
             this.stateManager = stateManager;
-            this.auditManager = auditManager;
             this.changeHandler = changeHandler;
         }
 
@@ -59,7 +57,6 @@ namespace StateManagment
             if (envelop.Change == ChangeType.Create)
             {
                 await changeHandler.Draft(envelop);
-                await auditManager.Write(envelop);
 
                 if (envelop.IsSubmitted)
                 {
