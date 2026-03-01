@@ -14,6 +14,7 @@ namespace StateManagment.Models
         public static readonly TaskOutcome TRANSITION_NOT_SUPPORTED = new(false);
         public static readonly TaskOutcome CHANGE_NOT_SUPPORTED = new(false);
         public static readonly TaskOutcome STALE_DRAFT = new(false);
+        public static readonly TaskOutcome NO_CHANGE_TO_SUBMIT = new(false);
 
         public bool Successful { get; }
 

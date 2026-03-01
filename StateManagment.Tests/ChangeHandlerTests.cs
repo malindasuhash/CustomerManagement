@@ -126,8 +126,8 @@ namespace StateManagment.Tests
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
-            database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
-            database.Received(1).MergeDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
+            await database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
+            await database.Received(1).MergeDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
         }
 
@@ -155,10 +155,48 @@ namespace StateManagment.Tests
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
-            database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
-            database.DidNotReceive().StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
+            await database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
+            await database.DidNotReceive().StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
             result.Should().Be(TaskOutcome.VERSION_MISMATCH);
+        }
+
+        [Fact]
+        public async Task TryLockSubmitted_WhenBothDraftAndSubmittedVersionsAreTheSame_ThenDoesNotSubmit()
+        {
+            // Arrange
+            var distributedLock = Substitute.For<IDistributedLock>();
+            var database = Substitute.For<ICustomerDatabase>();
+            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>());
+            var entityId = "entity1";
+
+            var messageEnvelop = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                DraftVersion = 2,
+                IsSubmitted = true,
+                UpdateUser = "testUser"
+            };
+
+            var storedDraft = new Contact() { FirstName = "Apple", LastName = "Orange" };
+            database.GetEntityDocument(EntityName.Contact, entityId).Returns(new MessageEnvelop()
+            {
+                Name = EntityName.Contact,
+                EntityId = entityId,
+                Draft = storedDraft,
+                DraftVersion = 2,
+                SubmittedVersion = 2,
+            });
+
+            distributedLock.Lock(entityId).Returns(TaskOutcome.OK);
+
+            // Act  
+            var result = await changeHandler.TryLockSubmitted(messageEnvelop);
+
+            // Assert
+            result.Should().Be(TaskOutcome.NO_CHANGE_TO_SUBMIT);
         }
 
         [Fact]
@@ -196,8 +234,8 @@ namespace StateManagment.Tests
 
             // Assert
             await distributedLock.Received(1).Lock(entityId);
-            database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
-            database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c == storedDraft), entityId,  messageEnvelop.UpdateUser);
+            await database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
+            await database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c == storedDraft), entityId, messageEnvelop.UpdateUser);
         }
 
         [Fact]

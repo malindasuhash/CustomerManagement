@@ -30,7 +30,7 @@ namespace StateManagment
             }
 
             var entityDocument = await database.GetEntityDocument(name, entityId);
-            
+
             return await eventPublisher.PublishStateChangedEvent(entityDocument);
         }
 
@@ -113,6 +113,12 @@ namespace StateManagment
                 await distributedLock.Lock(envelop.EntityId);
 
                 var storedDraftEntity = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+
+                // Unless there is a change, there is no need to submit
+                if (storedDraftEntity.DraftVersion == storedDraftEntity.SubmittedVersion)
+                {
+                    return TaskOutcome.NO_CHANGE_TO_SUBMIT;
+                }
 
                 await database.StoreSubmitted(storedDraftEntity.Name, storedDraftEntity.Draft, storedDraftEntity.EntityId, envelop.UpdateUser);
             }
