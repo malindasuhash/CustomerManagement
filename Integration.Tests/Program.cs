@@ -3,14 +3,14 @@ using Integration.Tests;
 
 Console.WriteLine("RUNNING!");
 
-//var runToApplied = new DraftToApplied();
-// await app.RunToApplied();
+var runToApplied = new DraftToApplied();
+await runToApplied.RunToApplied();
 
-//var multipleUpdates = new UpdatesToDraftMultipleTimes();
-//await multipleUpdates.UpdateDraft();
+var multipleUpdates = new UpdatesToDraftMultipleTimes();
+await multipleUpdates.UpdateDraft();
 
-//var completeFlowAndDelete = new CompleteFlowAndDelete();
-//await completeFlowAndDelete.Delete();
+var completeFlowAndDelete = new CompleteFlowAndDelete();
+await completeFlowAndDelete.Delete();
 
 var submitAndSubmit = new SubmitFollowedWithSubmitWithoutChange();
 await submitAndSubmit.SubmitNoChangeSubmit();
