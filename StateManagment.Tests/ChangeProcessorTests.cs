@@ -8,6 +8,28 @@ namespace StateManagment.Tests
     public class ChangeProcessorTests
     {
         [Fact]
+        public async Task ProcessChangeAsync_WhenTouched_ThenInitiatesStateManager()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Touch,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                IsSubmitted = false
+            };
+
+            var stateManager = Substitute.For<IStateManager>();
+            var changeProcessor = new ChangeProcessor(Substitute.For<IChangeHandler>(), stateManager);
+
+            // Act
+            await changeProcessor.ProcessChangeAsync(envelop);
+
+            // Assert
+            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
+        }
+
+        [Fact]
         public async Task ProcessChangeAsync_WhenJustSubmittedSpecifically_ThenSubmitsRequest()
         {
             // Arrange

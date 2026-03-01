@@ -15,4 +15,7 @@ await completeFlowAndDelete.Delete();
 var submitAndSubmit = new SubmitFollowedWithSubmitWithoutChange();
 await submitAndSubmit.SubmitNoChangeSubmit();
 
+var touchAfterSynced = new TouchRerunEvaluation();
+await touchAfterSynced.Run();
+
 Console.ReadKey();

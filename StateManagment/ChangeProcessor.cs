@@ -19,6 +19,11 @@ namespace StateManagment
         /// </summary>
         public async Task<TaskOutcome> ProcessChangeAsync(MessageEnvelop envelop)
         {
+            if (envelop.Change == ChangeType.Touch)
+            {
+                return await stateManager.Initiate(envelop.Name, envelop.EntityId);
+            }
+
             if (envelop.Change == ChangeType.Submit)
             {
                 var lockedResult = await changeHandler.TryLockSubmitted(envelop);
@@ -48,7 +53,7 @@ namespace StateManagment
 
                 return TaskOutcome.OK;
             }
-            
+
             if (envelop.Change == ChangeType.Create)
             {
                 await changeHandler.Draft(envelop);

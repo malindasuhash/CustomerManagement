@@ -7,6 +7,7 @@
         Update,
         Delete,
         Read,
-        Submit
+        Submit,
+        Touch
     }
 }
