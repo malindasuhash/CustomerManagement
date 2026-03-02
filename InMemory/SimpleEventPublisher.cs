@@ -13,10 +13,5 @@ namespace InMemory
         {
             return Task.FromResult(TaskOutcome.OK);
         }
-
-        public Task<TaskOutcome> Send(OrchestrationEnvelop orchestrationEvent)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
