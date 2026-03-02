@@ -18,7 +18,7 @@ namespace ContactOrchestration
             await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED), runtimeInfo.CorellationId);
 
             // Marker in the Ochestration data to skip certain checks perhaps.
-            if (runtimeInfo.OrchestrationData.Any(a => a.Key.Equals("SHORTCUT_COMPLETE_EVALUATION")))
+            if (runtimeInfo.OrchestrationData.Any(a => a.Key.Equals("SKIP_EVALUTE_RUN_APPLY")))
             {
                 await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, null, runtimeInfo.OrchestrationData), runtimeInfo.CorellationId);
                 return;
