@@ -88,7 +88,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED after DELETE"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(entityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() { FeedbackType = FeedbackType.Warning, Key = "PROCESSING_DELETE", Value = "BLA" }], [])).Wait();
+            stateManager.ProcessUpdateAsync(StepToSend(entityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() { Type = FeedbackType.Warning, Key = "PROCESSING_DELETE", Value = "BLA" }], [])).Wait();
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED after DELETE"); Console.WriteLine();
 

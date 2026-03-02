@@ -15,7 +15,7 @@ namespace ContactOrchestration.Checks
             // FirstName contains non-alphabetic characters
             if (!Regex.IsMatch(contact.FirstName, pattern)) 
             {
-                Feedbacks.Add(new Feedback() {  FeedbackType = FeedbackType.Error, Key = "FirstName", Value="NonAlphaCharacters" });
+                Feedbacks.Add(new Feedback() {  Type = FeedbackType.Error, Key = "FirstName", Value="NonAlphaCharacters" });
             }
 
             return nextCheck.RunCheckAsync(runtimeInfo);

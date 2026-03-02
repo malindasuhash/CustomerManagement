@@ -75,7 +75,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_STARTED,
-                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "Key", Value = "Value" }],
+                Feedbacks = [new Feedback() { Type = FeedbackType.Error, Key = "Key", Value = "Value" }],
                 OrchestrationData = [new OrchestrationData() { Key = "OK", Value = "BK" }]
             };
 
@@ -168,7 +168,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_COMPLETED,
-                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "EvaluationCompletedSuccessfully", Value = "OK"}],
+                Feedbacks = [new Feedback() { Type = FeedbackType.Error, Key = "EvaluationCompletedSuccessfully", Value = "OK"}],
                 OrchestrationData = [new OrchestrationData() { Key = "OK", Value = "BK" }]
             };
 
@@ -201,7 +201,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_INCOMPLETE,
-                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Warning, Key = "AwaitingDocumentSigning", Value = "InComplete" }],
+                Feedbacks = [new Feedback() { Type = FeedbackType.Warning, Key = "AwaitingDocumentSigning", Value = "InComplete" }],
                 OrchestrationData = [new OrchestrationData() { Key = "OK", Value = "BK" }]
             };
 
@@ -234,7 +234,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_REQUIRES_MANUAL_REVIEW,
-                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "NeedManagerCheckApproval", Value = "Waiting"}]
+                Feedbacks = [new Feedback() { Type = FeedbackType.Error, Key = "NeedManagerCheckApproval", Value = "Waiting"}]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -291,7 +291,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 6,
                 Status = RuntimeStatus.EVALUATION_INCOMPLETE,
-                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Warning, Value = "BK", Key = "NeedAdditionalInformation" }]
+                Feedbacks = [new Feedback() { Type = FeedbackType.Warning, Value = "BK", Key = "NeedAdditionalInformation" }]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -320,7 +320,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 6,
                 Status = RuntimeStatus.CHANGE_FAILED,
-                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "ServiceUnavailable", Value = "OK" }]
+                Feedbacks = [new Feedback() { Type = FeedbackType.Error, Key = "ServiceUnavailable", Value = "OK" }]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -373,7 +373,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 6,
                 Status = action,
-                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "Messages", Value = "OK" }]
+                Feedbacks = [new Feedback() { Type = FeedbackType.Error, Key = "Messages", Value = "OK" }]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();

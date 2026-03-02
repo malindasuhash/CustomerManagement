@@ -347,7 +347,7 @@ namespace StateManagment.Tests
             messageEnvelop.SetState(EntityState.EVALUATING);
 
             database.GetEntityDocument(EntityName.Contact, entityId).Returns(messageEnvelop);
-            var feedbacks = new Feedback() { FeedbackType = FeedbackType.Warning, Key = "PendingRiskChecks", Value = "Waiting" };
+            var feedbacks = new Feedback() { Type = FeedbackType.Warning, Key = "PendingRiskChecks", Value = "Waiting" };
 
             // Act
             var result = await changeHandler.ChangeStatusTo(messageEnvelop.EntityId, messageEnvelop.Name, EntityState.IN_REVIEW, [feedbacks]);

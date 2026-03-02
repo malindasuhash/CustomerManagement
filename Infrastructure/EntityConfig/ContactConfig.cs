@@ -26,6 +26,12 @@ namespace Infrastructure.EntityConfig
                 cm.UnmapMember(c => c.Name);
                 cm.UnmapMember(c => c.IsSubmitted);
             });
+
+            BsonClassMap.RegisterClassMap<Feedback>(cm =>
+            {
+                cm.AutoMap();
+                cm.MapMember(a => a.Type).SetSerializer(new EnumSerializer<FeedbackType>(MongoDB.Bson.BsonType.String));
+            });
         }
 
         public static async Task<DbEexecutionParams> Patch(MessageEnvelop messageEnvelop, int latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM")
