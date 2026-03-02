@@ -39,7 +39,8 @@ namespace StateManagment.Models
         public string CreatedUser { get; set; }
         public DateTime CreatedTimestamp { get; set; }
 
-        public string[] OrchestrationData { get; set; }
+        public Feedback[] Feedback { get; set; }
+        public OrchestrationData[] OrchestrationData { get; set; }
 
         public void SetState(EntityState targetState)
         {

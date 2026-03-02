@@ -10,7 +10,7 @@ namespace ContactOrchestration.Checks
     internal abstract class Check
     {
         protected readonly Check nextCheck;
-        public List<string> Issues { get; set; } = [];
+        public List<Feedback> Feedbacks { get; set; } = [];
 
         public Check(Check nextCheck)
         {

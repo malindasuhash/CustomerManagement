@@ -18,16 +18,16 @@ namespace ContactOrchestration
             await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED), runtimeInfo.CorellationId);
 
             // Marker in the WorkflowData that indicate to skip steps and move to next.
-            if (runtimeInfo.WorkflowData.Contains("SHORTCUT_COMPLETE_EVALUATION"))
+            if (runtimeInfo.OrchestrationData.Any(a => a.Key.Equals("SHORTCUT_COMPLETE_EVALUATION")))
             {
-                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, null, runtimeInfo.WorkflowData), runtimeInfo.CorellationId);
+                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, null, runtimeInfo.OrchestrationData), runtimeInfo.CorellationId);
                 return;
             }
 
             var rules = RulesToExecute();
             await rules.RunCheckAsync(runtimeInfo);
 
-            if (rules.Issues.Count == 0)
+            if (rules.Feedbacks.Count == 0)
             {
                 // Send EVALUATION_COMPLETED event
                 await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED), runtimeInfo.CorellationId);
@@ -35,7 +35,7 @@ namespace ContactOrchestration
             else
             {
                 // Send EVALUATION_INCOMPLETE event
-                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_INCOMPLETE, [.. rules.Issues]), runtimeInfo.CorellationId);
+                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_INCOMPLETE, [.. rules.Feedbacks]), runtimeInfo.CorellationId);
             }
         }
 
@@ -45,7 +45,7 @@ namespace ContactOrchestration
         /// <returns></returns>
         private Check RulesToExecute()
         {
-            var evaluationCompleted = new EvalutionComplete(null);
+            var evaluationCompleted = new EvalutionComplete();
             var contactValidationCheck = new ContactValidationCheck(evaluationCompleted);
             return contactValidationCheck;
         }

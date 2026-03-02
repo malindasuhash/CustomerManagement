@@ -75,7 +75,8 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_STARTED,
-                Messages = ["EvaluationCompletedSuccessfully"]
+                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "Key", Value = "Value" }],
+                OrchestrationData = [new OrchestrationData() { Key = "OK", Value = "BK" }]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -91,7 +92,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATING, orchestrationEnvelop.Messages);
+            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATING, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         [Fact]
@@ -167,10 +168,10 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_COMPLETED,
-                Messages = ["EvaluationCompletedSuccessfully"]
+                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "EvaluationCompletedSuccessfully", Value = "OK"}],
+                OrchestrationData = [new OrchestrationData() { Key = "OK", Value = "BK" }]
             };
 
-            // TODO: Consider messages being part of evaluation result
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
@@ -185,7 +186,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_PROGRESS, orchestrationEnvelop.Messages);
+            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_PROGRESS, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.Received(1).ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -200,7 +201,8 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_INCOMPLETE,
-                Messages = ["AwaitingDocumentSigning"]
+                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Warning, Key = "AwaitingDocumentSigning", Value = "InComplete" }],
+                OrchestrationData = [new OrchestrationData() { Key = "OK", Value = "BK" }]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -217,7 +219,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Messages);
+            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.DidNotReceive().ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -232,7 +234,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_REQUIRES_MANUAL_REVIEW,
-                Messages = ["NeedManagerCheckApproval"]
+                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "NeedManagerCheckApproval", Value = "Waiting"}]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -249,7 +251,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_REVIEW, orchestrationEnvelop.Messages);
+            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_REVIEW, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.DidNotReceive().ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -289,7 +291,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 6,
                 Status = RuntimeStatus.EVALUATION_INCOMPLETE,
-                Messages = ["NeedAdditionalInformation"]
+                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Warning, Value = "BK", Key = "NeedAdditionalInformation" }]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -304,7 +306,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Messages);
+            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         [Fact]
@@ -318,7 +320,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 6,
                 Status = RuntimeStatus.CHANGE_FAILED,
-                Messages = ["ServiceUnavailable"]
+                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "ServiceUnavailable", Value = "OK" }]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -333,7 +335,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Messages);
+            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         private const int StateDoesNotChange = 0;
@@ -371,7 +373,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 6,
                 Status = action,
-                Messages = ["Messages"]
+                Feedbacks = [new Feedback() { FeedbackType = FeedbackType.Error, Key = "Messages", Value = "OK" }]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -388,7 +390,7 @@ namespace StateManagment.Tests
             var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(statusChangeCount).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, targetState, orchestrationEnvelop.Messages);
+            await changeHandler.Received(statusChangeCount).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, targetState, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.Received(evalutionCount).EvaluateAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             await orchestrator.Received(applyCount).ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             await orchestrator.Received(postApplyCount).PostApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);

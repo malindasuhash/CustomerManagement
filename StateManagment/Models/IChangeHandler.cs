@@ -8,7 +8,7 @@ namespace StateManagment.Models
 {
     public interface IChangeHandler
     {
-        Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, string[]? messages = null);
+        Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null);
         Task<TaskOutcome> Draft(MessageEnvelop envelop);
         Task<TaskOutcome> ReleaseEntityLock(string entityId);
         Task<TaskOutcome> Submitted(MessageEnvelop envelop);

@@ -1,7 +1,12 @@
 ﻿namespace ContactOrchestration.Checks
 {
-    internal class EvalutionComplete(Check nextCheck) : Check(nextCheck)
+    internal class EvalutionComplete : Check
     {
+        public EvalutionComplete() : base(null)
+        {
+            
+        }
+
         public override Task RunCheckAsync(RuntimeInfo runtimeInfo)
         {
             //NOP - This is the end of the chain, there is nothing to do here.

@@ -65,7 +65,7 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> UpdateData(string entityId, EntityState entityState, IMongoDatabase db, string[] messages, string updatedUser = "SYSTEM")
+        public static async Task<DbEexecutionParams> UpdateData(string entityId, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM")
         {
             var contact = await Get(entityId, db);
 
@@ -73,7 +73,8 @@ namespace Infrastructure.EntityConfig
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
             var onUpdate = Builders<MessageEnvelop>.Update
             .Set(a => a.State, entityState)
-            .Set(b => b.OrchestrationData, messages)
+            .Set(b => b.Feedback, feedbacks)
+            .Set(b => b.OrchestrationData, orchestrationData)
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 

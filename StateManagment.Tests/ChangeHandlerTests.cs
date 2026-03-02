@@ -347,13 +347,14 @@ namespace StateManagment.Tests
             messageEnvelop.SetState(EntityState.EVALUATING);
 
             database.GetEntityDocument(EntityName.Contact, entityId).Returns(messageEnvelop);
+            var feedbacks = new Feedback() { FeedbackType = FeedbackType.Warning, Key = "PendingRiskChecks", Value = "Waiting" };
 
             // Act
-            var result = await changeHandler.ChangeStatusTo(messageEnvelop.EntityId, messageEnvelop.Name, EntityState.IN_REVIEW, ["PendingRiskChesks"]);
+            var result = await changeHandler.ChangeStatusTo(messageEnvelop.EntityId, messageEnvelop.Name, EntityState.IN_REVIEW, [feedbacks]);
 
             // Assert
             await database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
-            await database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.IN_REVIEW, Arg.Is<string[]>(s => s.Contains("PendingRiskChesks")));
+            await database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.IN_REVIEW, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
             await eventPublisher.Received(1).PublishStateChangedEvent(messageEnvelop);
         }
 
@@ -393,7 +394,7 @@ namespace StateManagment.Tests
 
             // Assert
             await database.Received(1).StoreApplied(EntityName.Contact, Arg.Any<IEntity>(), entityId);
-            await database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.SYNCHRONISED, Arg.Is<string[]>(s => s.Length == 0));
+            await database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.SYNCHRONISED, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
             await auditManager.Received(1).Write(AuditTarget.Applied, after, before);
         }
     }

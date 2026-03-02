@@ -47,14 +47,14 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, ["ALL_GOOD"])).Wait();
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [], [])).Wait();
 
             contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
             Console.WriteLine($" Contact: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [])).Wait();
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [new Feedback() { FeedbackType = FeedbackType.Warning, Key = "FINE", Value = "S" }], [])).Wait();
 
             contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
@@ -62,7 +62,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent CHANGE_APPLIED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [])).Wait();
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [], [new OrchestrationData() { Key = "AMAZING", Value = "WORLD"}])).Wait();
 
             contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
@@ -70,7 +70,7 @@ namespace Integration.Tests
             Console.ReadKey();
         }
 
-        private static OrchestrationEnvelop StepToSend(string entityId, int submittedVersion, RuntimeStatus runtimeStatus, string[] messages)
+        private static OrchestrationEnvelop StepToSend(string entityId, int submittedVersion, RuntimeStatus runtimeStatus, Feedback[] feedbacks, OrchestrationData[] orchestrationData)
         {
             var step = new OrchestrationEnvelop
             {
@@ -78,7 +78,8 @@ namespace Integration.Tests
                 Name = EntityName.Contact,
                 SubmittedVersion = submittedVersion,
                 Status = runtimeStatus,
-                Messages = messages
+                Feedbacks = feedbacks,
+                OrchestrationData = orchestrationData
             };
 
             return step;

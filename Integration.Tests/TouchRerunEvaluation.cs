@@ -49,14 +49,14 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, ["ALL_GOOD"])).Wait();
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() { FeedbackType = FeedbackType.Error, Key = "ALL_GOOD", Value = "BLA" }], [])).Wait();
 
             contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
             Console.WriteLine($" Contact: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [])).Wait();
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [], [])).Wait();
 
             contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
@@ -64,7 +64,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent CHANGE_APPLIED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [])).Wait();
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [], [])).Wait();
 
             contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
@@ -85,7 +85,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED after TOUCH"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, ["ALL_GOOD_AFTER_TOUCH"])).Wait();
+            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() { FeedbackType = FeedbackType.Warning, Key = "ALL_GOOD_AFTER_TOUCH", Value = "OK" }], [])).Wait();
 
             contactDocument = await database.GetEntityDocument(EntityName.Contact, entityId);
             Console.WriteLine($"Contact after EVALUATION_STARTED: {contactDocument}"); Console.WriteLine();
@@ -93,7 +93,7 @@ namespace Integration.Tests
             Console.ReadKey();
         }
 
-        private static OrchestrationEnvelop StepToSend(string entityId, int submittedVersion, RuntimeStatus runtimeStatus, string[] messages)
+        private static OrchestrationEnvelop StepToSend(string entityId, int submittedVersion, RuntimeStatus runtimeStatus, Feedback[] feedbacks, OrchestrationData[] orchestrationData)
         {
             var step = new OrchestrationEnvelop
             {
@@ -101,7 +101,8 @@ namespace Integration.Tests
                 Name = EntityName.Contact,
                 SubmittedVersion = submittedVersion,
                 Status = runtimeStatus,
-                Messages = messages
+                Feedbacks = feedbacks,
+                OrchestrationData = orchestrationData
             };
 
             return step;

@@ -66,26 +66,26 @@ namespace StateManagment
                     case EntityState.ATTENTION_REQUIRED when operationalEntity.Status == RuntimeStatus.EVALUATION_STARTED:
                     case EntityState.SYNCHRONISED when operationalEntity.Status == RuntimeStatus.EVALUATION_STARTED:
                     case EntityState.EVALUATION_RESTARTING when operationalEntity.Status == RuntimeStatus.EVALUATION_STARTED:
-                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.EVALUATING, operationalEntity.Messages);
+                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.EVALUATING, operationalEntity.Feedbacks, operationalEntity.OrchestrationData);
                         break;
 
                     case EntityState.EVALUATING when operationalEntity.Status == RuntimeStatus.EVALUATION_COMPLETED:
-                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.IN_PROGRESS, operationalEntity.Messages);
+                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.IN_PROGRESS, operationalEntity.Feedbacks, operationalEntity.OrchestrationData);
                         await orchestrator.ApplyAsync(operationalEntity.EntityId, operationalEntity.Name);
 
                         break;
                     case EntityState.EVALUATING when operationalEntity.Status == RuntimeStatus.EVALUATION_INCOMPLETE:
                     case EntityState.IN_REVIEW when operationalEntity.Status == RuntimeStatus.EVALUATION_INCOMPLETE:
                     case EntityState.IN_PROGRESS when operationalEntity.Status == RuntimeStatus.CHANGE_FAILED:
-                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.ATTENTION_REQUIRED, operationalEntity.Messages);
+                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.ATTENTION_REQUIRED, operationalEntity.Feedbacks, operationalEntity.OrchestrationData);
 
                         break;
                     case EntityState.EVALUATING when operationalEntity.Status == RuntimeStatus.EVALUATION_REQUIRES_MANUAL_REVIEW:
-                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.IN_REVIEW, operationalEntity.Messages);
+                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.IN_REVIEW, operationalEntity.Feedbacks, operationalEntity.OrchestrationData);
                         break;
 
                     case EntityState.IN_PROGRESS when operationalEntity.Status == RuntimeStatus.CHANGE_APPLIED:
-                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.SYNCHRONISED, operationalEntity.Messages);
+                        await changeHandler.ChangeStatusTo(operationalEntity.EntityId, operationalEntity.Name, EntityState.SYNCHRONISED, operationalEntity.Feedbacks, operationalEntity.OrchestrationData);
                         await orchestrator.PostApplyAsync(operationalEntity.EntityId, operationalEntity.Name);
                         break;
 

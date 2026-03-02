@@ -13,7 +13,7 @@ namespace StateManagment.Models
         Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId);
         Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion);
         Task<TaskOutcome> StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser);
-        Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages);
+        Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, Feedback[] feedbacks, OrchestrationData[] orchestrationData);
         Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId);
         Task<TaskOutcome> MergeDraft(MessageEnvelop envelop, int latestDraftVersion);
     }

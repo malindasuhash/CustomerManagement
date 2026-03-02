@@ -21,9 +21,9 @@ namespace StateManagment
         /// Changes the status of the specified entity in the database to the provided entity state 
         /// and publishes a state changed event.
         /// </summary>
-        public async Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, string[]? messages = null)
+        public async Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null)
         {
-            await database.UpdateData(name, entityId, entityState, messages ?? []);
+            await database.UpdateData(name, entityId, entityState, feedbacks ?? [], orchestrationData ?? []);
 
             if (entityState == EntityState.SYNCHRONISED)
             {

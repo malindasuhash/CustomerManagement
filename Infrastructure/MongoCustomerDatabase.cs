@@ -127,14 +127,14 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, string[] messages)
+        public async Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, Feedback[] feedbacks, OrchestrationData[]? orchestrationData = null)
         {
             DbEexecutionParams dbEexecution;
 
             switch (entityName)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.UpdateData(entityId, targetState, database, messages);
+                    dbEexecution = await ContactConfig.UpdateData(entityId, targetState, database, feedbacks, orchestrationData);
                     break;
 
                 default:

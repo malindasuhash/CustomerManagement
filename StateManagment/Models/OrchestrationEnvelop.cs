@@ -7,10 +7,10 @@
         public int DraftVersion { get; set; }
         public int SubmittedVersion { get; set; }
         public RuntimeStatus Status { get; set; }
-        public string[] Messages { get; set; } = [];
-        public string[] WorkflowData { get; set; } = [];
+        public Feedback[] Feedbacks { get; set; } = [];
+        public OrchestrationData[] OrchestrationData { get; set; } = [];
 
-        public static OrchestrationEnvelop Create(EntityName entityName, string entityId, int submittedVersion, RuntimeStatus status, string[]? issues = null, string[]? workflowData = null)
+        public static OrchestrationEnvelop Create(EntityName entityName, string entityId, int submittedVersion, RuntimeStatus status, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null)
         {
             return new OrchestrationEnvelop
             {
@@ -18,8 +18,8 @@
                 Name = entityName,
                 SubmittedVersion = submittedVersion,
                 Status = status,
-                Messages = issues,
-                WorkflowData = workflowData
+                Feedbacks = feedbacks,
+                OrchestrationData = orchestrationData
             };
         }
     }

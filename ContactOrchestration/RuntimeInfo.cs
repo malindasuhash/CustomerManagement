@@ -1,4 +1,5 @@
 ﻿using StateManagment.Entity;
+using StateManagment.Models;
 
 namespace ContactOrchestration
 {
@@ -10,6 +11,6 @@ namespace ContactOrchestration
         public IEntity Applied { get; set; }
         public int SubmittedVersion { get; set; }
         public int AppliedVersion { get; set; }
-        public string[] WorkflowData { get; set; } = new string[0];
+        public OrchestrationData[] OrchestrationData { get; set; } = new OrchestrationData[0];
     }
 }
