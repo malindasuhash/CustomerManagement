@@ -79,7 +79,7 @@ namespace StateManagment.Tests
         {
             // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
-            var changeHandler = new ChangeHandler(Substitute.For<ICustomerDatabase>(), distributedLock, Substitute.For<IEventPublisher>());
+            var changeHandler = new ChangeHandler(Substitute.For<ICustomerDatabase>(), distributedLock, Substitute.For<IEventPublisher>(), Substitute.For<IAuditManager>());
             var entityId = "entity1";
             distributedLock.Lock(entityId).Returns(TaskOutcome.OK);
 
@@ -96,7 +96,7 @@ namespace StateManagment.Tests
         {
             // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
-            var changeHandler = new ChangeHandler(Substitute.For<ICustomerDatabase>(), distributedLock, Substitute.For<IEventPublisher>());
+            var changeHandler = new ChangeHandler(Substitute.For<ICustomerDatabase>(), distributedLock, Substitute.For<IEventPublisher>(), Substitute.For<IAuditManager>());
             var entityId = "entity1";
             distributedLock.Lock(entityId).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
@@ -113,7 +113,7 @@ namespace StateManagment.Tests
         {
             // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
-            var changeHandler = new ChangeHandler(Substitute.For<ICustomerDatabase>(), distributedLock, Substitute.For<IEventPublisher>());
+            var changeHandler = new ChangeHandler(Substitute.For<ICustomerDatabase>(), distributedLock, Substitute.For<IEventPublisher>(), Substitute.For<IAuditManager>());
             var entityId = "entity1";
 
             // Act
@@ -124,31 +124,42 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task TryMergeDraft_ObtainsSpecialDraftLock_And_ThenAddsToDraftIfVersionsAreHigher()
+        public async Task TryMergeDraft_ObtainsSpecialDraftLock_And_ThenAddsToDraftIfVersionsAreHigherAndAudits()
         {
             // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>());
+            var auditManager = Substitute.For<IAuditManager>();
+            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), auditManager);
             var entityId = "entity1";
-            var messageEnvelop = new MessageEnvelop
+            var before = new MessageEnvelop
             {
                 EntityId = entityId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
             };
+            var after = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Cactus", LastName = "Mango" },
+                DraftVersion = 5,
+            };
+
+            database.GetEntityDocument(EntityName.Contact, entityId).Returns(before, after);
 
             database.GetBasicInfo(EntityName.Contact, entityId).Returns(new EntityBasics { DraftVersion = 2 });
 
             // Act  
-            var result = await changeHandler.TryMergeDraft(messageEnvelop);
+            var result = await changeHandler.TryMergeDraft(before);
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
             await database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
-            await database.Received(1).MergeDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
+            await database.Received(1).MergeDraft(before, before.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
+            await auditManager.Received(1).Write(AuditTarget.Draft, after, before);
         }
 
         [Fact]
@@ -157,7 +168,7 @@ namespace StateManagment.Tests
             // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>());
+            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), Substitute.For<IAuditManager>());
             var entityId = "entity1";
 
             var messageEnvelop = new MessageEnvelop
@@ -182,15 +193,16 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task TryMergeDraft_WhenDeletedActionIsDetected_ReturnsVersionsAreNotChecks()
+        public async Task TryMergeDraft_WhenDeletedActionIsDetected_ReturnsVersionsAreNotChecksAndAudits()
         {
             // Arrange
+            var auditManager = Substitute.For<IAuditManager>();
             var distributedLock = Substitute.For<IDistributedLock>();
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>());
+            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), auditManager);
             var entityId = "entity1";
 
-            var messageEnvelop = new MessageEnvelop
+            var before = new MessageEnvelop
             {
                 Change = ChangeType.Delete,
                 EntityId = entityId,
@@ -198,19 +210,28 @@ namespace StateManagment.Tests
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 5,
             };
+            var after = new MessageEnvelop
+            {
+                Change = ChangeType.Delete,
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Green", LastName = "Black" },
+                DraftVersion = 5,
+            };
 
             var basics = new EntityBasics { DraftVersion = 5 };
             database.GetBasicInfo(EntityName.Contact, entityId).Returns(basics);
+            database.GetEntityDocument(EntityName.Contact, entityId).Returns(before, after);
 
             // Act  
-            var result = await changeHandler.TryMergeDraft(messageEnvelop);
+            var result = await changeHandler.TryMergeDraft(before);
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
             await database.Received(1).GetBasicInfo(EntityName.Contact, entityId);
-            await database.Received(1).MergeDraft(messageEnvelop, basics.DraftVersion + 1);
+            await database.Received(1).MergeDraft(before, basics.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
-            result.Should().Be(TaskOutcome.OK);
+            await auditManager.Received(1).Write(AuditTarget.Draft, after, before);
         }
 
         [Fact]
@@ -219,7 +240,7 @@ namespace StateManagment.Tests
             // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>());
+            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), Substitute.For<IAuditManager>());
             var entityId = "entity1";
 
             var messageEnvelop = new MessageEnvelop
@@ -252,12 +273,13 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task TryLockSubmitted_WhenInvoked_ThenTakesEntityLockAndCopiesLatestDraftToSubmitted()
+        public async Task TryLockSubmitted_WhenInvoked_ThenTakesEntityLockAndCopiesLatestDraftToSubmittedAndAudits()
         {
             // Arrange
+            var auditManager = Substitute.For<IAuditManager>();
             var distributedLock = Substitute.For<IDistributedLock>();
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>());
+            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), auditManager);
             var entityId = "entity1";
 
             var messageEnvelop = new MessageEnvelop
@@ -270,14 +292,27 @@ namespace StateManagment.Tests
                 UpdateUser = "testUser"
             };
 
+            var after = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                DraftVersion = 2,
+                IsSubmitted = true,
+                UpdateUser = "testUser"
+            };
+
             var storedDraft = new Contact() { FirstName = "Apple", LastName = "Orange" };
-            database.GetEntityDocument(EntityName.Contact, entityId).Returns(new MessageEnvelop()
+
+            var before = new MessageEnvelop()
             {
                 Name = EntityName.Contact,
                 EntityId = entityId,
                 Draft = storedDraft,
                 DraftVersion = 2
-            });
+            };
+
+            database.GetEntityDocument(EntityName.Contact, entityId).Returns(before, after);
 
             distributedLock.Lock(entityId).Returns(TaskOutcome.OK);
 
@@ -286,8 +321,9 @@ namespace StateManagment.Tests
 
             // Assert
             await distributedLock.Received(1).Lock(entityId);
-            await database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
+            await database.Received(2).GetEntityDocument(EntityName.Contact, entityId);
             await database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c == storedDraft), entityId, messageEnvelop.UpdateUser);
+            await auditManager.Received(1).Write(AuditTarget.Submitted, after, before);
         }
 
         [Fact]
@@ -297,7 +333,7 @@ namespace StateManagment.Tests
             var distributedLock = Substitute.For<IDistributedLock>();
             var eventPublisher = Substitute.For<IEventPublisher>();
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher);
+            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, Substitute.For<IAuditManager>());
             var entityId = "entity1";
 
             var messageEnvelop = new MessageEnvelop
@@ -316,21 +352,22 @@ namespace StateManagment.Tests
             var result = await changeHandler.ChangeStatusTo(messageEnvelop.EntityId, messageEnvelop.Name, EntityState.IN_REVIEW, ["PendingRiskChesks"]);
 
             // Assert
-            database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
-            database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.IN_REVIEW, Arg.Is<string[]>(s => s.Contains("PendingRiskChesks")));
+            await database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
+            await database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.IN_REVIEW, Arg.Is<string[]>(s => s.Contains("PendingRiskChesks")));
             await eventPublisher.Received(1).PublishStateChangedEvent(messageEnvelop);
         }
 
         [Fact]
-        public async Task ChangeStatusTo_WhenStateChangedToSynchronised_ThenCopiesSubmittedToApplied()
+        public async Task ChangeStatusTo_WhenStateChangedToSynchronised_ThenCopiesSubmittedToAppliedAndAudits()
         {
             // Arrange
+            var auditManager = Substitute.For<IAuditManager>();
             var distributedLock = Substitute.For<IDistributedLock>();
             var eventPublisher = Substitute.For<IEventPublisher>();
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher);
+            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);
             var entityId = "entity1";
-            var messageEnvelop = new MessageEnvelop
+            var before = new MessageEnvelop
             {
                 EntityId = entityId,
                 Name = EntityName.Contact,
@@ -338,16 +375,26 @@ namespace StateManagment.Tests
                 DraftVersion = 2,
                 IsSubmitted = true
             };
-            messageEnvelop.SetState(EntityState.EVALUATING);
+            var after = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Gray", LastName = "Yellow" },
+                DraftVersion = 2,
+                IsSubmitted = true
+            };
 
-            database.GetEntityDocument(EntityName.Contact, entityId).Returns(messageEnvelop);
+            before.SetState(EntityState.EVALUATING);
+
+            database.GetEntityDocument(EntityName.Contact, entityId).Returns(before, after);
 
             // Act
-            var result = await changeHandler.ChangeStatusTo(messageEnvelop.EntityId, messageEnvelop.Name, EntityState.SYNCHRONISED);
+            var result = await changeHandler.ChangeStatusTo(before.EntityId, before.Name, EntityState.SYNCHRONISED);
 
             // Assert
-            database.Received(1).StoreApplied(EntityName.Contact, Arg.Any<IEntity>(), entityId);
-            database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.SYNCHRONISED, Arg.Is<string[]>(s => s.Length == 0));
+            await database.Received(1).StoreApplied(EntityName.Contact, Arg.Any<IEntity>(), entityId);
+            await database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.SYNCHRONISED, Arg.Is<string[]>(s => s.Length == 0));
+            await auditManager.Received(1).Write(AuditTarget.Applied, after, before);
         }
     }
 }

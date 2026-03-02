@@ -9,7 +9,7 @@ namespace StateManagment
         private readonly IEventPublisher eventPublisher;
         private readonly IAuditManager auditManager;
 
-        public ChangeHandler(ICustomerDatabase database, IDistributedLock distributedLock, IEventPublisher eventPublisher, IAuditManager auditManager = null)
+        public ChangeHandler(ICustomerDatabase database, IDistributedLock distributedLock, IEventPublisher eventPublisher, IAuditManager auditManager)
         {
             this.database = database;
             this.distributedLock = distributedLock;
@@ -27,8 +27,11 @@ namespace StateManagment
 
             if (entityState == EntityState.SYNCHRONISED)
             {
-                var store = await database.GetEntityDocument(name, entityId);
-                database.StoreApplied(name, store.Submitted, entityId);
+                var before = await database.GetEntityDocument(name, entityId);
+                await database.StoreApplied(name, before.Submitted, entityId);
+                var after = await database.GetEntityDocument(name, entityId);
+
+                await auditManager.Write(AuditTarget.Applied, after, before);
             }
 
             var entityDocument = await database.GetEntityDocument(name, entityId);
@@ -85,7 +88,7 @@ namespace StateManagment
         }
 
         /// <summary>
-        /// Attempts to store a draft for the specified entity, ensuring that the draft version matches the current
+        /// Attempts to before a draft for the specified entity, ensuring that the draft version matches the current
         /// version in the database and increments the draft version as it is being updated.
         /// </summary>      
         public async Task<TaskOutcome> TryMergeDraft(MessageEnvelop envelop)
@@ -103,30 +106,35 @@ namespace StateManagment
                 // Special case for deletes, where we'll consider consumer is intending to remove the latest draft version.
                 // Therefore we'll not be checking requested version against stored version.
 
+                var before = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+
                 if (envelop.Change != ChangeType.Delete)
                 {
                     if (envelop.DraftVersion != basicInfo.DraftVersion)
                     {
                         return TaskOutcome.VERSION_MISMATCH;
                     }
-
+                   
                     await database.MergeDraft(envelop, envelop.DraftVersion + 1);
                 }
                 else
                 {
+
                     await database.MergeDraft(envelop, basicInfo.DraftVersion + 1);
                 }
+
+                var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+
+                return await auditManager.Write(AuditTarget.Draft, after, before);
             }
             finally
             {
                 await distributedLock.Unlock($"{envelop.EntityId}_draft");
             }
-
-            return TaskOutcome.OK;
         }
 
         /// <summary>
-        /// Attempts to acquire a distributed lock for the specified entity and store its latest draft as submitted data 
+        /// Attempts to acquire a distributed lock for the specified entity and before its latest draft as submitted data 
         /// along with latest draft version in the database.
         /// </summary>
         public async Task<TaskOutcome> TryLockSubmitted(MessageEnvelop envelop)
@@ -135,22 +143,23 @@ namespace StateManagment
             {
                 await distributedLock.Lock(envelop.EntityId);
 
-                var storedDraftEntity = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+                var before = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
 
                 // Unless there is a change, there is no need to submit
-                if (storedDraftEntity.DraftVersion == storedDraftEntity.SubmittedVersion)
+                if (before.DraftVersion == before.SubmittedVersion)
                 {
                     return TaskOutcome.NO_CHANGE_TO_SUBMIT;
                 }
 
-                await database.StoreSubmitted(storedDraftEntity.Name, storedDraftEntity.Draft, storedDraftEntity.EntityId, envelop.UpdateUser);
+                await database.StoreSubmitted(before.Name, before.Draft, before.EntityId, envelop.UpdateUser);
+                var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+
+                return await auditManager.Write(AuditTarget.Submitted, after, before);
             }
             finally
             {
                 await distributedLock.Unlock(envelop.EntityId);
             }
-
-            return TaskOutcome.OK;
         }
     }
 }

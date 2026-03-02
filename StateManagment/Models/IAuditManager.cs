@@ -10,11 +10,4 @@ namespace StateManagment.Models
     {
         Task<TaskOutcome> Write(AuditTarget auditTarget, MessageEnvelop after, MessageEnvelop? before = null);
     }
-
-    public enum AuditTarget
-    {
-        None = 0,
-        Draft,
-        Submitted
-    }
 }
