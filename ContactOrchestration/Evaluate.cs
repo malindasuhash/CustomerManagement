@@ -17,7 +17,7 @@ namespace ContactOrchestration
             // Send EVALUATION_STARTED event
             await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED), runtimeInfo.CorellationId);
 
-            // Marker in the data stored in the 
+            // Marker in the Ochestration data to skip certain checks perhaps.
             if (runtimeInfo.OrchestrationData.Any(a => a.Key.Equals("SHORTCUT_COMPLETE_EVALUATION")))
             {
                 await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, null, runtimeInfo.OrchestrationData), runtimeInfo.CorellationId);

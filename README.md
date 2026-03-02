@@ -25,3 +25,4 @@
 - Delete endpoint - first cut.
 - Audit manager embeded without actual audits records.
 - Completed Contact entity
+- Added Orchestration data and feedbacks to entity document.
