@@ -9,23 +9,22 @@ namespace ContactOrchestration
 {
     public class Apply
     {
-        private readonly IEventPublisher eventPublisher;
+        private readonly ISender sender;
 
-        public Apply(IEventPublisher eventPublisher)
+        public Apply(ISender sender)
         {
-            this.eventPublisher = eventPublisher;
+            this.sender = sender;
         }
 
         public async Task Run(RuntimeInfo runtimeInfo)
         {
            // There is nothing to change
-           await eventPublisher.Send(new OrchestrationEnvelop
-           {
-               EntityId = runtimeInfo.EntityId,
-               Name = EntityName.Contact,
-               SubmittedVersion = runtimeInfo.SubmittedVersion,
-               Status = RuntimeStatus.CHANGE_APPLIED
-           });
+           await sender.SendAsync(OrchestrationEnvelop.Create(
+               EntityName.Contact,
+               runtimeInfo.EntityId,
+               runtimeInfo.SubmittedVersion,
+               RuntimeStatus.CHANGE_APPLIED
+           ), runtimeInfo.CorellationId);
         }
     }
 }

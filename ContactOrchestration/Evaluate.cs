@@ -5,17 +5,24 @@ namespace ContactOrchestration
 {
     public class Evaluate
     {
-        private readonly IEventPublisher eventPublisher;
+        private readonly ISender sender;
 
-        public Evaluate(IEventPublisher eventPublisher)
+        public Evaluate(ISender sender)
         {
-            this.eventPublisher = eventPublisher;
+            this.sender = sender;
         }
 
         public async Task Run(RuntimeInfo runtimeInfo)
         {
             // Send EVALUATION_STARTED event
-            await eventPublisher.Send(Command(runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED));
+            await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED), runtimeInfo.CorellationId);
+
+            // Marker in the WorkflowData that indicate to skip steps and move to next.
+            if (runtimeInfo.WorkflowData.Contains("SHORTCUT_COMPLETE_EVALUATION"))
+            {
+                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, null, runtimeInfo.WorkflowData), runtimeInfo.CorellationId);
+                return;
+            }
 
             var rules = RulesToExecute();
             await rules.RunCheckAsync(runtimeInfo);
@@ -23,32 +30,24 @@ namespace ContactOrchestration
             if (rules.Issues.Count == 0)
             {
                 // Send EVALUATION_COMPLETED event
-                await eventPublisher.Send(Command(runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED));
+                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED), runtimeInfo.CorellationId);
             }
             else
             {
                 // Send EVALUATION_INCOMPLETE event
-                await eventPublisher.Send(Command(runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_INCOMPLETE, [.. rules.Issues]));
+                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_INCOMPLETE, [.. rules.Issues]), runtimeInfo.CorellationId);
             }
         }
 
+        /// <summary>
+        /// This can be a chain of responsibility
+        /// </summary>
+        /// <returns></returns>
         private Check RulesToExecute()
         {
             var evaluationCompleted = new EvalutionComplete(null);
             var contactValidationCheck = new ContactValidationCheck(evaluationCompleted);
             return contactValidationCheck;
-        }
-
-        private OrchestrationEnvelop Command(string entityId, int submittedVersion, RuntimeStatus status, string[] issues = null)
-        {
-            return new OrchestrationEnvelop
-            {
-                EntityId = entityId,
-                Name = EntityName.Contact,
-                SubmittedVersion = submittedVersion,
-                Status = status,
-                Messages = issues
-            };
         }
     }
 }
