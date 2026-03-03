@@ -24,7 +24,7 @@ namespace ContactOrchestration
                 return;
             }
 
-            var rules = RulesToExecute();
+            var rules = LoadRulesToExecute();
             await rules.RunCheckAsync(runtimeInfo);
 
             if (rules.Feedbacks.Count == 0)
@@ -43,7 +43,7 @@ namespace ContactOrchestration
         /// This can be a chain of responsibility
         /// </summary>
         /// <returns></returns>
-        private Check RulesToExecute()
+        private Check LoadRulesToExecute()
         {
             var evaluationCompleted = new EvalutionComplete();
             var contactValidationCheck = new ContactValidationCheck(evaluationCompleted);

@@ -16,7 +16,8 @@ namespace StateManagment.Entity
         public string AltTelephone { get; set; }
         public string AltTelephoneCode { get; set; }
         public Address PostalAddress { get; set; }
-
+        public Descriptor[] Descriptors { get; set; }
+        public string Label { get; set; }
         override public string ToString()
         {
             return $"FirstName: {FirstName}, LastName: {LastName}";

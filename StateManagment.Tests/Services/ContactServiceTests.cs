@@ -13,6 +13,24 @@ namespace StateManagment.Tests.Services
 {
     public class ContactServiceTests
     {
+        [Fact]
+        public async Task Touch_WhenInvoked_ThenDispatchTouchRequest()
+        {
+            // Arrange
+            var changeProcessor = Substitute.For<IChangeProcessor>();
+            var dataRetriver = Substitute.For<IDataRetriever>();
+            var contactService = new ContactService(changeProcessor, dataRetriver);
+            var entityId = "EntityId";
+            changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.LOCK_UNAVAILABLE);
+
+            // Act
+            var result = await contactService.Touch(entityId);
+
+            // Assert
+            await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(a => a.EntityId.Equals(entityId) && a.Name == EntityName.Contact && a.Change == ChangeType.Touch));
+            result.Should().Be(TaskOutcome.LOCK_UNAVAILABLE);
+        }
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -115,7 +133,7 @@ namespace StateManagment.Tests.Services
 
         [Fact]
         public async Task Get_WhenInvoked_ReturnsEntityDocument()
-        {             
+        {
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
             var dataRetriver = Substitute.For<IDataRetriever>();

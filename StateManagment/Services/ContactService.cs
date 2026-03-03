@@ -61,5 +61,17 @@ namespace StateManagment.Services
 
             return await dataRetriver.GetEntityEnvelop(envelop.EntityId, envelop.Name);
         }
+
+        public async Task<TaskOutcome> Touch(string entityId)
+        {
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Touch,
+                Name = EntityName.Contact,
+                EntityId = entityId
+            };
+
+            return await changeProcessor.ProcessChangeAsync(envelop);
+        }
     }
 }

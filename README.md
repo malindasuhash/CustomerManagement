@@ -7,14 +7,14 @@
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Runtime to host Contact orchestration.
-- Queue capability to send messages back to customer manager.
+- Data change event for consumers to react.
 
 # PENDING
 - Integration of pub/sub.
 - Concept of operation data store as an event stream storage.
 - Sample implementation of Legal Entity, Product and Trading Location
 - Complete sample implementation of validation for Contact
+- Runtime to host Contact orchestration.
 
 # DONE
 - Finite State Model 
@@ -26,3 +26,4 @@
 - Audit manager embeded without actual audits records.
 - Completed Contact entity
 - Added Orchestration data and feedbacks to entity document.
+- Queue capability to send messages back to customer manager.
