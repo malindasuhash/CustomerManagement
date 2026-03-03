@@ -17,25 +17,32 @@ namespace Infrastructure
         public AzureServiceBusMessageReceiver(IStateManager stateManager)
         {
             var connectionString = Environment.GetEnvironmentVariable("azureServiceBus.results.queue.listen");
-            serviceBusProcessor = new ServiceBusClient(connectionString).CreateProcessor("cm.orchestration.results");
+            serviceBusProcessor = new ServiceBusClient(connectionString).CreateProcessor("cm.orchestration.results", new ServiceBusProcessorOptions 
+            { 
+                AutoCompleteMessages = true,
+                ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete
+            });
             this.stateManager = stateManager;
-        }
-
-        public void ReceiveAsync()
-        {
-            serviceBusProcessor.ProcessMessageAsync += ServiceBusProcessor_ProcessMessageAsync;
-            
         }
 
         public void StartAsync()
         {
+            serviceBusProcessor.ProcessMessageAsync += ServiceBusProcessor_ProcessMessageAsync;
+            serviceBusProcessor.ProcessErrorAsync += ServiceBusProcessor_ProcessErrorAsync;
             serviceBusProcessor.StartProcessingAsync();
+        }
+
+        private Task ServiceBusProcessor_ProcessErrorAsync(ProcessErrorEventArgs arg)
+        {
+            // NOP
+            return Task.CompletedTask;
         }
 
         public void StopAync()
         {
-            serviceBusProcessor.ProcessMessageAsync -= ServiceBusProcessor_ProcessMessageAsync;
             serviceBusProcessor.StopProcessingAsync();
+            serviceBusProcessor.ProcessMessageAsync -= ServiceBusProcessor_ProcessMessageAsync;
+            serviceBusProcessor.ProcessErrorAsync -= ServiceBusProcessor_ProcessErrorAsync;
         }
 
         private async Task ServiceBusProcessor_ProcessMessageAsync(ProcessMessageEventArgs arg)

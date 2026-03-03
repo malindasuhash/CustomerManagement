@@ -14,7 +14,6 @@ namespace Api.Services
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            receiver.ReceiveAsync();
             receiver.StartAsync();
 
             return Task.Delay(Timeout.Infinite, cancellationToken);
@@ -22,6 +21,8 @@ namespace Api.Services
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
+            receiver.StopAync();
+
             return Task.CompletedTask;
         }
 
