@@ -47,7 +47,7 @@ namespace StateManagment
         {
             await database.StoreDraft(envelop, envelop.DraftVersion + 1);
 
-            var storedEntity = await database.GetEntityDocument(EntityName.Contact, envelop.EntityId);
+            var storedEntity = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
 
             return await auditManager.Write(AuditTarget.Draft, storedEntity);
         }
