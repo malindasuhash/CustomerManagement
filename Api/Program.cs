@@ -3,6 +3,7 @@ using Infrastructure;
 using InMemory;
 using StateManagment;
 using StateManagment.Models;
+using StateManagment.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,9 @@ builder.Services.AddSingleton<IOrchestrator, BasicOrchestrator>();
 builder.Services.AddSingleton<IStateManager, StateManager>();
 builder.Services.AddSingleton<IChangeProcessor, ChangeProcessor>();
 builder.Services.AddSingleton<IReceiver, AzureServiceBusMessageReceiver>();
+
+// API Services
+builder.Services.AddSingleton<ContactService>();
 
 var app = builder.Build();
 

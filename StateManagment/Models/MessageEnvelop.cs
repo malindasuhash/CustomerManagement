@@ -13,6 +13,7 @@ namespace StateManagment.Models
         public ChangeType Change { get; set; }
         public EntityName Name { get; set; }
 
+        public string CustomerId { get; set; }
         public string EntityId { get; set; }
         public int DraftVersion { get; set; }
         public int SubmittedVersion { get; set; }

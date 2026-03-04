@@ -3,6 +3,9 @@ using StateManagment.Models;
 
 namespace Api.Services
 {
+    /// <summary>
+    /// Background listner to process orchestration results.
+    /// </summary>
     public class OrchestrationResultProcessor : BackgroundService
     {
         private readonly IReceiver receiver;

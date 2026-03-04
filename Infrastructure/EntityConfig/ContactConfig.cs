@@ -15,6 +15,11 @@ namespace Infrastructure.EntityConfig
     {
         static ContactConfig()
         {
+            BsonClassMap.RegisterClassMap<Contact>(cm =>
+            {
+                cm.AutoMap();                
+            });
+
             BsonClassMap.RegisterClassMap<MessageEnvelop>(cm =>
             {
                 cm.AutoMap();
@@ -31,6 +36,11 @@ namespace Infrastructure.EntityConfig
             {
                 cm.AutoMap();
                 cm.MapMember(a => a.Type).SetSerializer(new EnumSerializer<FeedbackType>(MongoDB.Bson.BsonType.String));
+            });
+
+            BsonClassMap.RegisterClassMap<OrchestrationData>(cm =>
+            {
+                cm.AutoMap();
             });
         }
 

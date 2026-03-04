@@ -6,12 +6,12 @@ namespace StateManagment.Services
     public class ContactService
     {
         private readonly IChangeProcessor changeProcessor;
-        private readonly IDataRetriever dataRetriver;
+        private readonly ICustomerDatabase customerDatabase;
 
-        public ContactService(IChangeProcessor changeProcessor, IDataRetriever dataRetriver)
+        public ContactService(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase)
         {
             this.changeProcessor = changeProcessor;
-            this.dataRetriver = dataRetriver;
+            this.customerDatabase = customerDatabase;
         }
 
         public async Task<TaskOutcome> Delete(string entityId, bool submit)
@@ -29,7 +29,7 @@ namespace StateManagment.Services
 
         public async Task<MessageEnvelop> Get(string entityId)
         {
-            return await dataRetriver.GetEntityEnvelop(entityId, EntityName.Contact);
+            return await customerDatabase.GetEntityDocument(EntityName.Contact, entityId);
         }
 
         public async Task<MessageEnvelop> Patch(Contact contact, string entityId, bool submit)
@@ -45,7 +45,7 @@ namespace StateManagment.Services
 
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            return await dataRetriver.GetEntityEnvelop(envelop.EntityId, envelop.Name);
+            return await customerDatabase.GetEntityDocument(EntityName.Contact, entityId);
         }
 
         public async Task<MessageEnvelop> Post(Contact contact, bool submit)
@@ -59,7 +59,7 @@ namespace StateManagment.Services
             };
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            return await dataRetriver.GetEntityEnvelop(envelop.EntityId, envelop.Name);
+            return await customerDatabase.GetEntityDocument(EntityName.Contact, envelop.EntityId);
         }
 
         public async Task<TaskOutcome> Touch(string entityId)

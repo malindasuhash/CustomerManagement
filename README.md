@@ -7,14 +7,17 @@
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Data change event for consumers to react.
+- Add Legal Entity
+- Incorporate CustomerId in Contact
+- JSON API for Contact
 
 # PENDING
-- Integration of pub/sub.
+
 - Concept of operation data store as an event stream storage.
 - Sample implementation of Legal Entity, Product and Trading Location
 - Complete sample implementation of validation for Contact
 - Runtime to host Contact orchestration.
+- Authorisation and scopes for making certain changes.
 
 # DONE
 - Finite State Model 
@@ -27,3 +30,5 @@
 - Completed Contact entity
 - Added Orchestration data and feedbacks to entity document.
 - Queue capability to send messages back to customer manager.
+- Data change event for consumers to react (for contact only).
+- Integration of pub/sub.

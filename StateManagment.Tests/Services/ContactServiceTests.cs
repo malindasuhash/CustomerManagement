@@ -18,8 +18,8 @@ namespace StateManagment.Tests.Services
         {
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
-            var dataRetriver = Substitute.For<IDataRetriever>();
-            var contactService = new ContactService(changeProcessor, dataRetriver);
+            var customerDatabase = Substitute.For<ICustomerDatabase>();
+            var contactService = new ContactService(changeProcessor, customerDatabase);
             var entityId = "EntityId";
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
@@ -38,8 +38,8 @@ namespace StateManagment.Tests.Services
         {
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
-            var dataRetriver = Substitute.For<IDataRetriever>();
-            dataRetriver.GetEntityEnvelop(Arg.Any<string>(), Arg.Any<EntityName>()).Returns(Task.FromResult(new MessageEnvelop
+            var customerDatabase = Substitute.For<ICustomerDatabase>();
+            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
             {
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
@@ -47,7 +47,7 @@ namespace StateManagment.Tests.Services
                 IsSubmitted = submit
             }));
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
-            var contactService = new ContactService(changeProcessor, dataRetriver);
+            var contactService = new ContactService(changeProcessor, customerDatabase);
 
             // Act
             var result = await contactService.Post(new Contact { FirstName = "John", LastName = "Doe" }, submit);
@@ -70,10 +70,10 @@ namespace StateManagment.Tests.Services
         {
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
-            var dataRetriver = Substitute.For<IDataRetriever>();
+            var customerDatabase = Substitute.For<ICustomerDatabase>();
             var contact = new Contact { FirstName = "John", LastName = "Doe" };
 
-            dataRetriver.GetEntityEnvelop(Arg.Any<string>(), Arg.Any<EntityName>()).Returns(Task.FromResult(new MessageEnvelop
+            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
             {
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
@@ -82,7 +82,7 @@ namespace StateManagment.Tests.Services
             }));
 
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
-            var contactService = new ContactService(changeProcessor, dataRetriver);
+            var contactService = new ContactService(changeProcessor, customerDatabase);
 
             // Act
             var result = await contactService.Patch(contact, "321", submit);
@@ -105,10 +105,10 @@ namespace StateManagment.Tests.Services
         {
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
-            var dataRetriver = Substitute.For<IDataRetriever>();
+            var customerDatabase = Substitute.For<ICustomerDatabase>();
             var contact = new Contact { FirstName = "John", LastName = "Doe" };
 
-            dataRetriver.GetEntityEnvelop(Arg.Any<string>(), Arg.Any<EntityName>()).Returns(Task.FromResult(new MessageEnvelop
+            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
             {
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
@@ -117,7 +117,7 @@ namespace StateManagment.Tests.Services
             }));
 
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
-            var contactService = new ContactService(changeProcessor, dataRetriver);
+            var contactService = new ContactService(changeProcessor, customerDatabase);
 
             // Act
             var result = await contactService.Delete("321", submit);
@@ -136,8 +136,8 @@ namespace StateManagment.Tests.Services
         {
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
-            var dataRetriver = Substitute.For<IDataRetriever>();
-            dataRetriver.GetEntityEnvelop(Arg.Any<string>(), Arg.Any<EntityName>()).Returns(Task.FromResult(new MessageEnvelop
+            var customerDatabase = Substitute.For<ICustomerDatabase>();
+            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
             {
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
@@ -145,7 +145,7 @@ namespace StateManagment.Tests.Services
                 IsSubmitted = false
             }));
 
-            var contactService = new ContactService(changeProcessor, dataRetriver);
+            var contactService = new ContactService(changeProcessor, customerDatabase);
 
             // Act
             var result = await contactService.Get("321");
@@ -154,7 +154,7 @@ namespace StateManagment.Tests.Services
             result.Change.Should().Be(ChangeType.Read);
             result.Name.Should().Be(EntityName.Contact);
             result.EntityId.Should().Be("321");
-            _ = await dataRetriver.Received(1).GetEntityEnvelop(Arg.Is<string>(s => s == "321"), Arg.Is<EntityName>(n => n == EntityName.Contact));
+            _ = await customerDatabase.Received(1).GetEntityDocument(Arg.Is<EntityName>(n => n == EntityName.Contact), Arg.Is<string>(s => s == "321"));
         }
     }
 }
