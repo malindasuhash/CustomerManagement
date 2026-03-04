@@ -12,7 +12,7 @@ namespace Orchestration.Host
     {
         public async Task Run()
         {
-            var serviceBusQueue = new AzureServiceBusMessageSender();
+            var serviceBusQueue = new AzureServiceBusMessageSender("azureServiceBus.results.queue", "cm.orchestration.results");
 
             var contactOrchestration = new ContactOrchestration.Evaluate(serviceBusQueue);
 

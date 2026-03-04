@@ -9,7 +9,7 @@ namespace InMemory
 {
     public class SimpleEventPublisher : IEventPublisher
     {
-        public Task<TaskOutcome> PublishStateChangedEvent(MessageEnvelop messageEnvelop)
+        public Task<TaskOutcome> DataChangedAsync(MessageEnvelop messageEnvelop)
         {
             return Task.FromResult(TaskOutcome.OK);
         }

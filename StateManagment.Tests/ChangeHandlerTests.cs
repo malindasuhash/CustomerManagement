@@ -13,12 +13,13 @@ namespace StateManagment.Tests
     public class ChangeHandlerTests
     {
         [Fact]
-        public async Task Draft_WhenEntityIsDrafted_StoresEntityUnderDraftAndAudits()
+        public async Task Draft_WhenEntityIsDrafted_StoresEntityUnderDraftAndAudits_AndPublishDataChangedEvent()
         {
             // Arrange
             var database = Substitute.For<ICustomerDatabase>();
             var auditManager = Substitute.For<IAuditManager>();
-            var changeHandler = new ChangeHandler(database, Substitute.For<IDistributedLock>(), Substitute.For<IEventPublisher>(), auditManager);
+            var eventPublisher = Substitute.For<IEventPublisher>();
+            var changeHandler = new ChangeHandler(database, Substitute.For<IDistributedLock>(), eventPublisher, auditManager);
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = "entity1",
@@ -35,16 +36,17 @@ namespace StateManagment.Tests
             await database.Received(1).StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
             await database.Received(1).GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId);
             await auditManager.Received(1).Write(AuditTarget.Draft, messageEnvelop);
+            await eventPublisher.Received(1).DataChangedAsync(messageEnvelop);
         }
 
         [Fact]
-        public async Task Submitted_WhenEntityIsSubmitted_ThenStoresAuditsAndInDatastore()
+        public async Task Submitted_WhenEntityIsSubmitted_ThenStoresAuditsAndInDatastore_AndPublishDataChangedEvent()
         {
             // Arrange
             var database = Substitute.For<ICustomerDatabase>();
             var auditManager = Substitute.For<IAuditManager>();
-
-            var changeHandler = new ChangeHandler(database, Substitute.For<IDistributedLock>(), Substitute.For<IEventPublisher>(), auditManager);
+            var eventPublisher = Substitute.For<IEventPublisher>();
+            var changeHandler = new ChangeHandler(database, Substitute.For<IDistributedLock>(), eventPublisher, auditManager);
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = "entity1",
@@ -72,6 +74,7 @@ namespace StateManagment.Tests
             await database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", messageEnvelop.UpdateUser);
             await database.Received(2).GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId);
             await auditManager.Received(1).Write(AuditTarget.Submitted, messageEnvelop2, messageEnvelop);
+            await eventPublisher.Received(1).DataChangedAsync(messageEnvelop2);
         }
 
         [Fact]
@@ -124,13 +127,14 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task TryMergeDraft_ObtainsSpecialDraftLock_And_ThenAddsToDraftIfVersionsAreHigherAndAudits()
+        public async Task TryMergeDraft_ObtainsSpecialDraftLock_And_ThenAddsToDraftIfVersionsAreHigherAndAuditsAndPublishEvent()
         {
             // Arrange
             var distributedLock = Substitute.For<IDistributedLock>();
             var database = Substitute.For<ICustomerDatabase>();
             var auditManager = Substitute.For<IAuditManager>();
-            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), auditManager);
+            var eventPublisher = Substitute.For<IEventPublisher>();
+            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);
             var entityId = "entity1";
             var before = new MessageEnvelop
             {
@@ -160,6 +164,7 @@ namespace StateManagment.Tests
             await database.Received(1).MergeDraft(before, before.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
             await auditManager.Received(1).Write(AuditTarget.Draft, after, before);
+            await eventPublisher.Received(1).DataChangedAsync(after);
         }
 
         [Fact]
@@ -273,13 +278,14 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task TryLockSubmitted_WhenInvoked_ThenTakesEntityLockAndCopiesLatestDraftToSubmittedAndAudits()
+        public async Task TryLockSubmitted_WhenInvoked_ThenTakesEntityLockAndCopiesLatestDraftToSubmittedAndAuditsAndPublishEvent()
         {
             // Arrange
             var auditManager = Substitute.For<IAuditManager>();
             var distributedLock = Substitute.For<IDistributedLock>();
             var database = Substitute.For<ICustomerDatabase>();
-            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), auditManager);
+            var eventPublisher = Substitute.For<IEventPublisher>();
+            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);
             var entityId = "entity1";
 
             var messageEnvelop = new MessageEnvelop
@@ -324,6 +330,7 @@ namespace StateManagment.Tests
             await database.Received(2).GetEntityDocument(EntityName.Contact, entityId);
             await database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c == storedDraft), entityId, messageEnvelop.UpdateUser);
             await auditManager.Received(1).Write(AuditTarget.Submitted, after, before);
+            await eventPublisher.Received(1).DataChangedAsync(after);
         }
 
         [Fact]
@@ -355,7 +362,7 @@ namespace StateManagment.Tests
             // Assert
             await database.Received(1).GetEntityDocument(EntityName.Contact, entityId);
             await database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.IN_REVIEW, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
-            await eventPublisher.Received(1).PublishStateChangedEvent(messageEnvelop);
+            await eventPublisher.Received(1).DataChangedAsync(messageEnvelop);
         }
 
         [Fact]

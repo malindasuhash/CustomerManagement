@@ -18,7 +18,7 @@ namespace Integration.Tests
         {
             var database = new MongoCustomerDatabase();
             var distributedLock = new DictionaryLock();
-            var eventPublisher = new SimpleEventPublisher();
+            var eventPublisher = new DataChangedEventPublisher();
             var auditManager = new AuditManager();
 
             var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);

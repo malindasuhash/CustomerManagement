@@ -8,6 +8,6 @@ namespace StateManagment.Models
 {
     public interface IEventPublisher
     {
-        Task<TaskOutcome> PublishStateChangedEvent(MessageEnvelop messageEnvelop);
+        Task<TaskOutcome> DataChangedAsync(MessageEnvelop messageEnvelop);
     }
 }

@@ -190,5 +190,10 @@ namespace Infrastructure.EntityConfig
                     SubmittedVersion = p.SubmittedVersion,
                 }).FirstOrDefaultAsync();
         }
+
+        public static void CreateDataChangedEvent(MessageEnvelop messageEnvelop)
+        {
+
+        }
     }
 }

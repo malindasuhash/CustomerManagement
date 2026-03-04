@@ -36,7 +36,7 @@ namespace StateManagment
 
             var entityDocument = await database.GetEntityDocument(name, entityId);
 
-            return await eventPublisher.PublishStateChangedEvent(entityDocument);
+            return await eventPublisher.DataChangedAsync(entityDocument);
         }
 
         /// <summary>
@@ -49,7 +49,9 @@ namespace StateManagment
 
             var storedEntity = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
 
-            return await auditManager.Write(AuditTarget.Draft, storedEntity);
+            await auditManager.Write(AuditTarget.Draft, storedEntity);
+
+            return await eventPublisher.DataChangedAsync(storedEntity);
         }
 
         /// <summary>
@@ -73,7 +75,9 @@ namespace StateManagment
             await database.StoreSubmitted(envelop.Name, envelop.Draft, envelop.EntityId, envelop.UpdateUser);
             var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
 
-            return await auditManager.Write(AuditTarget.Submitted, after, before);
+            await auditManager.Write(AuditTarget.Submitted, after, before);
+
+            return await eventPublisher.DataChangedAsync(after);
         }
 
         /// <summary>
@@ -125,7 +129,8 @@ namespace StateManagment
 
                 var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
 
-                return await auditManager.Write(AuditTarget.Draft, after, before);
+                await auditManager.Write(AuditTarget.Draft, after, before);
+                return await eventPublisher.DataChangedAsync(after);
             }
             finally
             {
@@ -154,7 +159,8 @@ namespace StateManagment
                 await database.StoreSubmitted(before.Name, before.Draft, before.EntityId, envelop.UpdateUser);
                 var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
 
-                return await auditManager.Write(AuditTarget.Submitted, after, before);
+                await auditManager.Write(AuditTarget.Submitted, after, before);
+                return await eventPublisher.DataChangedAsync(after);
             }
             finally
             {

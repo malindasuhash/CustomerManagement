@@ -60,7 +60,7 @@ namespace StateManagment
 
                 if (envelop.IsSubmitted)
                 {
-                    changeHandler.Submitted(envelop);
+                    await changeHandler.Submitted(envelop);
                     var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
                     return result;
                 }
