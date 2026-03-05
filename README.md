@@ -32,3 +32,57 @@
 - Data change event for consumers to react (for contact only).
 - Integration of pub/sub.
 - Incorporate CustomerId in Contact and Mongo
+
+
+### GET Contact response 
+```
+{
+  "customerId": "Cus123",
+  "entityId": "5522a8da-0186-47cb-b552-74df7958bd4a",
+  "state": "SYNCHRONISED",
+  "draft": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "telephone": null,
+    "telephoneCode": null,
+    "email": null,
+    "altTelephone": null,
+    "altTelephoneCode": null,
+    "postalAddress": null,
+    "descriptors": [],
+    "label": null
+  },
+  "draftVersion": 1,
+  "submitted": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "telephone": null,
+    "telephoneCode": null,
+    "email": null,
+    "altTelephone": null,
+    "altTelephoneCode": null,
+    "postalAddress": null,
+    "descriptors": [],
+    "label": null
+  },
+  "submittedVersion": 1,
+  "applied": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "telephone": null,
+    "telephoneCode": null,
+    "email": null,
+    "altTelephone": null,
+    "altTelephoneCode": null,
+    "postalAddress": null,
+    "descriptors": [],
+    "label": null
+  },
+  "appliedVersion": 1,
+  "updateUser": null,
+  "updateTimestamp": "0001-01-01T00:00:00",
+  "createdUser": "Tester",
+  "createdTimestamp": "2026-03-05T06:03:45.648Z",
+  "feedback": []
+}
+```
