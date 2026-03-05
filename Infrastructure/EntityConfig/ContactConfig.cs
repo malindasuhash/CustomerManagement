@@ -46,7 +46,7 @@ namespace Infrastructure.EntityConfig
 
         public static async Task<DbEexecutionParams> Patch(MessageEnvelop messageEnvelop, int latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM")
         {
-            var stored = await Get(messageEnvelop.EntityId, db);
+            var stored = await Get(messageEnvelop.EntityId, messageEnvelop.CustomerId, db);
 
             var contact = (Contact)messageEnvelop.Draft;
             var storedContact = (Contact)stored.Draft;
@@ -83,7 +83,7 @@ namespace Infrastructure.EntityConfig
 
         public static async Task<DbEexecutionParams> UpdateData(string entityId, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM")
         {
-            var contact = await Get(entityId, db);
+            var contact = await GetById(entityId, db);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -107,7 +107,7 @@ namespace Infrastructure.EntityConfig
         public static async Task<DbEexecutionParams> AddToSubmitted(IEntity entity, string entityId, string updatedUser, IMongoDatabase db)
         {
             // Read the entity document - I need the latest document here.
-            var contact = await Get(entityId, db);
+            var contact = await GetById(entityId, db);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -129,7 +129,7 @@ namespace Infrastructure.EntityConfig
 
         public static async Task<DbEexecutionParams> AddToApplied(string entityId, IEntity entity, IMongoDatabase db, string updatedUser = "SYSTEM")
         {
-            var contact = await Get(entityId, db);
+            var contact = await GetById(entityId, db);
 
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
@@ -161,6 +161,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.AppliedVersion, messageEnvelop.AppliedVersion)
             .Set(a => a.Draft, (Contact)messageEnvelop.Draft)
             .Set(a => a.State, messageEnvelop.State)
+            .Set(a => a.CustomerId, messageEnvelop.CustomerId)
             .SetOnInsert(a => a.CreatedTimestamp, DateTime.UtcNow)
             .SetOnInsert(a => a.CreatedUser, messageEnvelop.CreatedUser)
             .SetOnInsert(a => a.EntityId, messageEnvelop.EntityId);
@@ -175,7 +176,19 @@ namespace Infrastructure.EntityConfig
             });
         }
 
-        public static Task<MessageEnvelop> Get(string entityId, IMongoDatabase db)
+        public static Task<MessageEnvelop> Get(string entityId, string customerId, IMongoDatabase db)
+        {
+            var filter = Builders<MessageEnvelop>.Filter.And(
+                Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId),
+                Builders<MessageEnvelop>.Filter.Eq(o => o.CustomerId, customerId));
+                
+
+            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+
+            return contacts.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public static Task<MessageEnvelop> GetById(string entityId, IMongoDatabase db)
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 

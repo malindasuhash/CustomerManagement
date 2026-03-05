@@ -14,10 +14,11 @@ namespace Api.Controllers
         {
             this.contactService = contactService;
         }
+
         [HttpGet("customers/{customerId}/contact/{contactId}")]
         public async Task<EntityDocumentModel> GetContactById(string customerId, string contactId)
         {
-            var contact = await contactService.Get(contactId);
+            var contact = await contactService.Get(customerId, contactId);
 
             var model = new EntityDocumentModel()
             {

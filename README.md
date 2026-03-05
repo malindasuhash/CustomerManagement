@@ -8,7 +8,6 @@
 
 # UNDER DEV
 - Add Legal Entity
-- Incorporate CustomerId in Contact
 - JSON API for Contact
 
 # PENDING
@@ -32,3 +31,4 @@
 - Queue capability to send messages back to customer manager.
 - Data change event for consumers to react (for contact only).
 - Integration of pub/sub.
+- Incorporate CustomerId in Contact and Mongo

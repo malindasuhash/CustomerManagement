@@ -36,7 +36,8 @@ namespace Integration.Tests
                 IsSubmitted = true,
                 Draft = new Contact { FirstName = "John", LastName = "Doe" },
                 CreatedUser = "Tester",
-                UpdateUser = "Malinda"
+                UpdateUser = "Malinda",
+                CustomerId = "Cus123"
             };
 
             await changeProcessor.ProcessChangeAsync(envelop);

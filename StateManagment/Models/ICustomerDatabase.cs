@@ -10,7 +10,7 @@ namespace StateManagment.Models
     public interface ICustomerDatabase
     {
         Task<EntityBasics> GetBasicInfo(EntityName entityName, string entityId);
-        Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId);
+        Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId, string? customerId = null);
         Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion);
         Task<TaskOutcome> StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser);
         Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, Feedback[] feedbacks, OrchestrationData[] orchestrationData);

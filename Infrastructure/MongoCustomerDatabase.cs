@@ -37,12 +37,12 @@ namespace Infrastructure
             throw new NotImplementedException();
         }
 
-        public async Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId)
+        public async Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId, string? customerId = null)
         {
             switch (entityName)
             {
                 case EntityName.Contact:
-                    var contact = await ContactConfig.Get(entityId, database);
+                    var contact = await ContactConfig.GetById(entityId, database);
                     contact.Name = entityName;
                     contact.Change = ChangeType.Read;
                     return contact;

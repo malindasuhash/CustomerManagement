@@ -142,18 +142,20 @@ namespace StateManagment.Tests.Services
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
                 EntityId = "321",
-                IsSubmitted = false
+                IsSubmitted = false,
+                CustomerId = "CustomerId"
             }));
 
             var contactService = new ContactService(changeProcessor, customerDatabase);
 
             // Act
-            var result = await contactService.Get("321");
+            var result = await contactService.Get("CustomerId", "321");
 
             // Assert   
             result.Change.Should().Be(ChangeType.Read);
             result.Name.Should().Be(EntityName.Contact);
             result.EntityId.Should().Be("321");
+            result.CustomerId.Should().Be("CustomerId");
             _ = await customerDatabase.Received(1).GetEntityDocument(Arg.Is<EntityName>(n => n == EntityName.Contact), Arg.Is<string>(s => s == "321"));
         }
     }

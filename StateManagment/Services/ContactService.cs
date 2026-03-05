@@ -27,9 +27,9 @@ namespace StateManagment.Services
             return await changeProcessor.ProcessChangeAsync(envelop);
         }
 
-        public async Task<MessageEnvelop> Get(string entityId)
+        public async Task<MessageEnvelop> Get(string customerId, string entityId)
         {
-            return await customerDatabase.GetEntityDocument(EntityName.Contact, entityId);
+            return await customerDatabase.GetEntityDocument(EntityName.Contact, entityId, customerId);
         }
 
         public async Task<MessageEnvelop> Patch(Contact contact, string entityId, bool submit)
