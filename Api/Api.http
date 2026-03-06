@@ -35,3 +35,11 @@ content-type: application/json
   ]
 }
 ###
+
+PATCH {{Api_HostAddress}}/customers/Cus123/contact/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
+content-type: application/json
+{
+  "firstName": "Updated 1",
+  "lastName": "Updated 2"
+}
+###

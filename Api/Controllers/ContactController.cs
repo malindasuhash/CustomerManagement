@@ -21,9 +21,9 @@ namespace Api.Controllers
         [HttpPost("customers/{customerId}/contact")]
         public async Task<EntityDocumentModel> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
         {
-            var storedEntity = await contactService.Post(contact, false);
+            var storedEntity = await contactService.Post(customerId, contact, false);
 
-            var contactEntity = await contactService.Get(customerId, storedEntity.EntityId);
+            var contactEntity = await contactService.Get(storedEntity.CustomerId, storedEntity.EntityId);
 
             return Translate(contactEntity);
         }

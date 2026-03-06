@@ -48,9 +48,10 @@ namespace StateManagment.Tests.Services
             }));
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
             var contactService = new ContactService(changeProcessor, customerDatabase);
+            var customerId = "cus123";
 
             // Act
-            var result = await contactService.Post(new Contact { FirstName = "John", LastName = "Doe" }, submit);
+            var result = await contactService.Post(customerId, new Contact { FirstName = "John", LastName = "Doe" }, submit);
 
             // Assert
             result.Change.Should().Be(ChangeType.Read);
@@ -59,6 +60,7 @@ namespace StateManagment.Tests.Services
             _ = await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(e =>
 
                 e.Change == ChangeType.Create && e.Name == EntityName.Contact && e.IsSubmitted == submit
+                && e.CustomerId == customerId
 
             ));
         }
@@ -137,7 +139,7 @@ namespace StateManagment.Tests.Services
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
             var customerDatabase = Substitute.For<ICustomerDatabase>();
-            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
+            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
             {
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
@@ -156,7 +158,7 @@ namespace StateManagment.Tests.Services
             result.Name.Should().Be(EntityName.Contact);
             result.EntityId.Should().Be("321");
             result.CustomerId.Should().Be("CustomerId");
-            _ = await customerDatabase.Received(1).GetEntityDocument(Arg.Is<EntityName>(n => n == EntityName.Contact), Arg.Is<string>(s => s == "321"));
+            _ = await customerDatabase.Received(1).GetEntityDocument(Arg.Is<EntityName>(n => n == EntityName.Contact), Arg.Is<string>(s => s == "321"), Arg.Is<string>(a => a.Equals("CustomerId")));
         }
     }
 }

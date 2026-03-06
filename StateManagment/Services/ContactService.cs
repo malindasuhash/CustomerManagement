@@ -48,14 +48,15 @@ namespace StateManagment.Services
             return await customerDatabase.GetEntityDocument(EntityName.Contact, entityId);
         }
 
-        public async Task<MessageEnvelop> Post(Contact contact, bool submit)
+        public async Task<MessageEnvelop> Post(string customerId, Contact contact, bool submit)
         {
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
                 Name = EntityName.Contact,
                 Draft = contact,
-                IsSubmitted = submit
+                IsSubmitted = submit,
+                CustomerId = customerId
             };
             await changeProcessor.ProcessChangeAsync(envelop);
 
