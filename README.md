@@ -17,6 +17,7 @@
 - Complete sample implementation of validation for Contact
 - Runtime to host Contact orchestration.
 - Authorisation and scopes for making certain changes.
+- Soft deletes for entities.
 
 # DONE
 - Finite State Model 
@@ -32,6 +33,7 @@
 - Data change event for consumers to react (for contact only).
 - Integration of pub/sub.
 - Incorporate CustomerId in Contact and Mongo
+- GET Contact
 
 
 ### GET Contact response 
