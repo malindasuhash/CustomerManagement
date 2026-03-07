@@ -167,5 +167,26 @@ namespace StateManagment
                 await distributedLock.Unlock(envelop.EntityId);
             }
         }
+
+        public async Task<TaskOutcome> TryMarkForRemoval(MessageEnvelop envelop)
+        {
+            try
+            {
+                await distributedLock.Lock(envelop.EntityId);
+
+                var before = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+
+                await database.MarkForRemoval(envelop.Name, envelop.EntityId);
+
+                var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+
+                await auditManager.Write(AuditTarget.Document, after, before);
+                return await eventPublisher.DataChangedAsync(after);
+            }
+            finally
+            {
+                await distributedLock.Unlock(envelop.EntityId);
+            }
+        }
     }
 }

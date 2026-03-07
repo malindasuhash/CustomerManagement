@@ -38,16 +38,10 @@ namespace StateManagment
 
             if (envelop.Change == ChangeType.Delete)
             {
-                await changeHandler.TryMergeDraft(envelop);
+                await changeHandler.TryMarkForRemoval(envelop);
 
                 if (envelop.IsSubmitted)
                 {
-                    var lockedResult = await changeHandler.TryLockSubmitted(envelop);
-                    if (lockedResult != TaskOutcome.OK)
-                    {
-                        return lockedResult;
-                    }
-
                     return await stateManager.Initiate(envelop.Name, envelop.EntityId);
                 }
 

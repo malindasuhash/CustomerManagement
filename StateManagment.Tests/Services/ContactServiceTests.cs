@@ -113,26 +113,29 @@ namespace StateManagment.Tests.Services
             var changeProcessor = Substitute.For<IChangeProcessor>();
             var customerDatabase = Substitute.For<ICustomerDatabase>();
             var contact = new Contact { FirstName = "John", LastName = "Doe" };
+            var customerId = "customerId";
 
             customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
             {
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
                 EntityId = "321",
-                IsSubmitted = submit
+                IsSubmitted = submit,
+                CustomerId = customerId,
             }));
 
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
             var contactService = new ContactService(changeProcessor, customerDatabase);
 
             // Act
-            var result = await contactService.Delete("321", submit);
+            var result = await contactService.Delete(customerId, "321", submit);
 
             // Assert
             result.Successful.Should().BeTrue();
             _ = await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(e =>
 
                e.Change == ChangeType.Delete && e.Name == EntityName.Contact && e.IsSubmitted == submit && e.EntityId == "321"
+               && e.CustomerId == customerId
 
            ));
         }

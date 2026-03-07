@@ -25,5 +25,9 @@ namespace Api.ApiModels
         public DateTime CreatedTimestamp { get; set; }
 
         public Feedback[] Feedback { get; set; }
+
+        public bool RemoveRequested { get; set; }
+
+        public bool Removed { get; set; }
     }
 }

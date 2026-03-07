@@ -16,5 +16,6 @@ namespace StateManagment.Models
         Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, Feedback[] feedbacks, OrchestrationData[] orchestrationData);
         Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId);
         Task<TaskOutcome> MergeDraft(MessageEnvelop envelop, int latestDraftVersion);
+        Task<TaskOutcome> MarkForRemoval(EntityName name, string entityId);
     }
 }

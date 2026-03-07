@@ -176,6 +176,22 @@ namespace Infrastructure.EntityConfig
             });
         }
 
+        public static Task<DbEexecutionParams> SetMarkForRemoval(string entityId, IMongoDatabase db)
+        {
+            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            var onInsert = Builders<MessageEnvelop>.Update
+            .Set(a => a.RemoveRequested, true);
+
+            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+
+            return Task.FromResult(new DbEexecutionParams
+            {
+                Collection = contacts,
+                Definition = onInsert,
+                Filter = filter
+            });
+        }
+
         public static Task<MessageEnvelop> Get(string entityId, string customerId, IMongoDatabase db)
         {
             var filter = Builders<MessageEnvelop>.Filter.And(

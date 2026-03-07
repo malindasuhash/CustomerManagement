@@ -5,6 +5,7 @@
         None = 0,
         Draft,
         Submitted,
-        Applied
+        Applied,
+        Document
     }
 }

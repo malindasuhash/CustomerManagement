@@ -20,6 +20,16 @@ namespace Api.Controllers
             this.contactService = contactService;
         }
 
+        [HttpDelete("customers/{customerId}/contact/{contactId}")]
+        public async Task<EntityDocumentModel> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
+        {
+            await contactService.Delete(customerId, contactId, false);
+
+            var contactEntity = await contactService.Get(customerId, contactId);
+
+            return Translate(contactEntity);
+        }
+
         [HttpPost("customers/{customerId}/contact")]
         public async Task<EntityDocumentModel> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
         {
@@ -105,6 +115,8 @@ namespace Api.Controllers
                 DraftVersion = contact.DraftVersion,
                 State = contact.State.ToString(),
                 Feedback = contact.Feedback,
+                Removed = contact.Removed,
+                RemoveRequested = contact.RemoveRequested
             };
 
             return model;

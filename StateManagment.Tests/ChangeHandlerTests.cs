@@ -404,5 +404,76 @@ namespace StateManagment.Tests
             await database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.SYNCHRONISED, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
             await auditManager.Received(1).Write(AuditTarget.Applied, after, before);
         }
+
+        [Fact]
+        public async Task TryMarkForRemoval_WhenInvoked_RemovalHappensWithinAnEntityLock()
+        {
+            // Arrange
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.None,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 2,
+                SubmittedVersion = 1,
+                IsSubmitted = true
+            };
+
+            var auditManager = Substitute.For<IAuditManager>();
+            var distributedLock = Substitute.For<IDistributedLock>();
+            var eventPublisher = Substitute.For<IEventPublisher>();
+            var database = Substitute.For<ICustomerDatabase>();
+            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);
+
+            // Act
+            await changeHandler.TryMarkForRemoval(envelop);
+
+            // Assert
+            await distributedLock.Received(1).Lock(envelop.EntityId);
+            await distributedLock.Received(1).Unlock(envelop.EntityId);
+        }
+
+        [Fact]
+        public async Task TryMarkForRemoval_RemovalsItemFromDatabase_AuditsAndPublishedEvent()
+        {
+            // Arrange
+            var before = new MessageEnvelop
+            {
+                Change = ChangeType.None,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 2,
+                SubmittedVersion = 1,
+                IsSubmitted = true,
+                CustomerId = "123",
+            };
+            var after = new MessageEnvelop
+            {
+                Change = ChangeType.None,
+                Name = EntityName.Contact,
+                EntityId = "123",
+                DraftVersion = 2,
+                SubmittedVersion = 1,
+                IsSubmitted = true,
+                CustomerId = "123"
+            };
+
+            var database = Substitute.For<ICustomerDatabase>();
+            database.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>(), Arg.Any<string>()).Returns(before, after);
+
+            var auditManager = Substitute.For<IAuditManager>();
+            var distributedLock = Substitute.For<IDistributedLock>();
+            var eventPublisher = Substitute.For<IEventPublisher>();
+            
+            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);
+
+            // Act
+            await changeHandler.TryMarkForRemoval(before);
+
+            // Assert
+            await database.Received(1).MarkForRemoval(before.Name, before.EntityId);
+            await auditManager.Received(1).Write(AuditTarget.Document, after, before);
+            await eventPublisher.Received(1).DataChangedAsync(after);
+        }
     }
 }

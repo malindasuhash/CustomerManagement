@@ -44,3 +44,6 @@ Content-Type: application/json
   "targetVersion": 1
 }
 ###
+
+DELETE {{Api_HostAddress}}/customers/Cus123/contact/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
+###

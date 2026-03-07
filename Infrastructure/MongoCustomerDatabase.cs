@@ -145,5 +145,24 @@ namespace Infrastructure
 
             return TaskOutcome.OK;
         }
+
+        public async Task<TaskOutcome> MarkForRemoval(EntityName name, string entityId)
+        {
+            DbEexecutionParams dbEexecution;
+
+            switch (name)
+            {
+                case EntityName.Contact:
+                    dbEexecution = await ContactConfig.SetMarkForRemoval(entityId, database);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
+
+            return TaskOutcome.OK;
+        }
     }
 }

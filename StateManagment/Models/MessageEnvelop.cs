@@ -45,14 +45,17 @@ namespace StateManagment.Models
 
         // Approach for handling deletes
 
-        // This would mean a consumer has requested this document to be deleted.
+        // This would mean a consumer has requested this entity document to be deleted.
         // Any further updates to this document are prevented unless it is resetted.
+        // Once a "reset" function is provided, then this property may need to be reset
+        // back to "false".
         public bool RemoveRequested { get; set; }
         
         // This may mean the document is removed from ciculation unless
         // the client has appropriate permissions to see it.
         // Perhaps if the consumer is a "power user", then such a user
         // should be able to see whether the document is removed.
+        // This property will be set during the apply step.
         public bool Removed { get; set; }
 
         public void SetState(EntityState targetState)

@@ -117,7 +117,7 @@ namespace StateManagment.Tests
             await changeProcessor.ProcessChangeAsync(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(envelop);
+            await changeHandler.Received(1).TryMarkForRemoval(envelop);
         }
 
         [Fact]
@@ -133,15 +133,13 @@ namespace StateManagment.Tests
             };
             var stateManager = Substitute.For<IStateManager>();
             var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryLockSubmitted(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.OK);
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
             var result = await changeProcessor.ProcessChangeAsync(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(envelop);
-            await changeHandler.Received(1).TryLockSubmitted(envelop);
+            await changeHandler.Received(1).TryMarkForRemoval(envelop);
             await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
         }
 
@@ -371,6 +369,6 @@ namespace StateManagment.Tests
             // Assert
             result.Successful.Should().BeFalse();
             result.Should().Be(TaskOutcome.CHANGE_NOT_SUPPORTED);
-        }
+        }       
     }
 }

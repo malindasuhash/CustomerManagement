@@ -14,14 +14,15 @@ namespace StateManagment.Services
             this.customerDatabase = customerDatabase;
         }
 
-        public async Task<TaskOutcome> Delete(string entityId, bool submit)
+        public async Task<TaskOutcome> Delete(string customerId, string entityId, bool submit)
         {
             var envelop = new MessageEnvelop
             {
                 EntityId = entityId,
                 Change = ChangeType.Delete,
                 Name = EntityName.Contact,
-                IsSubmitted = submit
+                IsSubmitted = submit,
+                CustomerId = customerId
             };
 
             return await changeProcessor.ProcessChangeAsync(envelop);
