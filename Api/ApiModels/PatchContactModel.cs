@@ -1,4 +1,6 @@
-﻿namespace Api.ApiModels
+﻿using StateManagment.Entity;
+
+namespace Api.ApiModels
 {
     // Some considerations:
     // 1. Properties may need to optional so that the serialisation framework
@@ -8,6 +10,14 @@
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public string? Telephone { get; set; }
+        public string? TelephoneCode { get; set; }
+        public string? Email { get; set; }
+        public string? AltTelephone { get; set; }
+        public string? AltTelephoneCode { get; set; }
+        public PatchAddressModel? PostalAddress { get; set; }
+        public PatchDescriptorModel[]? Descriptors { get; set; }
+        public string? Label { get; set; }
 
         public int TargetVersion { get; set; } = 0;
     }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
 using StateManagment.Models;
 using StateManagment.Services;
+using System.Linq;
 
 namespace Api.Controllers
 {
@@ -40,7 +41,7 @@ namespace Api.Controllers
         [HttpPatch("customers/{customerId}/contact/{contactId}")]
         public async Task<EntityDocumentModel> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] PatchContactModel patch)
         {
-            var patchModel = ContactToPatch(patch);  
+            var patchModel = ContactToPatch(patch);
             await contactService.Patch(patchModel, customerId, contactId, patch.TargetVersion, false);
 
             var contactEntity = await contactService.Get(customerId, contactId);
@@ -56,8 +57,34 @@ namespace Api.Controllers
             var contact = new Contact
             {
                 FirstName = patchModel.FirstName,
-                LastName = patchModel.LastName
+                LastName = patchModel.LastName,
+                AltTelephone = patchModel.AltTelephone,
+                AltTelephoneCode = patchModel.AltTelephoneCode,
+                Email = patchModel.Email,
+                Label = patchModel.Label,
+                Telephone = patchModel.Telephone,
+                TelephoneCode = patchModel.TelephoneCode
             };
+
+            if (patchModel.Descriptors != null)
+            {
+                contact.Descriptors = [.. patchModel.Descriptors.Select(a => new Descriptor() { Key = a.Key, Value = a.Value })];
+            }
+
+            if (patchModel.PostalAddress != null)
+            {
+                contact.PostalAddress = new Address()
+                {
+                    Code = patchModel.PostalAddress.Code,
+                    Country = patchModel.PostalAddress.Country,
+                    Line1 = patchModel.PostalAddress.Line1,
+                    Line2 = patchModel.PostalAddress.Line2,
+                    Line3 = patchModel.PostalAddress.Line3,
+                    Locality = patchModel.PostalAddress.Locality,
+                    Name = patchModel.PostalAddress.Name,
+                    Region = patchModel.PostalAddress.Region
+                };
+            }
 
             return contact;
         }
