@@ -43,6 +43,18 @@ namespace StateManagment.Models
         public Feedback[] Feedback { get; set; }
         public OrchestrationData[] OrchestrationData { get; set; }
 
+        // Approach for handling deletes
+
+        // This would mean a consumer has requested this document to be deleted.
+        // Any further updates to this document are prevented unless it is resetted.
+        public bool RemoveRequested { get; set; }
+        
+        // This may mean the document is removed from ciculation unless
+        // the client has appropriate permissions to see it.
+        // Perhaps if the consumer is a "power user", then such a user
+        // should be able to see whether the document is removed.
+        public bool Removed { get; set; }
+
         public void SetState(EntityState targetState)
         {
             defaultState = targetState;

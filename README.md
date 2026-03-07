@@ -33,7 +33,7 @@
 - Data change event for consumers to react (for contact only).
 - Integration of pub/sub.
 - Incorporate CustomerId in Contact and Mongo
-- GET Contact
+- GET, POST, PATCH Contact
 
 
 ### GET Contact response 
