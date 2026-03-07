@@ -1,4 +1,5 @@
 ﻿using Api.ApiModels;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,8 @@ using System.Linq;
 namespace Api.Controllers
 {
     [ApiController]
-    [Route("")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/customers")]
     public class ContactController : ControllerBase
     {
         private readonly ContactService contactService;
@@ -20,7 +22,17 @@ namespace Api.Controllers
             this.contactService = contactService;
         }
 
-        [HttpDelete("customers/{customerId}/contact/{contactId}")]
+        [HttpPost("{customerId}/contact/{contactId}/submit")]
+        public async Task<EntityDocumentModel> SubmitContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] SubmitEntityModel submitModel)
+        {
+            await contactService.Submit(customerId, contactId, submitModel.TargetVersion);
+
+            var contactEntity = await contactService.Get(customerId, contactId);
+
+            return Translate(contactEntity);
+        }
+
+        [HttpDelete("{customerId}/contact/{contactId}")]
         public async Task<EntityDocumentModel> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
             await contactService.Delete(customerId, contactId, false);
@@ -30,7 +42,7 @@ namespace Api.Controllers
             return Translate(contactEntity);
         }
 
-        [HttpPost("customers/{customerId}/contact")]
+        [HttpPost("{customerId}/contact")]
         public async Task<EntityDocumentModel> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
         {
             var storedEntity = await contactService.Post(customerId, contact, false);
@@ -40,7 +52,7 @@ namespace Api.Controllers
             return Translate(contactEntity);
         }
 
-        [HttpGet("customers/{customerId}/contact/{contactId}")]
+        [HttpGet("{customerId}/contact/{contactId}")]
         public async Task<EntityDocumentModel> GetContactById(string customerId, string contactId)
         {
             var contact = await contactService.Get(customerId, contactId);
@@ -48,8 +60,8 @@ namespace Api.Controllers
             return Translate(contact);
         }
 
-        [HttpPatch("customers/{customerId}/contact/{contactId}")]
-        public async Task<EntityDocumentModel> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] PatchContactModel patch)
+        [HttpPatch("{customerId}/contact/{contactId}")]
+        public async Task<EntityDocumentModel> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactEntityModel patch)
         {
             var patchModel = ContactToPatch(patch);
             await contactService.Patch(patchModel, customerId, contactId, patch.TargetVersion, false);
@@ -59,7 +71,7 @@ namespace Api.Controllers
             return Translate(contactEntity);
         }
 
-        private static Contact ContactToPatch(PatchContactModel patchModel)
+        private static Contact ContactToPatch(ContactEntityModel patchModel)
         {
             // There must be a better way to map from a view model to a domain model.
             // Number of other properties are ignored for now. Keen to get the concept 

@@ -8,7 +8,7 @@
 
 # UNDER DEV
 - Add Legal Entity
-- JSON API for Contact
+- System data concept
 
 # PENDING
 
@@ -33,7 +33,7 @@
 - Data change event for consumers to react (for contact only).
 - Integration of pub/sub.
 - Incorporate CustomerId in Contact and Mongo
-- GET, POST, PATCH Contact
+- GET, POST, PATCH, DELETE, SUBMIT Contact
 
 
 ### GET Contact response 

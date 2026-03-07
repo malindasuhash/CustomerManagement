@@ -1,6 +1,6 @@
 ﻿namespace Api.ApiModels
 {
-    public class PatchAddressModel
+    public class AddressEntityModel
     {
         public string? Name { get; set; }
         public string? Code { get; set; }

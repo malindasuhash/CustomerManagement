@@ -150,6 +150,11 @@ namespace StateManagment
 
                 var before = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
 
+                if (envelop.Change == ChangeType.Submit && envelop.DraftVersion != before.DraftVersion)
+                {
+                    return TaskOutcome.VERSION_MISMATCH;
+                }
+
                 // Unless there is a change, there is no need to submit
                 if (before.DraftVersion == before.SubmittedVersion)
                 {

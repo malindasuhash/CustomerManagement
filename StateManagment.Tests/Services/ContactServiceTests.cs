@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Castle.Core.Resource;
+using FluentAssertions;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -13,6 +14,39 @@ namespace StateManagment.Tests.Services
 {
     public class ContactServiceTests
     {
+
+        [Fact]
+        public async Task Submit_WhenInvoked_ThenSubmitsThe_GivenEntityVersion()
+        {
+            // Arrange
+            var changeProcessor = Substitute.For<IChangeProcessor>();
+            var customerDatabase = Substitute.For<ICustomerDatabase>();
+            var contactService = new ContactService(changeProcessor, customerDatabase);
+            var entityId = "EntityId";
+            var customerId = "CustomerId";
+            var targetVersion = 4;
+
+            var message = new MessageEnvelop
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.Contact,
+                EntityId = "321",
+                IsSubmitted = true,
+                CustomerId = customerId,
+                DraftVersion = targetVersion
+            };
+            
+            customerDatabase.GetEntityDocument(EntityName.Contact, entityId, customerId).Returns(message);
+
+            // Act
+            var result = await contactService.Submit(customerId, entityId, targetVersion);
+
+            // Assert
+            await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(a => a.Change == ChangeType.Submit && a.Name == EntityName.Contact &&
+            a.DraftVersion == targetVersion));
+            await customerDatabase.Received(1).GetEntityDocument(EntityName.Contact, entityId, customerId);
+        }
+
         [Fact]
         public async Task Touch_WhenInvoked_ThenDispatchTouchRequest()
         {

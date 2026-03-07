@@ -66,6 +66,23 @@ namespace StateManagment.Services
             return await customerDatabase.GetEntityDocument(EntityName.Contact, envelop.EntityId);
         }
 
+        public async Task<MessageEnvelop> Submit(string customerId, string entityId, int targetDraftVersion)
+        {
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.Contact,
+                IsSubmitted = true,
+                CustomerId = customerId,
+                EntityId = entityId,
+                DraftVersion = targetDraftVersion
+            };
+
+            await changeProcessor.ProcessChangeAsync(envelop);
+
+            return await customerDatabase.GetEntityDocument(envelop.Name, envelop.EntityId, envelop.CustomerId);
+        }
+
         public async Task<TaskOutcome> Touch(string entityId)
         {
             var envelop = new MessageEnvelop

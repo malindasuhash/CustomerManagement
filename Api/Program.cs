@@ -1,4 +1,5 @@
 using Api.Services;
+using Asp.Versioning;
 using Infrastructure;
 using InMemory;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,12 @@ builder.Services.AddSingleton<IOrchestrator, BasicOrchestrator>();
 builder.Services.AddSingleton<IStateManager, StateManager>();
 builder.Services.AddSingleton<IChangeProcessor, ChangeProcessor>();
 builder.Services.AddSingleton<IReceiver, AzureServiceBusMessageReceiver>();
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+});
 
 // API Services
 builder.Services.AddSingleton<ContactService>();
@@ -31,6 +38,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
+
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 

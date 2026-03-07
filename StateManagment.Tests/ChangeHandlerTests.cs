@@ -240,6 +240,47 @@ namespace StateManagment.Tests
         }
 
         [Fact]
+        public async Task TryLockSubmitted_WhenSubmittedChangeIsReceived_ThenGivenDraftVersionMustMatchBeforeProcessing()
+        {
+
+            // Arrange
+            var distributedLock = Substitute.For<IDistributedLock>();
+            var database = Substitute.For<ICustomerDatabase>();
+            var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), Substitute.For<IAuditManager>());
+            var entityId = "entity1";
+
+            var stored = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                DraftVersion = 2,
+                IsSubmitted = true,
+                UpdateUser = "testUser",
+                Change = ChangeType.Submit
+            };
+
+            var received = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Name = EntityName.Contact,
+                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                DraftVersion = 4,
+                IsSubmitted = true,
+                UpdateUser = "testUser",
+                Change = ChangeType.Submit
+            };
+
+            database.GetEntityDocument(EntityName.Contact, entityId).Returns(stored);
+
+            // Act  
+            var result = await changeHandler.TryLockSubmitted(received);
+
+            // Assert
+            result.Should().Be(TaskOutcome.VERSION_MISMATCH);
+        }
+
+        [Fact]
         public async Task TryLockSubmitted_WhenBothDraftAndSubmittedVersionsAreTheSame_ThenDoesNotSubmit()
         {
             // Arrange

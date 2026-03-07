@@ -1,6 +1,6 @@
-@Api_HostAddress = https://localhost:7296
+@Api_HostAddress = https://localhost:7296/api/v1
 
-GET https://localhost:7296/customers/cus123/contact/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
+GET  {{Api_HostAddress}}/customers/cus123/contact/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
 Accept: application/json
 
 ###
@@ -36,14 +36,21 @@ Content-Type: application/json
 }
 ###
 
-PATCH {{Api_HostAddress}}/customers/Cus123/contact/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
+PATCH {{Api_HostAddress}}/customers/Cus123/contact/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
 Content-Type: application/json
 {
-  "firstName": "Updated 1",
-  "lastName": "Updated 2",
-  "targetVersion": 1
+  "firstName": "Updated 4",
+  "lastName": "Updated 8",
+  "targetVersion": 2
 }
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/contact/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/contact/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2/submit
+Content-Type: application/json
+{
+  "targetVersion": 3
+}
 ###
