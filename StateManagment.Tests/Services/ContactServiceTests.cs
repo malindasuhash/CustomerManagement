@@ -74,20 +74,23 @@ namespace StateManagment.Tests.Services
             var changeProcessor = Substitute.For<IChangeProcessor>();
             var customerDatabase = Substitute.For<ICustomerDatabase>();
             var contact = new Contact { FirstName = "John", LastName = "Doe" };
+            var customerId = "CustomerId";
+            var targetVersion = 2;
 
             customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
             {
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
                 EntityId = "321",
-                IsSubmitted = submit
+                IsSubmitted = submit,
+                CustomerId = customerId
             }));
 
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
             var contactService = new ContactService(changeProcessor, customerDatabase);
 
             // Act
-            var result = await contactService.Patch(contact, "321", submit);
+            var result = await contactService.Patch(contact, customerId, "321", targetVersion, submit);
 
             // Assert   
             result.Change.Should().Be(ChangeType.Read);
@@ -95,7 +98,8 @@ namespace StateManagment.Tests.Services
             result.EntityId.Should().Be("321");
             _ = await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(e =>
 
-                e.Change == ChangeType.Update && e.Name == EntityName.Contact && e.IsSubmitted == submit && e.EntityId == "321"
+                e.Change == ChangeType.Update && e.Name == EntityName.Contact && e.IsSubmitted == submit && e.EntityId == "321" 
+                && e.DraftVersion == targetVersion
 
             ));
         }

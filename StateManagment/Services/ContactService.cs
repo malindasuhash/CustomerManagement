@@ -32,7 +32,7 @@ namespace StateManagment.Services
             return await customerDatabase.GetEntityDocument(EntityName.Contact, entityId, customerId);
         }
 
-        public async Task<MessageEnvelop> Patch(Contact contact, string entityId, bool submit)
+        public async Task<MessageEnvelop> Patch(Contact contact, string customerId, string entityId, int targetVersion, bool submit)
         {
             var envelop = new MessageEnvelop
             {
@@ -40,7 +40,9 @@ namespace StateManagment.Services
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
                 Draft = contact,
-                IsSubmitted = submit
+                IsSubmitted = submit,
+                CustomerId = customerId,
+                DraftVersion = targetVersion
             };
 
             await changeProcessor.ProcessChangeAsync(envelop);

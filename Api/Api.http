@@ -7,7 +7,7 @@ Accept: application/json
 
 
 POST {{Api_HostAddress}}/customers/Cus123/contact
-content-type: application/json
+Content-Type: application/json
 {
   "firstName": "Watford",
   "lastName": "Hays",
@@ -37,9 +37,10 @@ content-type: application/json
 ###
 
 PATCH {{Api_HostAddress}}/customers/Cus123/contact/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
-content-type: application/json
+Content-Type: application/json
 {
   "firstName": "Updated 1",
-  "lastName": "Updated 2"
+  "lastName": "Updated 2",
+  "targetVersion": 1
 }
 ###

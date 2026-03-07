@@ -51,7 +51,7 @@ namespace Infrastructure.EntityConfig
             var contact = (Contact)messageEnvelop.Draft;
             var storedContact = (Contact)stored.Draft;
 
-            if (messageEnvelop.Change != ChangeType.Delete)
+            if (messageEnvelop.Change == ChangeType.Update)
             {
                 if (contact.FirstName != null)
                 {
@@ -69,7 +69,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser)
             .Set(a => a.DraftVersion, latestDraftVersion)
-            .Set(a => a.Draft, messageEnvelop.Change != ChangeType.Delete ? storedContact : null); // Blank out when deleting
+            .Set(a => a.Draft, messageEnvelop.Change == ChangeType.Delete ? null : storedContact); // Blank out when deleting
 
             var contacts = db.GetCollection<MessageEnvelop>("contacts");
 

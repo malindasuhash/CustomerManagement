@@ -1,6 +1,7 @@
 using Api.Services;
 using Infrastructure;
 using InMemory;
+using Microsoft.AspNetCore.Mvc;
 using StateManagment;
 using StateManagment.Models;
 using StateManagment.Services;
@@ -26,6 +27,10 @@ builder.Services.AddSingleton<IReceiver, AzureServiceBusMessageReceiver>();
 
 // API Services
 builder.Services.AddSingleton<ContactService>();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 var app = builder.Build();
 

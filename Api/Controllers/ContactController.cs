@@ -1,5 +1,6 @@
 ﻿using Api.ApiModels;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -34,6 +35,31 @@ namespace Api.Controllers
             var contact = await contactService.Get(customerId, contactId);
 
             return Translate(contact);
+        }
+
+        [HttpPatch("customers/{customerId}/contact/{contactId}")]
+        public async Task<EntityDocumentModel> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] PatchContactModel patch)
+        {
+            var patchModel = ContactToPatch(patch);  
+            await contactService.Patch(patchModel, customerId, contactId, patch.TargetVersion, false);
+
+            var contactEntity = await contactService.Get(customerId, contactId);
+
+            return Translate(contactEntity);
+        }
+
+        private static Contact ContactToPatch(PatchContactModel patchModel)
+        {
+            // There must be a better way to map from a view model to a domain model.
+            // Number of other properties are ignored for now. Keen to get the concept 
+            // operational.
+            var contact = new Contact
+            {
+                FirstName = patchModel.FirstName,
+                LastName = patchModel.LastName
+            };
+
+            return contact;
         }
 
         private EntityDocumentModel Translate(MessageEnvelop contact)
