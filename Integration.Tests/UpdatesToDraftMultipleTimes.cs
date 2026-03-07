@@ -59,7 +59,8 @@ namespace Integration.Tests
                 CreatedUser = "Tester",
                 UpdateUser = "Suhash",
                 EntityId = entityId,
-                DraftVersion = 1    
+                DraftVersion = 1,
+                CustomerId = "Cus123"
             };
 
             await changeProcessor.ProcessChangeAsync(envelop);
@@ -79,7 +80,8 @@ namespace Integration.Tests
                 CreatedUser = "Tester",
                 UpdateUser = "Niranga",
                 EntityId = entityId,
-                DraftVersion = 2
+                DraftVersion = 2,
+                CustomerId = "Cus123"
             };
 
             await changeProcessor.ProcessChangeAsync(envelop);
@@ -99,7 +101,8 @@ namespace Integration.Tests
                 CreatedUser = "Tester",
                 UpdateUser = "Malinda",
                 EntityId = entityId,
-                DraftVersion = 3
+                DraftVersion = 3,
+                CustomerId = "Cus123"
             };
 
             await changeProcessor.ProcessChangeAsync(envelop);

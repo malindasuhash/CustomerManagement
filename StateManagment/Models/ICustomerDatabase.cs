@@ -14,7 +14,7 @@ namespace StateManagment.Models
         Task<TaskOutcome> StoreDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion);
         Task<TaskOutcome> StoreSubmitted(EntityName entityName, IEntity entity, string entityId, string updatedUser);
         Task<TaskOutcome> UpdateData(EntityName entityName, string entityId, EntityState targetState, Feedback[] feedbacks, OrchestrationData[] orchestrationData);
-        Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId);
+        Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId, bool confirmRemoval);
         Task<TaskOutcome> MergeDraft(MessageEnvelop envelop, int latestDraftVersion);
         Task<TaskOutcome> MarkForRemoval(EntityName name, string entityId);
     }

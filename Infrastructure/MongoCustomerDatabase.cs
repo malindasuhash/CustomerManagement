@@ -70,14 +70,14 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId)
+        public async Task<TaskOutcome> StoreApplied(EntityName entityName, IEntity entity, string entityId, bool confirmRemoval)
         {
             DbEexecutionParams dbEexecution;
 
             switch (entityName)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.AddToApplied(entityId, entity, database);
+                    dbEexecution = await ContactConfig.AddToApplied(entityId, entity, confirmRemoval, database);
                     break;
 
                 default:

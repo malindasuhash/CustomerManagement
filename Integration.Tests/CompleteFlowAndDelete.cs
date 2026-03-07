@@ -79,7 +79,8 @@ namespace Integration.Tests
                 Change = ChangeType.Delete,
                 IsSubmitted = true,
                 UpdateUser = "Bla",
-                EntityId = entityId
+                EntityId = entityId,
+                CustomerId = "Cus123"
             };
 
             await changeProcessor.ProcessChangeAsync(envelop);

@@ -54,7 +54,8 @@ namespace Integration.Tests
                 Change = ChangeType.Submit,
                 IsSubmitted = false,
                 UpdateUser = "Suhash",
-                EntityId = entityId
+                EntityId = entityId,
+                CustomerId = "Cus123"
             };
 
             await changeProcessor.ProcessChangeAsync(envelop);
@@ -70,7 +71,8 @@ namespace Integration.Tests
                 IsSubmitted = false,
                 UpdateUser = "Niranga",
                 EntityId = entityId,
-                DraftVersion = 2
+                DraftVersion = 2,
+                CustomerId = "Cus123"
             };
 
             var result = await changeProcessor.ProcessChangeAsync(envelop);

@@ -28,7 +28,7 @@ namespace StateManagment
             if (entityState == EntityState.SYNCHRONISED)
             {
                 var before = await database.GetEntityDocument(name, entityId);
-                await database.StoreApplied(name, before.Submitted, entityId);
+                await database.StoreApplied(name, before.Submitted, entityId, before.RemoveRequested);
                 var after = await database.GetEntityDocument(name, entityId);
 
                 await auditManager.Write(AuditTarget.Applied, after, before);

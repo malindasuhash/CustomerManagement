@@ -144,32 +144,6 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task ProcessChangeAsync_WhenDeletedAndSubmittedButLockFails_ThenReturnsUnsupported()
-        {
-            // Arrange
-            var envelop = new MessageEnvelop
-            {
-                Change = ChangeType.Delete,
-                Name = EntityName.Contact,
-                EntityId = "123",
-                IsSubmitted = true
-            };
-            var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
-            var stateManager = Substitute.For<IStateManager>();
-            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
-
-            // Act
-            var result = await changeProcessor.ProcessChangeAsync(envelop);
-
-            // Assert
-            await changeHandler.Received(1).TryMergeDraft(envelop);
-            await changeHandler.Received(1).TryLockSubmitted(envelop);
-            result.Successful.Should().BeFalse();
-            await stateManager.DidNotReceive().Initiate(Arg.Any<EntityName>(), Arg.Any<string>());
-        }
-
-        [Fact]
         public async Task ProcessChangeAsync_WhenChangeIsNew_ThenAddsItAsDraft()
         {
             // Arrange

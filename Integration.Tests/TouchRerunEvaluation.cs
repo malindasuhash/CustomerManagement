@@ -76,7 +76,8 @@ namespace Integration.Tests
                 Change = ChangeType.Touch,
                 IsSubmitted = false,
                 UpdateUser = "Malinda",
-                EntityId = entityId
+                EntityId = entityId,
+                CustomerId = "Cus123"
             };
 
             await changeProcessor.ProcessChangeAsync(envelop);
@@ -103,7 +104,7 @@ namespace Integration.Tests
                 SubmittedVersion = submittedVersion,
                 Status = runtimeStatus,
                 Feedbacks = feedbacks,
-                OrchestrationData = orchestrationData
+                OrchestrationData = orchestrationData,
             };
 
             return step;

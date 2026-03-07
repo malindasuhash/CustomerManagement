@@ -381,7 +381,8 @@ namespace StateManagment.Tests
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
-                IsSubmitted = true
+                IsSubmitted = true,
+                RemoveRequested = true
             };
             var after = new MessageEnvelop
             {
@@ -400,7 +401,7 @@ namespace StateManagment.Tests
             var result = await changeHandler.ChangeStatusTo(before.EntityId, before.Name, EntityState.SYNCHRONISED);
 
             // Assert
-            await database.Received(1).StoreApplied(EntityName.Contact, Arg.Any<IEntity>(), entityId);
+            await database.Received(1).StoreApplied(EntityName.Contact, Arg.Any<IEntity>(), entityId, before.RemoveRequested);
             await database.Received(1).UpdateData(EntityName.Contact, entityId, EntityState.SYNCHRONISED, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
             await auditManager.Received(1).Write(AuditTarget.Applied, after, before);
         }

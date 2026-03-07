@@ -127,24 +127,25 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToApplied(string entityId, IEntity entity, IMongoDatabase db, string updatedUser = "SYSTEM")
+        public static async Task<DbEexecutionParams> AddToApplied(string entityId, IEntity entity, bool confirmRemoval, IMongoDatabase db, string updatedUser = "SYSTEM")
         {
             var contact = await GetById(entityId, db);
 
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
-            var onUpdate = Builders<MessageEnvelop>.Update
-            .Set(a => a.AppliedVersion, contact.SubmittedVersion)
+            var onUpdate = Builders<MessageEnvelop>.Update;
+            var definition = onUpdate.Set(a => a.AppliedVersion, contact.SubmittedVersion)
             .Set(a => a.Applied, (Contact)entity)
-              .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
-            .Set(a => a.UpdateUser, updatedUser);
+            .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
+            .Set(a => a.UpdateUser, updatedUser)
+            .Set(a => a.Removed, confirmRemoval);
 
             var contacts = db.GetCollection<MessageEnvelop>("contacts");
 
             return new DbEexecutionParams
             {
                 Collection = contacts,
-                Definition = onUpdate,
+                Definition = definition,
                 Filter = filter
             };
         }
@@ -162,6 +163,8 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.Draft, (Contact)messageEnvelop.Draft)
             .Set(a => a.State, messageEnvelop.State)
             .Set(a => a.CustomerId, messageEnvelop.CustomerId)
+            .Set(a => a.RemoveRequested, false)
+            .Set(a => a.Removed, false)
             .SetOnInsert(a => a.CreatedTimestamp, DateTime.UtcNow)
             .SetOnInsert(a => a.CreatedUser, messageEnvelop.CreatedUser)
             .SetOnInsert(a => a.EntityId, messageEnvelop.EntityId);
