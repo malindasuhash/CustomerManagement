@@ -17,9 +17,10 @@
 - Complete sample implementation of validation for Contact
 - Runtime to host Contact orchestration.
 - Authorisation and scopes for making certain changes.
-- Soft deletes for entities.
 
 # DONE
+- Soft deletes for entities.
+- Added system data objects and Legal entity (most complex one)
 - Finite State Model 
 - State Model itself
 - Introduced new MongoDB database for contacts

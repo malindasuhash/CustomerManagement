@@ -3,6 +3,10 @@ using StateManagment.Models;
 
 namespace ContactOrchestration
 {
+    /// <summary>
+    /// This is the structure that us sent from CM to Orchestration
+    /// to process a change.
+    /// </summary>
     public class RuntimeInfo
     {
         public string CorellationId { get; set; } = Guid.NewGuid().ToString();
@@ -11,6 +15,7 @@ namespace ContactOrchestration
         public IEntity Applied { get; set; }
         public int SubmittedVersion { get; set; }
         public int AppliedVersion { get; set; }
-        public OrchestrationData[] OrchestrationData { get; set; } = new OrchestrationData[0];
+        public OrchestrationData[] OrchestrationData { get; set; } = [];
+        public SystemData[] SystemData { get; set; } = [];
     }
 }

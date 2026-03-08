@@ -1,5 +1,9 @@
 ﻿namespace StateManagment.Models
 {
+    /// <summary>
+    /// This is the message sent back from Orchestration to CM
+    /// once a change has been processed.
+    /// </summary>
     public class OrchestrationEnvelop
     {
         public required string EntityId { get; set; }

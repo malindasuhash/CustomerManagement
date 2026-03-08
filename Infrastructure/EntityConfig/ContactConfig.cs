@@ -165,6 +165,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.CustomerId, messageEnvelop.CustomerId)
             .Set(a => a.RemoveRequested, false)
             .Set(a => a.Removed, false)
+            .Set(a => a.SystemData, messageEnvelop.SystemData)
             .SetOnInsert(a => a.CreatedTimestamp, DateTime.UtcNow)
             .SetOnInsert(a => a.CreatedUser, messageEnvelop.CreatedUser)
             .SetOnInsert(a => a.EntityId, messageEnvelop.EntityId);
