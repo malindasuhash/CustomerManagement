@@ -10,11 +10,11 @@ namespace Api.Controllers
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/customers")]
-    public class ContactController : ControllerBase
+    public class ContactController : EntityManagementController
     {
         private readonly CustomerManagementService contactService;
 
-        public ContactController(CustomerManagementService contactService)
+        public ContactController(CustomerManagementService contactService) : base(contactService)
         {
             this.contactService = contactService;
         }
@@ -22,60 +22,31 @@ namespace Api.Controllers
         [HttpPost("{customerId}/contact/{contactId}/touch")]
         public async Task<ActionResult<EntityDocumentModel>> TouchContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
-            // Authorisation layer may go here
-            var result = await contactService.Touch(EntityName.Contact, customerId, contactId);
-
-            if (result != TaskOutcome.OK) 
-            { 
-                return BadRequest(result);
-            }
-
-            var contactEntity = await contactService.Get(EntityName.Contact, customerId, contactId);
-
-            return Translate(contactEntity);
+           return await Touch(EntityName.Contact, customerId, contactId);
         }
 
-         [HttpPost("{customerId}/contact/{contactId}/submit")]
+        [HttpPost("{customerId}/contact/{contactId}/submit")]
         public async Task<ActionResult<EntityDocumentModel>> SubmitContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] SubmitEntityModel submitModel)
         {
-            var result = await contactService.Submit(EntityName.Contact, customerId, contactId, submitModel.TargetVersion);
-
-            if (result != TaskOutcome.OK)
-            {
-                return BadRequest(result);
-            }
-
-            var contactEntity = await contactService.Get(EntityName.Contact, customerId, contactId);
-
-            return Translate(contactEntity);
+           return await Submit(EntityName.Contact, customerId, contactId, submitModel);
         }
 
         [HttpDelete("{customerId}/contact/{contactId}")]
         public async Task<ActionResult<EntityDocumentModel>> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
-            await contactService.Delete(EntityName.Contact, customerId, contactId, false);
-
-            var contactEntity = await contactService.Get(EntityName.Contact, customerId, contactId);
-
-            return Translate(contactEntity);
+            return await Remove(EntityName.Contact, customerId, contactId);
         }
 
         [HttpPost("{customerId}/contact")]
         public async Task<ActionResult<EntityDocumentModel>> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
         {
-            var storedEntity = await contactService.Post(contact, EntityName.Contact, customerId, false);
-
-            var contactEntity = await contactService.Get(EntityName.Contact, storedEntity.CustomerId, storedEntity.EntityId);
-
-            return Translate(contactEntity);
+           return await Create(EntityName.Contact, customerId, contact);
         }
 
         [HttpGet("{customerId}/contact/{contactId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetContactById(string customerId, string contactId)
         {
-            var contact = await contactService.Get(EntityName.Contact, customerId, contactId);
-
-            return Translate(contact);
+            return await GetById(EntityName.Contact, customerId, contactId);
         }
 
         [HttpPatch("{customerId}/contact/{contactId}")]
@@ -129,28 +100,27 @@ namespace Api.Controllers
             return contact;
         }
 
-        private EntityDocumentModel Translate(MessageEnvelop contact)
+        protected override EntityDocumentModel Translate(MessageEnvelop messageEnvelop)
         {
             var model = new EntityDocumentModel()
             {
-                CustomerId = contact.CustomerId,
-                EntityId = contact.EntityId,
-                Submitted = contact.Submitted,
-                SubmittedVersion = contact.SubmittedVersion,
-                Applied = contact.Applied,
-                AppliedVersion = contact.AppliedVersion,
-                CreatedTimestamp = contact.CreatedTimestamp,
-                CreatedUser = contact.CreatedUser,
-                Draft = contact.Draft,
-                DraftVersion = contact.DraftVersion,
-                State = contact.State.ToString(),
-                Feedback = contact.Feedback,
-                Removed = contact.Removed,
-                RemoveRequested = contact.RemoveRequested
+                CustomerId = messageEnvelop.CustomerId,
+                EntityId = messageEnvelop.EntityId,
+                Submitted = messageEnvelop.Submitted,
+                SubmittedVersion = messageEnvelop.SubmittedVersion,
+                Applied = messageEnvelop.Applied,
+                AppliedVersion = messageEnvelop.AppliedVersion,
+                CreatedTimestamp = messageEnvelop.CreatedTimestamp,
+                CreatedUser = messageEnvelop.CreatedUser,
+                Draft = messageEnvelop.Draft,
+                DraftVersion = messageEnvelop.DraftVersion,
+                State = messageEnvelop.State.ToString(),
+                Feedback = messageEnvelop.Feedback,
+                Removed = messageEnvelop.Removed,
+                RemoveRequested = messageEnvelop.RemoveRequested
             };
 
             return model;
         }
-
     }
 }
