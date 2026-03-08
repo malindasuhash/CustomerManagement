@@ -1,6 +1,6 @@
 ﻿namespace StateManagment.Entity
 {
-    public class RegisteredAddress
+    public class RegisteredAddress : IEntity
     {
         public Address Address { get; set; }
         public bool Current { get; set; }

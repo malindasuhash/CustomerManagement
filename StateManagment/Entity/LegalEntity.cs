@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StateManagment.Entity
 {
-    public class LegalEntity
+    public class LegalEntity : IEntity
     {
         public string Name { get; set; }
         public string TradingName { get; set; }

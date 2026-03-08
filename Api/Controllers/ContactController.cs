@@ -19,37 +19,37 @@ namespace Api.Controllers
             this.contactService = contactService;
         }
 
-        [HttpPost("{customerId}/contact/{contactId}/touch")]
+        [HttpPost("{customerId}/contacts/{contactId}/touch")]
         public async Task<ActionResult<EntityDocumentModel>> TouchContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
            return await Touch(EntityName.Contact, customerId, contactId);
         }
 
-        [HttpPost("{customerId}/contact/{contactId}/submit")]
+        [HttpPost("{customerId}/contacts/{contactId}/submit")]
         public async Task<ActionResult<EntityDocumentModel>> SubmitContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] SubmitEntityModel submitModel)
         {
            return await Submit(EntityName.Contact, customerId, contactId, submitModel);
         }
 
-        [HttpDelete("{customerId}/contact/{contactId}")]
+        [HttpDelete("{customerId}/contacts/{contactId}")]
         public async Task<ActionResult<EntityDocumentModel>> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
             return await Remove(EntityName.Contact, customerId, contactId);
         }
 
-        [HttpPost("{customerId}/contact")]
+        [HttpPost("{customerId}/contacts")]
         public async Task<ActionResult<EntityDocumentModel>> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
         {
            return await Create(EntityName.Contact, customerId, contact);
         }
 
-        [HttpGet("{customerId}/contact/{contactId}")]
+        [HttpGet("{customerId}/contacts/{contactId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetContactById(string customerId, string contactId)
         {
             return await GetById(EntityName.Contact, customerId, contactId);
         }
 
-        [HttpPatch("{customerId}/contact/{contactId}")]
+        [HttpPatch("{customerId}/contacts/{contactId}")]
         public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactEntityModel patch)
         {
             var patchModel = ContactToPatch(patch);
@@ -98,29 +98,6 @@ namespace Api.Controllers
             }
 
             return contact;
-        }
-
-        protected override EntityDocumentModel Translate(MessageEnvelop messageEnvelop)
-        {
-            var model = new EntityDocumentModel()
-            {
-                CustomerId = messageEnvelop.CustomerId,
-                EntityId = messageEnvelop.EntityId,
-                Submitted = messageEnvelop.Submitted,
-                SubmittedVersion = messageEnvelop.SubmittedVersion,
-                Applied = messageEnvelop.Applied,
-                AppliedVersion = messageEnvelop.AppliedVersion,
-                CreatedTimestamp = messageEnvelop.CreatedTimestamp,
-                CreatedUser = messageEnvelop.CreatedUser,
-                Draft = messageEnvelop.Draft,
-                DraftVersion = messageEnvelop.DraftVersion,
-                State = messageEnvelop.State.ToString(),
-                Feedback = messageEnvelop.Feedback,
-                Removed = messageEnvelop.Removed,
-                RemoveRequested = messageEnvelop.RemoveRequested
-            };
-
-            return model;
         }
     }
 }

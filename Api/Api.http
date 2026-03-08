@@ -1,12 +1,12 @@
 @Api_HostAddress = https://localhost:7296/api/v1
 
-GET  {{Api_HostAddress}}/customers/cus123/contact/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
+GET  {{Api_HostAddress}}/customers/cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
 Accept: application/json
 
 ###
 
 
-POST {{Api_HostAddress}}/customers/Cus123/contact
+POST {{Api_HostAddress}}/customers/Cus123/contacts
 Content-Type: application/json
 {
   "firstName": "Watford",
@@ -36,7 +36,7 @@ Content-Type: application/json
 }
 ###
 
-PATCH {{Api_HostAddress}}/customers/Cus123/contact/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
+PATCH {{Api_HostAddress}}/customers/Cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
 Content-Type: application/json
 {
   "firstName": "Updated 4",
@@ -45,15 +45,15 @@ Content-Type: application/json
 }
 ###
 
-DELETE {{Api_HostAddress}}/customers/Cus123/contact/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
+DELETE {{Api_HostAddress}}/customers/Cus123/contacts/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/contact/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2/submit
+POST {{Api_HostAddress}}/customers/Cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2/submit
 Content-Type: application/json
 {
   "targetVersion": 4
 }
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/contact/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2/touch
+POST {{Api_HostAddress}}/customers/Cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2/touch
 ###

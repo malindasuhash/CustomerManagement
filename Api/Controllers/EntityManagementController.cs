@@ -31,7 +31,6 @@ namespace Api.Controllers
             return Translate(specificEntity);
         }
 
-        [HttpPost("{customerId}/contact/{contactId}/touch")]
         internal async Task<ActionResult<EntityDocumentModel>> Touch(EntityName entityName, string customerId, string contactId)
         {
             // Authorisation layer may go here
@@ -70,7 +69,28 @@ namespace Api.Controllers
             return Translate(contactEntity);
         }
 
-        protected abstract EntityDocumentModel Translate(MessageEnvelop messageEnvelop);
-        
+        protected EntityDocumentModel Translate(MessageEnvelop messageEnvelop)
+        {
+            var model = new EntityDocumentModel()
+            {
+                CustomerId = messageEnvelop.CustomerId,
+                EntityId = messageEnvelop.EntityId,
+                Submitted = messageEnvelop.Submitted,
+                SubmittedVersion = messageEnvelop.SubmittedVersion,
+                Applied = messageEnvelop.Applied,
+                AppliedVersion = messageEnvelop.AppliedVersion,
+                CreatedTimestamp = messageEnvelop.CreatedTimestamp,
+                CreatedUser = messageEnvelop.CreatedUser,
+                Draft = messageEnvelop.Draft,
+                DraftVersion = messageEnvelop.DraftVersion,
+                State = messageEnvelop.State.ToString(),
+                Feedback = messageEnvelop.Feedback,
+                Removed = messageEnvelop.Removed,
+                RemoveRequested = messageEnvelop.RemoveRequested
+            };
+
+            return model;
+        }
+
     }
 }
