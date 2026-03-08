@@ -62,7 +62,7 @@ namespace Api.Controllers
 
         private static Contact ContactToPatch(ContactEntityModel patchModel)
         {
-            // There must be a better way to map from a view model to a domain model.
+            // There must be a better way to map from a api model to a domain model.
             // Number of other properties are ignored for now. Keen to get the concept 
             // operational.
             var contact = new Contact
