@@ -1,12 +1,9 @@
 ﻿using Api.ApiModels;
 using Asp.Versioning;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
 using StateManagment.Models;
 using StateManagment.Services;
-using System.Linq;
 
 namespace Api.Controllers
 {
@@ -22,10 +19,31 @@ namespace Api.Controllers
             this.contactService = contactService;
         }
 
-        [HttpPost("{customerId}/contact/{contactId}/submit")]
-        public async Task<EntityDocumentModel> SubmitContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] SubmitEntityModel submitModel)
+        [HttpPost("{customerId}/contact/{contactId}/touch")]
+        public async Task<ActionResult<EntityDocumentModel>> TouchContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
-            await contactService.Submit(customerId, contactId, submitModel.TargetVersion);
+            // Authorisation layer may go here
+            var result = await contactService.Touch(customerId, contactId);
+
+            if (result != TaskOutcome.OK) 
+            { 
+                return BadRequest(result);
+            }
+
+            var contactEntity = await contactService.Get(customerId, contactId);
+
+            return Translate(contactEntity);
+        }
+
+         [HttpPost("{customerId}/contact/{contactId}/submit")]
+        public async Task<ActionResult<EntityDocumentModel>> SubmitContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] SubmitEntityModel submitModel)
+        {
+            var result = await contactService.Submit(customerId, contactId, submitModel.TargetVersion);
+
+            if (result != TaskOutcome.OK)
+            {
+                return BadRequest(result);
+            }
 
             var contactEntity = await contactService.Get(customerId, contactId);
 
@@ -33,7 +51,7 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{customerId}/contact/{contactId}")]
-        public async Task<EntityDocumentModel> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
+        public async Task<ActionResult<EntityDocumentModel>> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
             await contactService.Delete(customerId, contactId, false);
 
@@ -43,7 +61,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/contact")]
-        public async Task<EntityDocumentModel> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
+        public async Task<ActionResult<EntityDocumentModel>> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
         {
             var storedEntity = await contactService.Post(customerId, contact, false);
 
@@ -53,7 +71,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{customerId}/contact/{contactId}")]
-        public async Task<EntityDocumentModel> GetContactById(string customerId, string contactId)
+        public async Task<ActionResult<EntityDocumentModel>> GetContactById(string customerId, string contactId)
         {
             var contact = await contactService.Get(customerId, contactId);
 
@@ -61,7 +79,7 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/contact/{contactId}")]
-        public async Task<EntityDocumentModel> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactEntityModel patch)
+        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactEntityModel patch)
         {
             var patchModel = ContactToPatch(patch);
             await contactService.Patch(patchModel, customerId, contactId, patch.TargetVersion, false);

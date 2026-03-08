@@ -66,7 +66,7 @@ namespace StateManagment.Services
             return await customerDatabase.GetEntityDocument(EntityName.Contact, envelop.EntityId);
         }
 
-        public async Task<MessageEnvelop> Submit(string customerId, string entityId, int targetDraftVersion)
+        public async Task<TaskOutcome> Submit(string customerId, string entityId, int targetDraftVersion)
         {
             var envelop = new MessageEnvelop
             {
@@ -78,18 +78,17 @@ namespace StateManagment.Services
                 DraftVersion = targetDraftVersion
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
-
-            return await customerDatabase.GetEntityDocument(envelop.Name, envelop.EntityId, envelop.CustomerId);
+            return await changeProcessor.ProcessChangeAsync(envelop);
         }
 
-        public async Task<TaskOutcome> Touch(string entityId)
+        public async Task<TaskOutcome> Touch(string customerId, string entityId)
         {
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Touch,
                 Name = EntityName.Contact,
-                EntityId = entityId
+                EntityId = entityId,
+                CustomerId = customerId
             };
 
             return await changeProcessor.ProcessChangeAsync(envelop);

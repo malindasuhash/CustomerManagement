@@ -55,13 +55,14 @@ namespace StateManagment.Tests.Services
             var customerDatabase = Substitute.For<ICustomerDatabase>();
             var contactService = new ContactService(changeProcessor, customerDatabase);
             var entityId = "EntityId";
+            var customerId = "CustomerId";
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             // Act
-            var result = await contactService.Touch(entityId);
+            var result = await contactService.Touch(customerId, entityId);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(a => a.EntityId.Equals(entityId) && a.Name == EntityName.Contact && a.Change == ChangeType.Touch));
+            await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(a => a.EntityId.Equals(entityId) && a.Name == EntityName.Contact && a.Change == ChangeType.Touch && a.CustomerId.Equals(customerId)));
             result.Should().Be(TaskOutcome.LOCK_UNAVAILABLE);
         }
 
