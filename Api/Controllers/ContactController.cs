@@ -12,9 +12,9 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class ContactController : ControllerBase
     {
-        private readonly ContactService contactService;
+        private readonly CustomerManagementService contactService;
 
-        public ContactController(ContactService contactService)
+        public ContactController(CustomerManagementService contactService)
         {
             this.contactService = contactService;
         }
@@ -23,14 +23,14 @@ namespace Api.Controllers
         public async Task<ActionResult<EntityDocumentModel>> TouchContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
             // Authorisation layer may go here
-            var result = await contactService.Touch(customerId, contactId);
+            var result = await contactService.Touch(EntityName.Contact, customerId, contactId);
 
             if (result != TaskOutcome.OK) 
             { 
                 return BadRequest(result);
             }
 
-            var contactEntity = await contactService.Get(customerId, contactId);
+            var contactEntity = await contactService.Get(EntityName.Contact, customerId, contactId);
 
             return Translate(contactEntity);
         }
@@ -38,14 +38,14 @@ namespace Api.Controllers
          [HttpPost("{customerId}/contact/{contactId}/submit")]
         public async Task<ActionResult<EntityDocumentModel>> SubmitContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] SubmitEntityModel submitModel)
         {
-            var result = await contactService.Submit(customerId, contactId, submitModel.TargetVersion);
+            var result = await contactService.Submit(EntityName.Contact, customerId, contactId, submitModel.TargetVersion);
 
             if (result != TaskOutcome.OK)
             {
                 return BadRequest(result);
             }
 
-            var contactEntity = await contactService.Get(customerId, contactId);
+            var contactEntity = await contactService.Get(EntityName.Contact, customerId, contactId);
 
             return Translate(contactEntity);
         }
@@ -53,9 +53,9 @@ namespace Api.Controllers
         [HttpDelete("{customerId}/contact/{contactId}")]
         public async Task<ActionResult<EntityDocumentModel>> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
-            await contactService.Delete(customerId, contactId, false);
+            await contactService.Delete(EntityName.Contact, customerId, contactId, false);
 
-            var contactEntity = await contactService.Get(customerId, contactId);
+            var contactEntity = await contactService.Get(EntityName.Contact, customerId, contactId);
 
             return Translate(contactEntity);
         }
@@ -63,9 +63,9 @@ namespace Api.Controllers
         [HttpPost("{customerId}/contact")]
         public async Task<ActionResult<EntityDocumentModel>> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
         {
-            var storedEntity = await contactService.Post(customerId, contact, false);
+            var storedEntity = await contactService.Post(contact, EntityName.Contact, customerId, false);
 
-            var contactEntity = await contactService.Get(storedEntity.CustomerId, storedEntity.EntityId);
+            var contactEntity = await contactService.Get(EntityName.Contact, storedEntity.CustomerId, storedEntity.EntityId);
 
             return Translate(contactEntity);
         }
@@ -73,7 +73,7 @@ namespace Api.Controllers
         [HttpGet("{customerId}/contact/{contactId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetContactById(string customerId, string contactId)
         {
-            var contact = await contactService.Get(customerId, contactId);
+            var contact = await contactService.Get(EntityName.Contact, customerId, contactId);
 
             return Translate(contact);
         }
@@ -82,9 +82,9 @@ namespace Api.Controllers
         public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactEntityModel patch)
         {
             var patchModel = ContactToPatch(patch);
-            await contactService.Patch(patchModel, customerId, contactId, patch.TargetVersion, false);
+            await contactService.Patch(patchModel, EntityName.Contact, customerId, contactId, patch.TargetVersion, false);
 
-            var contactEntity = await contactService.Get(customerId, contactId);
+            var contactEntity = await contactService.Get(EntityName.Contact, customerId, contactId);
 
             return Translate(contactEntity);
         }

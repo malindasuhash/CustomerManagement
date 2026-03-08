@@ -12,16 +12,15 @@ using System.Threading.Tasks;
 
 namespace StateManagment.Tests.Services
 {
-    public class ContactServiceTests
+    public class CustomerManagemenServiceTests
     {
-
         [Fact]
         public async Task Submit_WhenInvoked_ThenSubmitsThe_GivenEntityVersion()
         {
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
             var customerDatabase = Substitute.For<ICustomerDatabase>();
-            var contactService = new ContactService(changeProcessor, customerDatabase);
+            var contactService = new CustomerManagementService(changeProcessor, customerDatabase);
             var entityId = "EntityId";
             var customerId = "CustomerId";
             var targetVersion = 4;
@@ -36,15 +35,12 @@ namespace StateManagment.Tests.Services
                 DraftVersion = targetVersion
             };
             
-            customerDatabase.GetEntityDocument(EntityName.Contact, entityId, customerId).Returns(message);
-
             // Act
-            var result = await contactService.Submit(customerId, entityId, targetVersion);
+            var result = await contactService.Submit(EntityName.Contact, customerId, entityId, targetVersion);
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(a => a.Change == ChangeType.Submit && a.Name == EntityName.Contact &&
             a.DraftVersion == targetVersion));
-            await customerDatabase.Received(1).GetEntityDocument(EntityName.Contact, entityId, customerId);
         }
 
         [Fact]
@@ -53,13 +49,13 @@ namespace StateManagment.Tests.Services
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
             var customerDatabase = Substitute.For<ICustomerDatabase>();
-            var contactService = new ContactService(changeProcessor, customerDatabase);
+            var contactService = new CustomerManagementService(changeProcessor, customerDatabase);
             var entityId = "EntityId";
             var customerId = "CustomerId";
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             // Act
-            var result = await contactService.Touch(customerId, entityId);
+            var result = await contactService.Touch(EntityName.Contact, customerId, entityId);
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(a => a.EntityId.Equals(entityId) && a.Name == EntityName.Contact && a.Change == ChangeType.Touch && a.CustomerId.Equals(customerId)));
@@ -74,19 +70,19 @@ namespace StateManagment.Tests.Services
             // Arrange
             var changeProcessor = Substitute.For<IChangeProcessor>();
             var customerDatabase = Substitute.For<ICustomerDatabase>();
-            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
+            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(new MessageEnvelop
             {
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
                 EntityId = "321",
                 IsSubmitted = submit
-            }));
-            changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
-            var contactService = new ContactService(changeProcessor, customerDatabase);
+            });
+           
+            var contactService = new CustomerManagementService(changeProcessor, customerDatabase);
             var customerId = "cus123";
 
             // Act
-            var result = await contactService.Post(customerId, new Contact { FirstName = "John", LastName = "Doe" }, submit);
+            var result = await contactService.Post(new Contact { FirstName = "John", LastName = "Doe" }, EntityName.Contact, customerId, submit);
 
             // Assert
             result.Change.Should().Be(ChangeType.Read);
@@ -112,20 +108,19 @@ namespace StateManagment.Tests.Services
             var customerId = "CustomerId";
             var targetVersion = 2;
 
-            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(Task.FromResult(new MessageEnvelop
+            customerDatabase.GetEntityDocument(Arg.Any<EntityName>(), Arg.Any<string>()).Returns(new MessageEnvelop
             {
                 Change = ChangeType.Read,
                 Name = EntityName.Contact,
                 EntityId = "321",
                 IsSubmitted = submit,
                 CustomerId = customerId
-            }));
+            });
 
-            changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
-            var contactService = new ContactService(changeProcessor, customerDatabase);
+            var contactService = new CustomerManagementService(changeProcessor, customerDatabase);
 
             // Act
-            var result = await contactService.Patch(contact, customerId, "321", targetVersion, submit);
+            var result = await contactService.Patch(contact, EntityName.Contact, customerId, "321", targetVersion, submit);
 
             // Assert   
             result.Change.Should().Be(ChangeType.Read);
@@ -160,10 +155,10 @@ namespace StateManagment.Tests.Services
             }));
 
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(a => { ((MessageEnvelop)a[0]).EntityId = "321"; return Task.FromResult(TaskOutcome.OK); });
-            var contactService = new ContactService(changeProcessor, customerDatabase);
+            var contactService = new CustomerManagementService(changeProcessor, customerDatabase);
 
             // Act
-            var result = await contactService.Delete(customerId, "321", submit);
+            var result = await contactService.Delete(EntityName.Contact, customerId, "321", submit);
 
             // Assert
             result.Successful.Should().BeTrue();
@@ -190,10 +185,10 @@ namespace StateManagment.Tests.Services
                 CustomerId = "CustomerId"
             }));
 
-            var contactService = new ContactService(changeProcessor, customerDatabase);
+            var contactService = new CustomerManagementService(changeProcessor, customerDatabase);
 
             // Act
-            var result = await contactService.Get("CustomerId", "321");
+            var result = await contactService.Get(EntityName.Contact, "CustomerId", "321");
 
             // Assert   
             result.Change.Should().Be(ChangeType.Read);

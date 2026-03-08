@@ -33,7 +33,7 @@ builder.Services.AddApiVersioning(options =>
 });
 
 // API Services
-builder.Services.AddSingleton<ContactService>();
+builder.Services.AddSingleton<CustomerManagementService>();
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
