@@ -59,7 +59,6 @@ namespace Api.Controllers
             return Translate(contactEntity);
         }
 
-        // TODO: Implementing
         private LegalEntity ContactToPatch(LegalEntityModel patch)
         {
             var legalEntity = new LegalEntity()
@@ -78,12 +77,78 @@ namespace Api.Controllers
                 TradingName = patch.TradingName,
                 TurnoverPerAnnum = patch.TurnoverPerAnnum,
                 VatRegistration = patch.VatRegistration,
-                VatRegistrationStatus = patch.VatRegistrationStatus,
+                VatRegistrationStatus = patch.VatRegistrationStatus
             };
 
-            if (patch.BusinessContacts != null) 
-            { 
-            
+            if (patch.BusinessContacts != null)
+            {
+                legalEntity.BusinessContacts = [.. patch.BusinessContacts.Select(x => new BusinessContact()
+                {
+                    ContactId = x.ContactId,
+                    ContactType = Enum.Parse<ContactType>(x.ContactType, true)
+                })];
+            }
+
+            if (patch.Descriptors != null)
+            {
+                legalEntity.Descriptors = [.. patch.Descriptors.Select(x => new Descriptor() { Key = x.Key, Value = x.Value })];
+            }
+
+            if (patch.LegalEntitiesWithControl != null)
+            {
+                legalEntity.LegalEntitiesWithControl = [.. patch.LegalEntitiesWithControl.Select(x => new LegalEntityWithControl()
+                {
+                    LegalEntityId = x.LegalEntityId,
+                    ControlTypes = [.. x.ControlTypes.Select(y => Enum.Parse<ControlType>(y))]
+                })];
+            }
+
+            if (patch.PersonsWithControl != null)
+            {
+                legalEntity.PersonsWithControl = [.. patch.PersonsWithControl.Select(x => new PersonWithControl()
+                {
+                    ControlTypes = [.. x.ControlTypes.Select(y => Enum.Parse<ControlType>(y))],
+                    Person = new Person() {
+                        Title = x.Person.Title,
+                        Nationality = x.Person.Nationality,
+                        FirstName = x.Person.FirstName,
+                        LastName = x.Person.LastName,
+                        DateOfBirth = x.Person.DateOfBirth,
+                        MiddleName = x.Person.MiddleName,
+                        Address = new Address()
+                        {
+                            Code = x.Person.Address.Code,
+                            Country = x.Person.Address.Country,
+                            Line1 = x.Person.Address.Line1,
+                            Line2 = x.Person.Address.Line2,
+                            Line3 = x.Person.Address.Line3,
+                            Locality = x.Person.Address.Locality,
+                            Name = x.Person.Address.Name,
+                            Region = x.Person.Address.Region
+                        }
+                    }
+                })];
+            }
+
+            if (patch.RegisteredAddresses != null)
+            {
+                legalEntity.RegisteredAddresses = [.. patch.RegisteredAddresses.Select(x => new RegisteredAddress()
+                {
+                    Current = x.Current,
+                    DateFrom = DateTime.Parse(x.DateFrom),
+                    DateTo = x.DateTo != null ? DateTime.Parse(x.DateTo) : null,
+                    Address = new Address()
+                    {
+                            Code = x.Address.Code,
+                            Country = x.Address.Country,
+                            Line1 = x.Address.Line1,
+                            Line2 = x.Address.Line2,
+                            Line3 = x.Address.Line3,
+                            Locality = x.Address.Locality,
+                            Name = x.Address.Name,
+                            Region = x.Address.Region
+                    }
+                }) ];
             }
 
             return legalEntity;
