@@ -2,7 +2,7 @@
 {
     public class LegalEntityWithControl : IEntity
     {
-        public string[] ControlTypes { get; set; }
+        public ControlType[] ControlTypes { get; set; }
         public string LegalEntityId { get; set; }
     }
 }

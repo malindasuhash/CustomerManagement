@@ -46,5 +46,47 @@ namespace Api.Controllers
         {
             return await GetById(EntityName.LegalEntity, customerId, entityId);
         }
+
+        [HttpPatch("{customerId}/legal-entities/{entityId}")]
+        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] LegalEntityModel patch)
+        {
+            var patchModel = ContactToPatch(patch);
+
+            await customerManagement.Patch(patchModel, EntityName.LegalEntity, customerId, entityId, patch.TargetVersion, false);
+
+            var contactEntity = await customerManagement.Get(EntityName.LegalEntity, customerId, entityId);
+
+            return Translate(contactEntity);
+        }
+
+        // TODO: Implementing
+        private LegalEntity ContactToPatch(LegalEntityModel patch)
+        {
+            var legalEntity = new LegalEntity()
+            {
+                BusinessEmail = patch.BusinessEmail,
+                BusinessType = patch.BusinessType,
+                CardTurnoverPerAnnum = patch.CardTurnoverPerAnnum,
+                CompanyRegistration = patch.CompanyRegistration,
+                DateBusinessStarted = !string.IsNullOrWhiteSpace(patch.DateBusinessStarted) ? DateTime.Parse(patch.DateBusinessStarted) : null,
+                DateTradingStarted = !string.IsNullOrWhiteSpace(patch.DateTradingStarted) ? DateTime.Parse(patch.DateTradingStarted) : null,
+                Label = patch.Label,
+                MaximumTransactionValue = patch.MaximumTransactionValue,
+                MerchantCategoryCode = patch.MerchantCategoryCode,
+                Name = patch.Name,
+                StandardIndustryClassification = patch.StandardIndustryClassification,
+                TradingName = patch.TradingName,
+                TurnoverPerAnnum = patch.TurnoverPerAnnum,
+                VatRegistration = patch.VatRegistration,
+                VatRegistrationStatus = patch.VatRegistrationStatus,
+            };
+
+            if (patch.BusinessContacts != null) 
+            { 
+            
+            }
+
+            return legalEntity;
+        }
     }
 }

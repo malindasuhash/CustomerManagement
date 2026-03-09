@@ -5,7 +5,6 @@ Accept: application/json
 
 ###
 
-
 POST {{Api_HostAddress}}/customers/Cus123/contacts
 Content-Type: application/json
 {

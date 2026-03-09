@@ -13,15 +13,15 @@ namespace StateManagment.Entity
         public string BusinessType { get; set; }
         public string BusinessEmail { get; set; }
         public BusinessContact[] BusinessContacts { get; set; }
-        public int CardTurnoverPerAnnum { get; set; }
-        public int TurnoverPerAnnum { get; set; }
+        public int? CardTurnoverPerAnnum { get; set; }
+        public int? TurnoverPerAnnum { get; set; }
         public string CompanyRegistration { get; set; }
         public string VatRegistration { get; set; }
         public string VatRegistrationStatus { get; set; }
-        public string DateBusinessStarted { get; set; }
-        public string DateTradingStarted { get; set; }
+        public DateTime? DateBusinessStarted { get; set; }
+        public DateTime? DateTradingStarted { get; set; }
         public LegalEntityWithControl[] LegalEntitiesWithControl { get; set; }
-        public int MaximumTransactionValue { get; set; }
+        public int? MaximumTransactionValue { get; set; }
         public string MerchantCategoryCode { get; set; }
         public string StandardIndustryClassification { get; set; }
         public PersonWithControl[] PersonsWithControl { get; set; }

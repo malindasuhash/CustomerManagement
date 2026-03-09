@@ -1,0 +1,96 @@
+@Api_HostAddress = https://localhost:7296/api/v1
+
+GET  {{Api_HostAddress}}/customers/cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
+Accept: application/json
+
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities
+Content-Type: application/json
+{
+  "businessContacts": [
+    {
+      "contactId": "12345678",
+      "contactType": "Account"
+    }
+  ],
+  "businessEmail": "business-email@example.com",
+  "businessType": "This is an example business created from API documentation testing",
+  "cardTurnoverPerAnnum": 45000,
+  "company_registration_no": "12345678",
+  "date_business_created": "2025-01-01",
+  "date_trading_started": "2025-01-01",
+  "legal_entity_status": null,
+  "legal_entity_with_control": [
+    {
+      "control_types": [
+        "Shareholder"
+      ],
+      "legal_entity_id": "string"
+    }
+  ],
+  "maximum_transaction_value": 10000,
+  "merchant_category_code": "1234",
+  "name": "Example business",
+  "persons_with_control": [
+    {
+      "control_types": [
+        "Shareholder"
+      ],
+      "person": {
+        "address": null,
+        "date_of_birth": "1980-01-01",
+        "first_name": "Mary",
+        "last_name": "Anonymous",
+        "middle_name": "Jane",
+        "nationality": "GB",
+        "title": "Ms"
+      }
+    }
+  ],
+  "registered_addresses": [
+    {
+      "address": {
+        "code": "AB1 2CD",
+        "country": "GB",
+        "line1": "Line 1",
+        "line2": "string",
+        "line3": "string",
+        "locality": "string",
+        "name": "House name",
+        "region": "Suffolk"
+      },
+      "current": true,
+      "date_from": "2015-01-01",
+      "date_to": "2015-01-01"
+    }
+  ],
+  "standard_industry_classification": "1234",
+  "trading_name": "Trading as...",
+  "turnover_per_annum": 75000,
+  "vat_registration_no": "GB123456789",
+  "vat_registration_status": null
+}
+###
+
+PATCH {{Api_HostAddress}}/customers/Cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
+Content-Type: application/json
+{
+  "firstName": "Updated 4",
+  "lastName": "Updated 8",
+  "targetVersion": 2
+}
+###
+
+DELETE {{Api_HostAddress}}/customers/Cus123/contacts/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2/submit
+Content-Type: application/json
+{
+  "targetVersion": 4
+}
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2/touch
+###

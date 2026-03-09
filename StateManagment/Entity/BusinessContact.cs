@@ -3,6 +3,6 @@
     public class BusinessContact : IEntity
     {
         public string ContactId { get; set; }
-        public string ContactType { get; set; }
+        public ContactType ContactType { get; set; }
     }
 }

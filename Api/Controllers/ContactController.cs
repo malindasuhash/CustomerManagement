@@ -50,7 +50,7 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/contacts/{contactId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactEntityModel patch)
+        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactModel patch)
         {
             var patchModel = ContactToPatch(patch);
             await contactService.Patch(patchModel, EntityName.Contact, customerId, contactId, patch.TargetVersion, false);
@@ -60,7 +60,7 @@ namespace Api.Controllers
             return Translate(contactEntity);
         }
 
-        private static Contact ContactToPatch(ContactEntityModel patchModel)
+        private static Contact ContactToPatch(ContactModel patchModel)
         {
             // There must be a better way to map from a api model to a domain model.
             // Number of other properties are ignored for now. Keen to get the concept 

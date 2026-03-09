@@ -2,7 +2,7 @@
 {
     public class PersonWithControl : IEntity
     {
-        public string[] ControlTypes { get; set; }
+        public ControlType[] ControlTypes { get; set; }
         public Person Person { get; set; }
     }
 }

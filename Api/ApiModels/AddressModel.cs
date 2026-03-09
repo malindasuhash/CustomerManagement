@@ -1,6 +1,6 @@
 ﻿namespace Api.ApiModels
 {
-    public class AddressEntityModel
+    public class AddressModel
     {
         public string? Name { get; set; }
         public string? Code { get; set; }
