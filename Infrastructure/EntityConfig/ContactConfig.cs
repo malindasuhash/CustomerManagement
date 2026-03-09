@@ -83,7 +83,7 @@ namespace Infrastructure.EntityConfig
 
         public static async Task<DbEexecutionParams> UpdateData(string entityId, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM")
         {
-            var contact = await GetById(entityId, db);
+            var contact = await GetById(entityId, EntityNameToCollectionName.GetCollectionName(EntityName.Contact), db);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -94,7 +94,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
-            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(EntityName.Contact));
 
             return new DbEexecutionParams
             {
@@ -107,7 +107,7 @@ namespace Infrastructure.EntityConfig
         public static async Task<DbEexecutionParams> AddToSubmitted(IEntity entity, string entityId, string updatedUser, IMongoDatabase db)
         {
             // Read the entity document - I need the latest document here.
-            var contact = await GetById(entityId, db);
+            var contact = await GetById(entityId, EntityNameToCollectionName.GetCollectionName(EntityName.Contact), db);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -129,7 +129,7 @@ namespace Infrastructure.EntityConfig
 
         public static async Task<DbEexecutionParams> AddToApplied(string entityId, IEntity entity, bool confirmRemoval, IMongoDatabase db, string updatedUser = "SYSTEM")
         {
-            var contact = await GetById(entityId, db);
+            var contact = await GetById(entityId, EntityNameToCollectionName.GetCollectionName(EntityName.Contact),  db);
 
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
@@ -140,7 +140,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateUser, updatedUser)
             .Set(a => a.Removed, confirmRemoval);
 
-            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(EntityName.Contact));
 
             return new DbEexecutionParams
             {
@@ -150,7 +150,7 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static Task<DbEexecutionParams> AddToDraft(MessageEnvelop messageEnvelop, int incrementalDraftVersion, IMongoDatabase db)
+        public static Task<DbEexecutionParams> AddToDraft<T>(MessageEnvelop messageEnvelop, int incrementalDraftVersion, string collectionName, IMongoDatabase db) where T : IEntity
         {
             messageEnvelop.EntityId = Guid.NewGuid().ToString();
             messageEnvelop.DraftVersion = incrementalDraftVersion;
@@ -160,7 +160,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.DraftVersion, messageEnvelop.DraftVersion)
             .Set(a => a.SubmittedVersion, messageEnvelop.SubmittedVersion)
             .Set(a => a.AppliedVersion, messageEnvelop.AppliedVersion)
-            .Set(a => a.Draft, (Contact)messageEnvelop.Draft)
+            .Set(a => a.Draft, (T)messageEnvelop.Draft)
             .Set(a => a.State, messageEnvelop.State)
             .Set(a => a.CustomerId, messageEnvelop.CustomerId)
             .Set(a => a.RemoveRequested, false)
@@ -170,7 +170,7 @@ namespace Infrastructure.EntityConfig
             .SetOnInsert(a => a.CreatedUser, messageEnvelop.CreatedUser)
             .SetOnInsert(a => a.EntityId, messageEnvelop.EntityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+            var contacts = db.GetCollection<MessageEnvelop>(collectionName);
 
             return Task.FromResult(new DbEexecutionParams
             {
@@ -208,11 +208,11 @@ namespace Infrastructure.EntityConfig
             return contacts.Find(filter).FirstOrDefaultAsync();
         }
 
-        public static Task<MessageEnvelop> GetById(string entityId, IMongoDatabase db)
+        public static Task<MessageEnvelop> GetById(string entityId, string collectionName, IMongoDatabase db)
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+            var contacts = db.GetCollection<MessageEnvelop>(collectionName);
 
             return contacts.Find(filter).FirstOrDefaultAsync();
         }

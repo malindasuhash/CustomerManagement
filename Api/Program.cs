@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using StateManagment;
 using StateManagment.Models;
 using StateManagment.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,11 @@ builder.Services.AddApiVersioning(options =>
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ReportApiVersions = true;
 });
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // API Services
 builder.Services.AddSingleton<CustomerManagementService>();

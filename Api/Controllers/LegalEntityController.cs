@@ -1,6 +1,5 @@
 ﻿using Api.ApiModels;
 using Asp.Versioning;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
 using StateManagment.Models;

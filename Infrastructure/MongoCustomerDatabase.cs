@@ -42,10 +42,16 @@ namespace Infrastructure
             switch (entityName)
             {
                 case EntityName.Contact:
-                    var contact = await ContactConfig.GetById(entityId, database);
+                    var contact = await ContactConfig.GetById(entityId, "contacts", database);
                     contact.Name = entityName;
                     contact.Change = ChangeType.Read;
                     return contact;
+
+                case EntityName.LegalEntity:
+                    var legalEntity = await ContactConfig.GetById(entityId, "legal-entities", database);
+                    legalEntity.Name = entityName;
+                    legalEntity.Change = ChangeType.Read;
+                    return legalEntity;
             }
 
             throw new NotImplementedException();
@@ -96,7 +102,11 @@ namespace Infrastructure
             switch (messageEnvelop.Name)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.AddToDraft(messageEnvelop, incrementalDraftVersion, database);
+                    dbEexecution = await ContactConfig.AddToDraft<Contact>(messageEnvelop, incrementalDraftVersion, "contacts", database);
+                    break;
+
+                case EntityName.LegalEntity:
+                    dbEexecution = await ContactConfig.AddToDraft<LegalEntity>(messageEnvelop, incrementalDraftVersion, "legal-entities", database);
                     break;
 
                 default:
