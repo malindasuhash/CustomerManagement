@@ -83,7 +83,7 @@ Content-Type: application/json
 {
   "tradingName": "Updated 4",
   "businessEmail": "Updated 8",
-  "targetVersion": 1
+  "targetVersion": 2
 }
 ###
 

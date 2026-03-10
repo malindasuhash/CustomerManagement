@@ -17,7 +17,27 @@ namespace Infrastructure.EntityConfig
         {
             BsonClassMap.RegisterClassMap<Contact>(cm =>
             {
-                cm.AutoMap();                
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<LegalEntity>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<PersonWithControl>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<LegalEntityWithControl>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<RegisteredAddress>(cm =>
+            {
+                cm.AutoMap();
             });
 
             BsonClassMap.RegisterClassMap<MessageEnvelop>(cm =>
@@ -44,23 +64,45 @@ namespace Infrastructure.EntityConfig
             });
         }
 
-        public static async Task<DbEexecutionParams> Patch(MessageEnvelop messageEnvelop, int latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM")
+        public static async Task<DbEexecutionParams> Patch<T>(MessageEnvelop messageEnvelop, int latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
         {
-            var stored = await Get(messageEnvelop.EntityId, messageEnvelop.CustomerId, db);
+            var stored = await GetById(messageEnvelop.EntityId, messageEnvelop.Name, db);
 
-            var contact = (Contact)messageEnvelop.Draft;
-            var storedContact = (Contact)stored.Draft;
+            var receivedEntity = (T)messageEnvelop.Draft;
+            var storedEntity = (T)stored.Draft;
 
-            if (messageEnvelop.Change == ChangeType.Update)
+            // This is not quite right. 
+            // I need to figure out a way to do this more elegantly.
+            // I'm reading the entire object and applying changes and saving it.
+            // Perhaps I can apply changes selectively instead.
+            if (messageEnvelop.Name == EntityName.Contact && messageEnvelop.Change == ChangeType.Update)
             {
-                if (contact.FirstName != null)
+                var receivedContact = receivedEntity as Contact;
+                var storedContact = storedEntity as Contact;
+
+                if (receivedContact.FirstName != null)
                 {
-                    storedContact.FirstName = contact.FirstName;
+                    storedContact.FirstName = receivedContact.FirstName;
                 }
 
-                if (contact.LastName != null)
+                if (receivedContact.LastName != null)
                 {
-                    storedContact.LastName = contact.LastName;
+                    storedContact.LastName = receivedContact.LastName;
+                }
+            }
+            if (messageEnvelop.Name == EntityName.LegalEntity && messageEnvelop.Change == ChangeType.Update)
+            {
+                var receivedLegalEntity = receivedEntity as LegalEntity;
+                var storedLegalEntity = storedEntity as LegalEntity;
+
+                if (receivedLegalEntity.TradingName != null)
+                {
+                    storedLegalEntity.TradingName = receivedLegalEntity.TradingName;
+                }
+
+                if (receivedLegalEntity.BusinessEmail != null)
+                {
+                    storedLegalEntity.BusinessEmail = receivedLegalEntity.BusinessEmail;
                 }
             }
 
@@ -69,9 +111,9 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser)
             .Set(a => a.DraftVersion, latestDraftVersion)
-            .Set(a => a.Draft, messageEnvelop.Change == ChangeType.Delete ? null : storedContact); // Blank out when deleting
+            .Set(a => a.Draft, storedEntity);
 
-            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(messageEnvelop.Name));
 
             return new DbEexecutionParams
             {
@@ -83,7 +125,7 @@ namespace Infrastructure.EntityConfig
 
         public static async Task<DbEexecutionParams> UpdateData(string entityId, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM")
         {
-            var contact = await GetById(entityId, EntityNameToCollectionName.GetCollectionName(EntityName.Contact), db);
+            var contact = await GetById(entityId, EntityName.Contact, db);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -104,10 +146,10 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToSubmitted(IEntity entity, string entityId, string updatedUser, IMongoDatabase db)
+        public static async Task<DbEexecutionParams> AddToSubmitted(IEntity entity, string entityId, string updatedUser, EntityName entityName, IMongoDatabase db)
         {
             // Read the entity document - I need the latest document here.
-            var contact = await GetById(entityId, EntityNameToCollectionName.GetCollectionName(EntityName.Contact), db);
+            var contact = await GetById(entityId, entityName, db);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -117,7 +159,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
-            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
 
             return new DbEexecutionParams
             {
@@ -127,9 +169,9 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToApplied(string entityId, IEntity entity, bool confirmRemoval, IMongoDatabase db, string updatedUser = "SYSTEM")
+        public static async Task<DbEexecutionParams> AddToApplied(string entityId, IEntity entity, bool confirmRemoval, IMongoDatabase db, EntityName entityName, string updatedUser = "SYSTEM")
         {
-            var contact = await GetById(entityId, EntityNameToCollectionName.GetCollectionName(EntityName.Contact),  db);
+            var contact = await GetById(entityId, entityName, db);
 
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
@@ -140,7 +182,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateUser, updatedUser)
             .Set(a => a.Removed, confirmRemoval);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(EntityName.Contact));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
 
             return new DbEexecutionParams
             {
@@ -201,18 +243,18 @@ namespace Infrastructure.EntityConfig
             var filter = Builders<MessageEnvelop>.Filter.And(
                 Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId),
                 Builders<MessageEnvelop>.Filter.Eq(o => o.CustomerId, customerId));
-                
+
 
             var contacts = db.GetCollection<MessageEnvelop>("contacts");
 
             return contacts.Find(filter).FirstOrDefaultAsync();
         }
 
-        public static Task<MessageEnvelop> GetById(string entityId, string collectionName, IMongoDatabase db)
+        public static Task<MessageEnvelop> GetById(string entityId, EntityName entityName, IMongoDatabase db)
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>(collectionName);
+            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
 
             return contacts.Find(filter).FirstOrDefaultAsync();
         }

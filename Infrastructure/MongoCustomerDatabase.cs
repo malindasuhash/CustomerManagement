@@ -46,13 +46,13 @@ namespace Infrastructure
             switch (entityName)
             {
                 case EntityName.Contact:
-                    var contact = await ContactConfig.GetById(entityId, EntityNameToCollectionName.GetCollectionName(entityName), database);
+                    var contact = await ContactConfig.GetById(entityId, entityName, database);
                     contact.Name = entityName;
                     contact.Change = ChangeType.Read;
                     return contact;
 
                 case EntityName.LegalEntity:
-                    var legalEntity = await ContactConfig.GetById(entityId, EntityNameToCollectionName.GetCollectionName(entityName), database);
+                    var legalEntity = await ContactConfig.GetById(entityId, entityName, database);
                     legalEntity.Name = entityName;
                     legalEntity.Change = ChangeType.Read;
                     return legalEntity;
@@ -68,7 +68,11 @@ namespace Infrastructure
             switch (envelop.Name)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.Patch(envelop, latestDraftVersion, database);
+                    dbEexecution = await ContactConfig.Patch<Contact>(envelop, latestDraftVersion, database);
+                    break;
+
+                case EntityName.LegalEntity:
+                    dbEexecution = await ContactConfig.Patch<LegalEntity>(envelop, latestDraftVersion, database);
                     break;
 
                 default:
@@ -87,7 +91,7 @@ namespace Infrastructure
             switch (entityName)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.AddToApplied(entityId, entity, confirmRemoval, database);
+                    dbEexecution = await ContactConfig.AddToApplied(entityId, entity, confirmRemoval, database, EntityName.Contact);
                     break;
 
                 default:
@@ -129,7 +133,7 @@ namespace Infrastructure
             switch (entityName)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.AddToSubmitted(entity, entityId, updatedUser, database);
+                    dbEexecution = await ContactConfig.AddToSubmitted(entity, entityId, updatedUser, EntityName.Contact, database);
                     break;
 
                 default:
