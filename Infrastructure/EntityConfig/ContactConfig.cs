@@ -146,7 +146,7 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToSubmitted(IEntity entity, string entityId, string updatedUser, EntityName entityName, IMongoDatabase db)
+        public static async Task<DbEexecutionParams> AddToSubmitted<T>(IEntity entity, string entityId, string updatedUser, EntityName entityName, IMongoDatabase db) where T : IEntity
         {
             // Read the entity document - I need the latest document here.
             var contact = await GetById(entityId, entityName, db);
@@ -155,7 +155,7 @@ namespace Infrastructure.EntityConfig
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
             var onUpdate = Builders<MessageEnvelop>.Update
             .Set(a => a.SubmittedVersion, contact.DraftVersion)
-            .Set(a => a.Submitted, (Contact)contact.Draft)
+            .Set(a => a.Submitted, (T)contact.Draft)
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
@@ -222,13 +222,13 @@ namespace Infrastructure.EntityConfig
             });
         }
 
-        public static Task<DbEexecutionParams> SetMarkForRemoval(string entityId, IMongoDatabase db)
+        public static Task<DbEexecutionParams> SetMarkForRemoval(string entityId, EntityName entityName, IMongoDatabase db)
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
             var onInsert = Builders<MessageEnvelop>.Update
             .Set(a => a.RemoveRequested, true);
 
-            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
 
             return Task.FromResult(new DbEexecutionParams
             {

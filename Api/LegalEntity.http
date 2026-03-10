@@ -87,15 +87,15 @@ Content-Type: application/json
 }
 ###
 
-DELETE {{Api_HostAddress}}/customers/Cus123/contacts/33fdab1b-6307-4cb6-b65b-3be8ca679b1d
+DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2/submit
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17/submit
 Content-Type: application/json
 {
-  "targetVersion": 4
+  "targetVersion": 3
 }
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2/touch
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17/touch
 ###

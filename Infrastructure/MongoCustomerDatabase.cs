@@ -133,7 +133,11 @@ namespace Infrastructure
             switch (entityName)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.AddToSubmitted(entity, entityId, updatedUser, EntityName.Contact, database);
+                    dbEexecution = await ContactConfig.AddToSubmitted<Contact>(entity, entityId, updatedUser, EntityName.Contact, database);
+                    break;
+
+                case EntityName.LegalEntity:
+                    dbEexecution = await ContactConfig.AddToSubmitted<LegalEntity>(entity, entityId, updatedUser, EntityName.LegalEntity, database);
                     break;
 
                 default:
@@ -171,9 +175,12 @@ namespace Infrastructure
             switch (name)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.SetMarkForRemoval(entityId, database);
+                    dbEexecution = await ContactConfig.SetMarkForRemoval(entityId, EntityName.Contact, database);
                     break;
 
+                case EntityName.LegalEntity:
+                    dbEexecution = await ContactConfig.SetMarkForRemoval(entityId, EntityName.LegalEntity, database);
+                    break;
                 default:
                     throw new NotImplementedException();
             }
