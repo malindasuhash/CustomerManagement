@@ -30,8 +30,12 @@ namespace Infrastructure
             switch (entityName)
             {
                 case EntityName.Contact:
-                    var contact = await ContactConfig.GetEntityBasics(entityId, database);
+                    var contact = await ContactConfig.GetEntityBasics(entityId, EntityName.Contact, database);
                     return contact;
+
+                case EntityName.LegalEntity:
+                    var legalEntity = await ContactConfig.GetEntityBasics(entityId, EntityName.LegalEntity, database);
+                    return legalEntity;
             }
 
             throw new NotImplementedException();
@@ -42,13 +46,13 @@ namespace Infrastructure
             switch (entityName)
             {
                 case EntityName.Contact:
-                    var contact = await ContactConfig.GetById(entityId, "contacts", database);
+                    var contact = await ContactConfig.GetById(entityId, EntityNameToCollectionName.GetCollectionName(entityName), database);
                     contact.Name = entityName;
                     contact.Change = ChangeType.Read;
                     return contact;
 
                 case EntityName.LegalEntity:
-                    var legalEntity = await ContactConfig.GetById(entityId, "legal-entities", database);
+                    var legalEntity = await ContactConfig.GetById(entityId, EntityNameToCollectionName.GetCollectionName(entityName), database);
                     legalEntity.Name = entityName;
                     legalEntity.Change = ChangeType.Read;
                     return legalEntity;

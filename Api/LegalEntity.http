@@ -1,6 +1,6 @@
 @Api_HostAddress = https://localhost:7296/api/v1
 
-GET  {{Api_HostAddress}}/customers/cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
+GET  {{Api_HostAddress}}/customers/cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17
 Accept: application/json
 
 ###
@@ -31,16 +31,59 @@ Content-Type: application/json
       ],
       "legalEntityId": "E65237"
     }
+  ],
+  "maximumTransactionValue": 10000,
+  "merchantCategoryCode": "MCC1",
+  "standardIndustryClassification": "SIC2",
+  "personsWithControl": [
+    {
+      "controlTypes": ["Shareholder"],
+      "person": {
+        "firstName": "Some",
+        "dateOfBirth": "1981-07-27",
+        "title": "Mr",
+        "lastName": "Form",
+        "middleName": "Not Middle",
+        "nationality": "IL",
+        "address": {
+           "code": "AB1 2CD",
+            "country": "GB",
+            "line1": "Line 1",
+            "line2": "Line 22",
+            "line3": "Line 33",
+            "locality": "locality 44",
+            "name": "House name",
+            "region": "Suffolk"
+        }
+      }
+    }
+  ],
+  "registeredAddresses": [
+    {
+      "address":  
+      {
+        "name": "House name",
+        "code": "AB1 2CD",
+        "country": "GB",
+        "line1": "Line 1",
+        "line2": "Line 22",
+        "line3": "Line 33",
+        "locality": "locality 44",
+        "region": "Suffolk"
+       },
+       "current": true,
+       "dateFrom": "2023-09-10"
+    }
   ]
 }
 ###
 
-PATCH {{Api_HostAddress}}/customers/Cus123/contacts/50ae2e45-2b22-4c9b-9a2c-1683de73e0e2
+PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17
 Content-Type: application/json
 {
-  "firstName": "Updated 4",
-  "lastName": "Updated 8",
-  "targetVersion": 2
+  "tradingName": "Updated 4",
+  "businessEmail": "Updated 8",
+  "targetVersion": 1
 }
 ###
 

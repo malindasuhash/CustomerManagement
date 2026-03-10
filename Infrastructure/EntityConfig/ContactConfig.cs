@@ -217,18 +217,18 @@ namespace Infrastructure.EntityConfig
             return contacts.Find(filter).FirstOrDefaultAsync();
         }
 
-        public static Task<EntityBasics> GetEntityBasics(string entityId, IMongoDatabase db)
+        public static Task<EntityBasics> GetEntityBasics(string entityId, EntityName entityName, IMongoDatabase db)
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>("contacts");
+            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
 
             return contacts.Find(filter)
                 .Project(p => new EntityBasics
                 {
                     DraftVersion = p.DraftVersion,
                     EntityId = entityId,
-                    Name = EntityName.Contact,
+                    Name = entityName,
                     State = p.State,
                     SubmittedVersion = p.SubmittedVersion,
                 }).FirstOrDefaultAsync();
