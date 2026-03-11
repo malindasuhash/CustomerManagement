@@ -12,11 +12,11 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class ContactController : EntityManagementController
     {
-        private readonly CustomerManagementService contactService;
+        private readonly CustomerManagementService customerManager;
 
-        public ContactController(CustomerManagementService contactService) : base(contactService)
+        public ContactController(CustomerManagementService customerManager) : base(customerManager)
         {
-            this.contactService = contactService;
+            this.customerManager = customerManager;
         }
 
         [HttpPost("{customerId}/contacts/{contactId}/touch")]
@@ -53,9 +53,9 @@ namespace Api.Controllers
         public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactModel patch)
         {
             var patchModel = ContactToPatch(patch);
-            await contactService.Patch(patchModel, EntityName.Contact, customerId, contactId, patch.TargetVersion, false);
+            await customerManager.Patch(patchModel, EntityName.Contact, customerId, contactId, patch.TargetVersion, false);
 
-            var contactEntity = await contactService.Get(EntityName.Contact, customerId, contactId);
+            var contactEntity = await customerManager.Get(EntityName.Contact, customerId, contactId);
 
             return Translate(contactEntity);
         }

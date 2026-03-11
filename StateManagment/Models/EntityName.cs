@@ -5,7 +5,8 @@
         None,
         Contact,
         BankAccount,
-        LegalEntity
+        LegalEntity,
+        BillingGroup
     }
 
     public enum EntityState

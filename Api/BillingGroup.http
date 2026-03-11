@@ -1,0 +1,45 @@
+@Api_HostAddress = https://localhost:7296/api/v1
+
+GET  {{Api_HostAddress}}/customers/cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4
+Accept: application/json
+
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/billing-groups
+Content-Type: application/json
+{
+  "billingBankAccountId": "A1234",
+  "description": "Bank Description",
+  "legalEntityId": "9938982",
+  "name": "Company billing",
+  "label": "Secondary billing account",
+  "descriptors": [
+    {
+      "key": "SomeKey",
+      "value": "SomeValue"
+    }
+  ]
+}
+###
+
+PATCH {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4
+Content-Type: application/json
+{
+  "description": "Description Updated 4",
+  "name": "Name Updated 8",
+  "targetVersion": 1
+}
+###
+
+DELETE {{Api_HostAddress}}/customers/Cus123/billing-groups/67a2a0a9-7633-43a0-8c63-a74c50216a17
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/billing-groups/67a2a0a9-7633-43a0-8c63-a74c50216a17/submit
+Content-Type: application/json
+{
+  "targetVersion": 2
+}
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/billing-groups/67a2a0a9-7633-43a0-8c63-a74c50216a17/touch
+###

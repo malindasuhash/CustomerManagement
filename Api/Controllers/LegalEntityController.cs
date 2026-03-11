@@ -12,43 +12,66 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class LegalEntityController : EntityManagementController
     {
-        public LegalEntityController(CustomerManagementService contactService) : base(contactService)
+        public LegalEntityController(CustomerManagementService customerManager) : base(customerManager)
         {
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/touch")]
         public async Task<ActionResult<EntityDocumentModel>> TouchLegalEntity([FromRoute] string customerId, [FromRoute] string entityId)
         {
+            // LEGAL_ENTITY_TOUCH
+            // LEGAL_ENTITY_READ
+            // SYSTEM_DATA_READ
+            // SOFTDELETE_DATA_READ
             return await Touch(EntityName.LegalEntity, customerId, entityId);
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/submit")]
         public async Task<ActionResult<EntityDocumentModel>> SubmitLegalEntity([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] SubmitEntityModel submitModel)
         {
+            // LEGAL_ENTITY_SUBMIT
+            // LEGAL_ENTITY_READ
+            // SYSTEM_DATA_READ
+            // SOFTDELETE_DATA_READ
             return await Submit(EntityName.LegalEntity, customerId, entityId, submitModel);
         }
 
         [HttpDelete("{customerId}/legal-entities/{entityId}")]
         public async Task<ActionResult<EntityDocumentModel>> RemoveLegalEntity([FromRoute] string customerId, [FromRoute] string entityId)
         {
+            // LEGAL_ENTITY_REMOVE
+            // LEGAL_ENTITY_READ
+            // SYSTEM_DATA_READ
+            // SOFTDELETE_DATA_READ
             return await Remove(EntityName.LegalEntity, customerId, entityId);
         }
 
         [HttpPost("{customerId}/legal-entities")]
         public async Task<ActionResult<EntityDocumentModel>> CreateLegalEntity([FromRoute] string customerId, [FromBody] LegalEntity legalEntity)
         {
+            // LEGAL_ENTITY_WRITE
+            // LEGAL_ENTITY_READ
+            // SYSTEM_DATA_READ
+            // SOFTDELETE_DATA_READ
             return await Create(EntityName.LegalEntity, customerId, legalEntity);
         }
 
         [HttpGet("{customerId}/legal-entities/{entityId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetLegalEntityById(string customerId, string entityId)
         {
+            // LEGAL_ENTITY_READ
+            // SYSTEM_DATA_READ
+            // SOFTDELETE_DATA_READ
             return await GetById(EntityName.LegalEntity, customerId, entityId);
         }
 
         [HttpPatch("{customerId}/legal-entities/{entityId}")]
         public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] LegalEntityModel patch)
         {
+            // LEGAL_ENTITY_UPDATE
+            // LEGAL_ENTITY_READ
+            // SYSTEM_DATA_READ
+            // SOFTDELETE_DATA_READ
             var patchModel = ContactToPatch(patch);
 
             await customerManagement.Patch(patchModel, EntityName.LegalEntity, customerId, entityId, patch.TargetVersion, false);

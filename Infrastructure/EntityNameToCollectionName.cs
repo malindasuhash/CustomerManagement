@@ -15,6 +15,7 @@ namespace Infrastructure
             {
                 EntityName.Contact => "contacts",
                 EntityName.LegalEntity => "legal-entities",
+                EntityName.BillingGroup => "billing-groups",
                 _ => "none",
             };
         }

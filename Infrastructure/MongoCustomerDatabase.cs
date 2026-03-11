@@ -27,38 +27,16 @@ namespace Infrastructure
 
         public async Task<EntityBasics> GetBasicInfo(EntityName entityName, string entityId)
         {
-            switch (entityName)
-            {
-                case EntityName.Contact:
-                    var contact = await ContactConfig.GetEntityBasics(entityId, EntityName.Contact, database);
-                    return contact;
-
-                case EntityName.LegalEntity:
-                    var legalEntity = await ContactConfig.GetEntityBasics(entityId, EntityName.LegalEntity, database);
-                    return legalEntity;
-            }
-
-            throw new NotImplementedException();
+            var storedBasics = await DatabaseCollectionConfig.GetEntityBasics(entityId, entityName, database);
+            return storedBasics;
         }
 
         public async Task<MessageEnvelop> GetEntityDocument(EntityName entityName, string entityId, string? customerId = null)
         {
-            switch (entityName)
-            {
-                case EntityName.Contact:
-                    var contact = await ContactConfig.GetById(entityId, entityName, database);
-                    contact.Name = entityName;
-                    contact.Change = ChangeType.Read;
-                    return contact;
-
-                case EntityName.LegalEntity:
-                    var legalEntity = await ContactConfig.GetById(entityId, entityName, database);
-                    legalEntity.Name = entityName;
-                    legalEntity.Change = ChangeType.Read;
-                    return legalEntity;
-            }
-
-            throw new NotImplementedException();
+            var storedEntity = await DatabaseCollectionConfig.GetById(entityId, entityName, database);
+            storedEntity.Name = entityName;
+            storedEntity.Change = ChangeType.Read;
+            return storedEntity;
         }
 
         public async Task<TaskOutcome> MergeDraft(MessageEnvelop envelop, int latestDraftVersion)
@@ -68,11 +46,15 @@ namespace Infrastructure
             switch (envelop.Name)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.Patch<Contact>(envelop, latestDraftVersion, database);
+                    dbEexecution = await DatabaseCollectionConfig.Patch<Contact>(envelop, latestDraftVersion, database);
                     break;
 
                 case EntityName.LegalEntity:
-                    dbEexecution = await ContactConfig.Patch<LegalEntity>(envelop, latestDraftVersion, database);
+                    dbEexecution = await DatabaseCollectionConfig.Patch<LegalEntity>(envelop, latestDraftVersion, database);
+                    break;
+
+                case EntityName.BillingGroup:
+                    dbEexecution = await DatabaseCollectionConfig.Patch<BillingGroup>(envelop, latestDraftVersion, database);
                     break;
 
                 default:
@@ -88,15 +70,7 @@ namespace Infrastructure
         {
             DbEexecutionParams dbEexecution;
 
-            switch (entityName)
-            {
-                case EntityName.Contact:
-                    dbEexecution = await ContactConfig.AddToApplied(entityId, entity, confirmRemoval, database, EntityName.Contact);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+            dbEexecution = await DatabaseCollectionConfig.AddToApplied(entityId, entity, confirmRemoval, database, entityName);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 
@@ -110,11 +84,15 @@ namespace Infrastructure
             switch (messageEnvelop.Name)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.AddToDraft<Contact>(messageEnvelop, incrementalDraftVersion, "contacts", database);
+                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<Contact>(messageEnvelop, incrementalDraftVersion, "contacts", database);
                     break;
 
                 case EntityName.LegalEntity:
-                    dbEexecution = await ContactConfig.AddToDraft<LegalEntity>(messageEnvelop, incrementalDraftVersion, "legal-entities", database);
+                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<LegalEntity>(messageEnvelop, incrementalDraftVersion, "legal-entities", database);
+                    break;
+
+                case EntityName.BillingGroup:
+                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<BillingGroup>(messageEnvelop, incrementalDraftVersion, "billing-groups", database);
                     break;
 
                 default:
@@ -133,11 +111,15 @@ namespace Infrastructure
             switch (entityName)
             {
                 case EntityName.Contact:
-                    dbEexecution = await ContactConfig.AddToSubmitted<Contact>(entity, entityId, updatedUser, EntityName.Contact, database);
+                    dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<Contact>(entity, entityId, updatedUser, entityName, database);
                     break;
 
                 case EntityName.LegalEntity:
-                    dbEexecution = await ContactConfig.AddToSubmitted<LegalEntity>(entity, entityId, updatedUser, EntityName.LegalEntity, database);
+                    dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<LegalEntity>(entity, entityId, updatedUser, entityName, database);
+                    break;
+
+                case EntityName.BillingGroup:
+                    dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<BillingGroup>(entity, entityId, updatedUser, entityName, database);
                     break;
 
                 default:
@@ -153,15 +135,7 @@ namespace Infrastructure
         {
             DbEexecutionParams dbEexecution;
 
-            switch (entityName)
-            {
-                case EntityName.Contact:
-                    dbEexecution = await ContactConfig.UpdateData(entityId, targetState, database, feedbacks, orchestrationData);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+            dbEexecution = await DatabaseCollectionConfig.UpdateData(entityName, entityId, targetState, database, feedbacks, orchestrationData);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 
@@ -172,18 +146,7 @@ namespace Infrastructure
         {
             DbEexecutionParams dbEexecution;
 
-            switch (name)
-            {
-                case EntityName.Contact:
-                    dbEexecution = await ContactConfig.SetMarkForRemoval(entityId, EntityName.Contact, database);
-                    break;
-
-                case EntityName.LegalEntity:
-                    dbEexecution = await ContactConfig.SetMarkForRemoval(entityId, EntityName.LegalEntity, database);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+            dbEexecution = await DatabaseCollectionConfig.SetMarkForRemoval(entityId, name, database);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 
