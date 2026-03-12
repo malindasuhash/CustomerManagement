@@ -31,15 +31,15 @@ Content-Type: application/json
 }
 ###
 
-DELETE {{Api_HostAddress}}/customers/Cus123/billing-groups/67a2a0a9-7633-43a0-8c63-a74c50216a17
+DELETE {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/billing-groups/67a2a0a9-7633-43a0-8c63-a74c50216a17/submit
+POST {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4/submit
 Content-Type: application/json
 {
   "targetVersion": 2
 }
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/billing-groups/67a2a0a9-7633-43a0-8c63-a74c50216a17/touch
+POST {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4/touch
 ###

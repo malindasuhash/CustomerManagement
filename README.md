@@ -7,7 +7,7 @@
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Adding Billing group and APIs
+- Adding Bank account and APIs
 
 # PENDING
 
@@ -18,7 +18,8 @@
 - Authorisation and scopes for making certain changes.
 
 # DONE
-- Add Legal Entity
+- Added billing group and APIs
+- Added Legal Entity and APIs
 - Soft deletes for entities.
 - Added system data objects and Legal entity (most complex one)
 - Finite State Model 
