@@ -22,7 +22,19 @@ namespace Api.Controllers
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/touch")]
         public async Task<ActionResult<EntityDocumentModel>> TouchBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            return await Touch(EntityName.BankAccount, customerId, bankAccountId);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Touch,
+                Name = EntityName.BankAccount,
+                CustomerId = customerId,
+                EntityId = bankAccountId,
+                Draft = new BankAccount()
+                {
+                    LegalEntityId = legalEntityId
+                }
+            };
+
+            return await Touch(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/submit")]

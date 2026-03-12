@@ -31,17 +31,17 @@ namespace Api.Controllers
             return Translate(specificEntity);
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> Touch(EntityName entityName, string customerId, string entityId)
+        internal async Task<ActionResult<EntityDocumentModel>> Touch(MessageEnvelop messageEnvelop)
         {
             // Authorisation layer may go here
-            var result = await customerManagement.Touch(entityName, customerId, entityId);
+            var result = await customerManagement.Touch(messageEnvelop);
 
             if (result != TaskOutcome.OK)
             {
                 return BadRequest(result);
             }
 
-            var specificEntity = await customerManagement.Get(entityName, customerId, entityId);
+            var specificEntity = await customerManagement.Get(messageEnvelop.Name, messageEnvelop.CustomerId, messageEnvelop.EntityId);
 
             return Translate(specificEntity);
         }

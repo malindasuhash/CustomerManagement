@@ -22,7 +22,15 @@ namespace Api.Controllers
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/touch")]
         public async Task<ActionResult<EntityDocumentModel>> TouchContact([FromRoute] string customerId, [FromRoute] string billingGroupId)
         {
-            return await Touch(EntityName.BillingGroup, customerId, billingGroupId);
+            var envelop = new MessageEnvelop()
+            {
+                CustomerId = customerId,
+                Change = ChangeType.Touch,
+                EntityId = billingGroupId,
+                Name = EntityName.BillingGroup
+            };
+
+            return await Touch(envelop);
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/submit")]

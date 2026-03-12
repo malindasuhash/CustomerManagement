@@ -54,8 +54,16 @@ namespace StateManagment.Tests.Services
             var customerId = "CustomerId";
             changeProcessor.ProcessChangeAsync(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Touch,
+                Name = EntityName.Contact,
+                CustomerId = customerId,
+                EntityId = entityId,
+            };
+
             // Act
-            var result = await contactService.Touch(EntityName.Contact, customerId, entityId);
+            var result = await contactService.Touch(envelop);
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync(Arg.Is<MessageEnvelop>(a => a.EntityId.Equals(entityId) && a.Name == EntityName.Contact && a.Change == ChangeType.Touch && a.CustomerId.Equals(customerId)));

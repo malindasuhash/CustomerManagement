@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StateManagment.Entity
 {
-    public class BankAccount : IEntity
+    public class BankAccount : IEntity, ILegalEntityAttached
     {
         public string LegalEntityId { get; set; }
         public string BankAccountHolderNames { get; set; }

@@ -166,7 +166,7 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToSubmitted<T>(IEntity entity, string entityId, string updatedUser, EntityName entityName, IMongoDatabase db) where T : IEntity 
+        public static async Task<DbEexecutionParams> AddToSubmitted<T>(IEntity entity, string entityId, string updatedUser, EntityName entityName, IMongoDatabase db) where T : IEntity
         {
             // Read the entity document - I need the latest document here.
             var contact = await GetById(entityId, entityName, db);
@@ -217,7 +217,10 @@ namespace Infrastructure.EntityConfig
             messageEnvelop.EntityId = Guid.NewGuid().ToString();
             messageEnvelop.DraftVersion = incrementalDraftVersion;
 
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, messageEnvelop.EntityId);
+            var filter = Builders<MessageEnvelop>.Filter.And(
+                Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, messageEnvelop.EntityId),
+                Builders<MessageEnvelop>.Filter.Eq(o => o.CustomerId, messageEnvelop.CustomerId));
+
             var onInsert = Builders<MessageEnvelop>.Update
             .Set(a => a.DraftVersion, messageEnvelop.DraftVersion)
             .Set(a => a.SubmittedVersion, messageEnvelop.SubmittedVersion)

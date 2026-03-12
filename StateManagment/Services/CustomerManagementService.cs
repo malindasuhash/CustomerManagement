@@ -81,17 +81,9 @@ namespace StateManagment.Services
             return await changeProcessor.ProcessChangeAsync(envelop);
         }
 
-        public async Task<TaskOutcome> Touch(EntityName entityName, string customerId, string entityId)
+        public async Task<TaskOutcome> Touch(MessageEnvelop messageEnvelop)
         {
-            var envelop = new MessageEnvelop
-            {
-                Change = ChangeType.Touch,
-                Name = entityName,
-                EntityId = entityId,
-                CustomerId = customerId
-            };
-
-            return await changeProcessor.ProcessChangeAsync(envelop);
+            return await changeProcessor.ProcessChangeAsync(messageEnvelop);
         }
     }
 }

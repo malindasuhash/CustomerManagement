@@ -23,7 +23,15 @@ namespace Api.Controllers
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
-            return await Touch(EntityName.LegalEntity, customerId, entityId);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Touch,
+                Name = EntityName.LegalEntity,
+                EntityId = entityId,
+                CustomerId = customerId
+            };
+
+            return await Touch(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/submit")]
