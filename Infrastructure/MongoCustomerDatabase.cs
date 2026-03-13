@@ -1,9 +1,7 @@
 ﻿using Infrastructure.EntityConfig;
 using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
-using SharpCompress.Common;
 using StateManagment.Entity;
 using StateManagment.Models;
 
@@ -57,6 +55,10 @@ namespace Infrastructure
                     dbEexecution = await DatabaseCollectionConfig.Patch<BillingGroup>(envelop, latestDraftVersion, database);
                     break;
 
+                case EntityName.BankAccount:
+                    dbEexecution = await DatabaseCollectionConfig.Patch<BankAccount>(envelop, latestDraftVersion, database);
+                    break;
+
                 default:
                     throw new NotImplementedException();
             }
@@ -84,15 +86,19 @@ namespace Infrastructure
             switch (messageEnvelop.Name)
             {
                 case EntityName.Contact:
-                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<Contact>(messageEnvelop, incrementalDraftVersion, "contacts", database);
+                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<Contact>(messageEnvelop, incrementalDraftVersion, database);
                     break;
 
                 case EntityName.LegalEntity:
-                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<LegalEntity>(messageEnvelop, incrementalDraftVersion, "legal-entities", database);
+                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<LegalEntity>(messageEnvelop, incrementalDraftVersion, database);
                     break;
 
                 case EntityName.BillingGroup:
-                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<BillingGroup>(messageEnvelop, incrementalDraftVersion, "billing-groups", database);
+                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<BillingGroup>(messageEnvelop, incrementalDraftVersion, database);
+                    break;
+
+                case EntityName.BankAccount:
+                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<BankAccount>(messageEnvelop, incrementalDraftVersion, database);
                     break;
 
                 default:
@@ -120,6 +126,10 @@ namespace Infrastructure
 
                 case EntityName.BillingGroup:
                     dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<BillingGroup>(entity, entityId, updatedUser, entityName, database);
+                    break;
+
+                case EntityName.BankAccount:
+                    dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<BankAccount>(entity, entityId, updatedUser, entityName, database);
                     break;
 
                 default:

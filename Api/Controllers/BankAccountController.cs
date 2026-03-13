@@ -3,7 +3,6 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
 using StateManagment.Models;
-using StateManagment.Services;
 
 namespace Api.Controllers
 {
@@ -12,11 +11,8 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class BankAccountController : EntityManagementController
     {
-        private readonly CustomerManagementService customerManager;
-
-        public BankAccountController(CustomerManagementService customerManager) : base(customerManager)
+        public BankAccountController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
         {
-            this.customerManager = customerManager;
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/touch")]
@@ -54,13 +50,25 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit(EntityName.BankAccount, customerId, bankAccountId, submitModel);
+            return await Submit(envelop);
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
         public async Task<ActionResult<EntityDocumentModel>> RemoveBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            return await Remove(EntityName.BankAccount, customerId, bankAccountId);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Delete,
+                Name = EntityName.BankAccount,
+                CustomerId = customerId,
+                EntityId = bankAccountId,
+                Draft = new BankAccount()
+                {
+                    LegalEntityId = legalEntityId
+                },
+            };
+
+            return await Remove(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts")]
@@ -68,7 +76,15 @@ namespace Api.Controllers
         {
             bankAccount.LegalEntityId = legalEntityId; // Legal entity scoped.
 
-            return await Create(EntityName.BankAccount, customerId, bankAccount);
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Create,
+                Name = EntityName.BankAccount,
+                Draft = bankAccount,
+                CustomerId = customerId
+            };
+
+            return await Create(envelop);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -81,9 +97,20 @@ namespace Api.Controllers
         public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] BankAccountModel patch)
         {
             var patchModel = ContactToPatch(patch);
-            await customerManager.Patch(patchModel, EntityName.BankAccount, customerId, bankAccountId, patch.TargetVersion, false);
 
-            var contactEntity = await customerManager.Get(EntityName.BankAccount, customerId, bankAccountId);
+            var envelop = new MessageEnvelop
+            {
+                EntityId = bankAccountId,
+                Change = ChangeType.Update,
+                Name = EntityName.BankAccount,
+                Draft = patchModel,
+                CustomerId = customerId,
+                DraftVersion = patch.TargetVersion
+            };
+
+            await changeProcessor.ProcessChangeAsync(envelop);
+
+            var contactEntity = await customerDatabase.GetEntityDocument(EntityName.BankAccount, bankAccountId, customerId);
 
             return Translate(contactEntity);
         }

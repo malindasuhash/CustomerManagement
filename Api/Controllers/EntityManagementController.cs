@@ -1,32 +1,32 @@
 ﻿using Api.ApiModels;
 using Microsoft.AspNetCore.Mvc;
-using StateManagment.Entity;
 using StateManagment.Models;
-using StateManagment.Services;
 
 namespace Api.Controllers
 {
     public abstract class EntityManagementController : ControllerBase
     {
-        protected readonly CustomerManagementService customerManagement;
+        protected readonly IChangeProcessor changeProcessor;
+        protected readonly ICustomerDatabase customerDatabase;
 
-        public EntityManagementController(CustomerManagementService contactService)
+        protected EntityManagementController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase)
         {
-            this.customerManagement = contactService;
+            this.changeProcessor = changeProcessor;
+            this.customerDatabase = customerDatabase;
         }
 
         internal async Task<ActionResult<EntityDocumentModel>> GetById(EntityName entityName, string customerId, string entityId)
         {
-            var contact = await customerManagement.Get(entityName, customerId, entityId);
+            var contact = await customerDatabase.GetEntityDocument(entityName, entityId, customerId);
 
             return Translate(contact);
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> Create<T>(EntityName entityName, string customerId, T entity) where T : IEntity, new()
+        internal async Task<ActionResult<EntityDocumentModel>> Create(MessageEnvelop envelop)
         {
-            var storedEntity = await customerManagement.Post(entity, entityName, customerId, false);
+            await changeProcessor.ProcessChangeAsync(envelop);
 
-            var specificEntity = await customerManagement.Get(entityName, storedEntity.CustomerId, storedEntity.EntityId);
+            var specificEntity = await customerDatabase.GetEntityDocument(envelop.Name, envelop.EntityId, envelop.CustomerId);
 
             return Translate(specificEntity);
         }
@@ -34,37 +34,37 @@ namespace Api.Controllers
         internal async Task<ActionResult<EntityDocumentModel>> Touch(MessageEnvelop messageEnvelop)
         {
             // Authorisation layer may go here
-            var result = await customerManagement.Touch(messageEnvelop);
+            var result = await changeProcessor.ProcessChangeAsync(messageEnvelop);
 
             if (result != TaskOutcome.OK)
             {
                 return BadRequest(result);
             }
 
-            var specificEntity = await customerManagement.Get(messageEnvelop.Name, messageEnvelop.CustomerId, messageEnvelop.EntityId);
+            var specificEntity = await customerDatabase.GetEntityDocument(messageEnvelop.Name, messageEnvelop.EntityId, messageEnvelop.CustomerId);
 
             return Translate(specificEntity);
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> Submit(EntityName entityName, string customerId, string entityId, SubmitEntityModel submitModel)
+        internal async Task<ActionResult<EntityDocumentModel>> Submit(MessageEnvelop envelop)
         {
-            var result = await customerManagement.Submit(entityName, customerId, entityId, submitModel.TargetVersion);
+            var result = await changeProcessor.ProcessChangeAsync(envelop);
 
             if (result != TaskOutcome.OK)
             {
                 return BadRequest(result);
             }
 
-            var contactEntity = await customerManagement.Get(entityName, customerId, entityId);
+            var contactEntity = await customerDatabase.GetEntityDocument(envelop.Name, envelop.EntityId, envelop.CustomerId);
 
             return Translate(contactEntity);
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> Remove(EntityName entityName, string customerId, string entityId)
+        internal async Task<ActionResult<EntityDocumentModel>> Remove(MessageEnvelop envelop)
         {
-            await customerManagement.Delete(entityName, customerId, entityId, false);
+            await changeProcessor.ProcessChangeAsync(envelop);
 
-            var contactEntity = await customerManagement.Get(entityName, customerId, entityId);
+            var contactEntity = await customerDatabase.GetEntityDocument(envelop.Name, envelop.EntityId, envelop.CustomerId);
 
             return Translate(contactEntity);
         }

@@ -16,6 +16,7 @@ namespace Infrastructure
                 EntityName.Contact => "contacts",
                 EntityName.LegalEntity => "legal-entities",
                 EntityName.BillingGroup => "billing-groups",
+                EntityName.BankAccount => "bank-accounts",
                 _ => "none",
             };
         }

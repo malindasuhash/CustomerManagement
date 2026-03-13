@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using StateManagment.Entity;
@@ -41,6 +42,11 @@ namespace Infrastructure.EntityConfig
             });
 
             BsonClassMap.RegisterClassMap<BillingGroup>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<BankAccount>(cm =>
             {
                 cm.AutoMap();
             });
@@ -123,6 +129,22 @@ namespace Infrastructure.EntityConfig
                 if (receivedBillingGroup.Description != null)
                 {
                     storedBillingGroup.Description = receivedBillingGroup.Description;
+                }
+            }
+
+            if (messageEnvelop.Name == EntityName.BankAccount && messageEnvelop.Change == ChangeType.Update)
+            {
+                var receivedBankAccount = receivedEntity as BankAccount;
+                var storedBankAccount = storedEntity as BankAccount;
+
+                if (receivedBankAccount.Name != null)
+                {
+                    storedBankAccount.Name = receivedBankAccount.Name;
+                }
+
+                if (receivedBankAccount.Iban != null)
+                {
+                    storedBankAccount.Iban = receivedBankAccount.Iban;
                 }
             }
 
@@ -212,14 +234,22 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static Task<DbEexecutionParams> AddToDraft<T>(MessageEnvelop messageEnvelop, int incrementalDraftVersion, string collectionName, IMongoDatabase db) where T : IEntity
+        public static Task<DbEexecutionParams> AddToDraft<T>(MessageEnvelop messageEnvelop, int incrementalDraftVersion, IMongoDatabase db) where T : IEntity
         {
             messageEnvelop.EntityId = Guid.NewGuid().ToString();
             messageEnvelop.DraftVersion = incrementalDraftVersion;
 
-            var filter = Builders<MessageEnvelop>.Filter.And(
+            var filter = Builders<MessageEnvelop>.Filter;
+            var filterDefs = new List<FilterDefinition<MessageEnvelop>>
+            {
                 Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, messageEnvelop.EntityId),
-                Builders<MessageEnvelop>.Filter.Eq(o => o.CustomerId, messageEnvelop.CustomerId));
+                Builders<MessageEnvelop>.Filter.Eq(o => o.CustomerId, messageEnvelop.CustomerId)
+            };
+
+            if (messageEnvelop.Draft is ILegalEntityAttached withLegalEntity)
+            {
+                filterDefs.Add(new BsonDocument("Draft.LegalEntityId", withLegalEntity.LegalEntityId));
+            }
 
             var onInsert = Builders<MessageEnvelop>.Update
             .Set(a => a.DraftVersion, messageEnvelop.DraftVersion)
@@ -235,13 +265,13 @@ namespace Infrastructure.EntityConfig
             .SetOnInsert(a => a.CreatedUser, messageEnvelop.CreatedUser)
             .SetOnInsert(a => a.EntityId, messageEnvelop.EntityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>(collectionName);
+            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(messageEnvelop.Name));
 
             return Task.FromResult(new DbEexecutionParams
             {
                 Collection = contacts,
                 Definition = onInsert,
-                Filter = filter
+                Filter = filter.And(filterDefs)
             });
         }
 
@@ -265,9 +295,9 @@ namespace Infrastructure.EntityConfig
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var entities = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
 
-            return contacts.Find(filter).FirstOrDefaultAsync();
+            return entities.Find(filter).FirstOrDefaultAsync();
         }
 
         public static Task<EntityBasics> GetEntityBasics(string entityId, EntityName entityName, IMongoDatabase db)

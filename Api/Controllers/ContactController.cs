@@ -3,7 +3,6 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
 using StateManagment.Models;
-using StateManagment.Services;
 
 namespace Api.Controllers
 {
@@ -12,11 +11,8 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class ContactController : EntityManagementController
     {
-        private readonly CustomerManagementService customerManager;
-
-        public ContactController(CustomerManagementService customerManager) : base(customerManager)
+        public ContactController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
         {
-            this.customerManager = customerManager;
         }
 
         [HttpPost("{customerId}/contacts/{contactId}/touch")]
@@ -36,19 +32,45 @@ namespace Api.Controllers
         [HttpPost("{customerId}/contacts/{contactId}/submit")]
         public async Task<ActionResult<EntityDocumentModel>> SubmitContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] SubmitEntityModel submitModel)
         {
-           return await Submit(EntityName.Contact, customerId, contactId, submitModel);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.Contact,
+                CustomerId = customerId,
+                EntityId = contactId,
+                IsSubmitted = true,
+                DraftVersion = submitModel.TargetVersion
+            };
+
+            return await Submit(envelop);
         }
 
         [HttpDelete("{customerId}/contacts/{contactId}")]
         public async Task<ActionResult<EntityDocumentModel>> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
-            return await Remove(EntityName.Contact, customerId, contactId);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Delete,
+                Name = EntityName.Contact,
+                CustomerId = customerId,
+                EntityId = contactId,
+            };
+
+            return await Remove(envelop);
         }
 
         [HttpPost("{customerId}/contacts")]
         public async Task<ActionResult<EntityDocumentModel>> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
         {
-           return await Create(EntityName.Contact, customerId, contact);
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Create,
+                Name = EntityName.Contact,
+                Draft = contact,
+                CustomerId = customerId
+            };
+
+            return await Create(envelop);
         }
 
         [HttpGet("{customerId}/contacts/{contactId}")]
@@ -61,9 +83,19 @@ namespace Api.Controllers
         public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactModel patch)
         {
             var patchModel = ContactToPatch(patch);
-            await customerManager.Patch(patchModel, EntityName.Contact, customerId, contactId, patch.TargetVersion, false);
+            var envelop = new MessageEnvelop
+            {
+                EntityId = contactId,
+                Change = ChangeType.Update,
+                Name = EntityName.Contact,
+                Draft = patchModel,
+                CustomerId = customerId,
+                DraftVersion = patch.TargetVersion
+            };
 
-            var contactEntity = await customerManager.Get(EntityName.Contact, customerId, contactId);
+            await changeProcessor.ProcessChangeAsync(envelop);
+
+            var contactEntity = await customerDatabase.GetEntityDocument(EntityName.Contact, customerId, contactId);
 
             return Translate(contactEntity);
         }

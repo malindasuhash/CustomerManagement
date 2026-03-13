@@ -5,7 +5,6 @@ using InMemory;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment;
 using StateManagment.Models;
-using StateManagment.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,7 +38,6 @@ builder.Services.AddControllers()
     });
 
 // API Services
-builder.Services.AddSingleton<CustomerManagementService>();
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;

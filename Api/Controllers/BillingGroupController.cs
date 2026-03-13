@@ -3,7 +3,6 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
 using StateManagment.Models;
-using StateManagment.Services;
 
 namespace Api.Controllers
 {
@@ -12,11 +11,8 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class BillingGroupController : EntityManagementController
     {
-        private readonly CustomerManagementService customerManager;
-
-        public BillingGroupController(CustomerManagementService customerManager) : base(customerManager)
+        public BillingGroupController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
         {
-            this.customerManager = customerManager;
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/touch")]
@@ -36,19 +32,45 @@ namespace Api.Controllers
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/submit")]
         public async Task<ActionResult<EntityDocumentModel>> SubmitContact([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] SubmitEntityModel submitModel)
         {
-            return await Submit(EntityName.BillingGroup, customerId, billingGroupId, submitModel);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.BillingGroup,
+                CustomerId = customerId,
+                EntityId = billingGroupId,
+                IsSubmitted = true,
+                DraftVersion = submitModel.TargetVersion
+            };
+
+            return await Submit(envelop);
         }
 
         [HttpDelete("{customerId}/billing-groups/{billingGroupId}")]
         public async Task<ActionResult<EntityDocumentModel>> RemoveContact([FromRoute] string customerId, [FromRoute] string billingGroupId)
         {
-            return await Remove(EntityName.BillingGroup, customerId, billingGroupId);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Delete,
+                Name = EntityName.BillingGroup,
+                CustomerId = customerId,
+                EntityId = billingGroupId,
+            };
+
+            return await Remove(envelop);
         }
 
         [HttpPost("{customerId}/billing-groups")]
         public async Task<ActionResult<EntityDocumentModel>> CreateContact([FromRoute] string customerId, [FromBody] BillingGroup billingGroup)
         {
-            return await Create(EntityName.BillingGroup, customerId, billingGroup);
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Create,
+                Name = EntityName.BankAccount,
+                Draft = billingGroup,
+                CustomerId = customerId
+            };
+
+            return await Create(envelop);
         }
 
         [HttpGet("{customerId}/billing-groups/{billingGroupId}")]
@@ -61,11 +83,22 @@ namespace Api.Controllers
         public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] BillingGroupModel patch)
         {
             var patchModel = ContactToPatch(patch);
-            await customerManager.Patch(patchModel, EntityName.BillingGroup, customerId, billingGroupId, patch.TargetVersion, false);
+            
+            var envelop = new MessageEnvelop
+            {
+                EntityId = billingGroupId,
+                Change = ChangeType.Update,
+                Name = EntityName.BillingGroup,
+                Draft = patchModel,
+                CustomerId = customerId,
+                DraftVersion = patch.TargetVersion
+            };
 
-            var contactEntity = await customerManager.Get(EntityName.BillingGroup, customerId, billingGroupId);
+            await changeProcessor.ProcessChangeAsync(envelop);
 
-            return Translate(contactEntity);
+            var billingGroup = await customerDatabase.GetEntityDocument(EntityName.BillingGroup, customerId, billingGroupId);
+
+            return Translate(billingGroup);
         }
 
         private static BillingGroup ContactToPatch(BillingGroupModel patchModel)
