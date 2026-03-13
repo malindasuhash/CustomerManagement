@@ -40,6 +40,20 @@ namespace Api.Controllers
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/submit")]
         public async Task<ActionResult<EntityDocumentModel>> SubmitBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] SubmitEntityModel submitModel)
         {
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.BankAccount,
+                CustomerId = customerId,
+                EntityId = bankAccountId,
+                IsSubmitted = true,
+                Draft = new BankAccount()
+                {
+                    LegalEntityId = legalEntityId
+                },
+                DraftVersion = submitModel.TargetVersion
+            };
+
             return await Submit(EntityName.BankAccount, customerId, bankAccountId, submitModel);
         }
 
@@ -52,6 +66,8 @@ namespace Api.Controllers
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts")]
         public async Task<ActionResult<EntityDocumentModel>> CreateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] BankAccount bankAccount)
         {
+            bankAccount.LegalEntityId = legalEntityId; // Legal entity scoped.
+
             return await Create(EntityName.BankAccount, customerId, bankAccount);
         }
 
