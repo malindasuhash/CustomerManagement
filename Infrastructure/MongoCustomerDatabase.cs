@@ -59,6 +59,10 @@ namespace Infrastructure
                     dbEexecution = await DatabaseCollectionConfig.Patch<BankAccount>(envelop, latestDraftVersion, database);
                     break;
 
+                case EntityName.ProductAgreement:
+                    dbEexecution = await DatabaseCollectionConfig.Patch<ProductAgreement>(envelop, latestDraftVersion, database);
+                    break;
+
                 default:
                     throw new NotImplementedException();
             }
@@ -101,6 +105,10 @@ namespace Infrastructure
                     dbEexecution = await DatabaseCollectionConfig.AddToDraft<BankAccount>(messageEnvelop, incrementalDraftVersion, database);
                     break;
 
+                case EntityName.ProductAgreement:
+                    dbEexecution = await DatabaseCollectionConfig.AddToDraft<ProductAgreement>(messageEnvelop, incrementalDraftVersion, database);
+                    break;
+
                 default:
                     throw new NotImplementedException();
             }
@@ -130,6 +138,10 @@ namespace Infrastructure
 
                 case EntityName.BankAccount:
                     dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<BankAccount>(entity, entityId, updatedUser, entityName, database);
+                    break;
+
+                case EntityName.ProductAgreement:
+                    dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<ProductAgreement>(entity, entityId, updatedUser, entityName, database);
                     break;
 
                 default:

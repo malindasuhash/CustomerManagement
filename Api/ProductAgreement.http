@@ -1,0 +1,60 @@
+@Api_HostAddress = https://localhost:7296/api/v1
+
+GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a
+Accept: application/json
+
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements
+Content-Type: application/json
+{
+  "legalEntityId": "LE123456",
+  "displayName": "Product name 1",
+  "productType": "Hardware",
+  "rateCardId": "R88374832",
+  "label": "Important product",
+  "features": [ 
+    {
+    "key": "MOTO",
+    "value": "Available"
+    }
+  ],
+  "configuration": [
+    {
+      "key": "paymentCallbackUrl",
+      "value": "https://tempurl.com/payment"
+    },
+    {
+      "key": "refundCallbackUrl",
+      "value": "https://tempurl.com/refund"
+    }
+  ],
+  "descriptors": [
+    {
+      "key": "SomeImportantKey",
+      "value": "SomeImportantValue"
+    }
+  ]
+}
+###
+
+PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a
+Content-Type: application/json
+{
+  "displayName": "display Updated 4",
+  "targetVersion": 1
+}
+###
+
+DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a/submit
+Content-Type: application/json
+{
+  "targetVersion": 2
+}
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a/touch
+###

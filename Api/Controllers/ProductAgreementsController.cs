@@ -9,9 +9,9 @@ namespace Api.Controllers
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/customers")]
-    public class ProductController : EntityManagementController
+    public class ProductAgreementsController : EntityManagementController
     {
-        public ProductController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
+        public ProductAgreementsController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
         {
         }
 
@@ -71,7 +71,7 @@ namespace Api.Controllers
             return await Remove(envelop);
         }
 
-        [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
+        [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements")]
         public async Task<ActionResult<EntityDocumentModel>> CreateProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ProductAgreement productAgreement)
         {
             productAgreement.LegalEntityId = legalEntityId; // Legal entity scoped.
@@ -122,7 +122,8 @@ namespace Api.Controllers
                 LegalEntityId = patchModel.LegalEntityId,
                 ProductType = patchModel.ProductType,
                 DisplayName = patchModel.DisplayName,
-                RateCardId = patchModel.RateCardId
+                RateCardId = patchModel.RateCardId,
+                Label = patchModel.Label
                 
             };
 
@@ -134,6 +135,11 @@ namespace Api.Controllers
             if (patchModel.Features != null)
             {
                 productAgreement.Features = [.. patchModel.Features.Select(a => new ProductFeature() { Key = a.Key, Value = a.Value })];
+            }
+
+            if (patchModel.Descriptors != null)
+            {
+                productAgreement.Descriptors = [.. patchModel.Descriptors.Select(a => new Descriptor() { Key = a.Key, Value = a.Value })];
             }
 
             return productAgreement;
