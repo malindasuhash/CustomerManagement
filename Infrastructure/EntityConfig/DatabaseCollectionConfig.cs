@@ -4,11 +4,6 @@ using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using StateManagment.Entity;
 using StateManagment.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.EntityConfig
 {
@@ -51,11 +46,26 @@ namespace Infrastructure.EntityConfig
                 cm.AutoMap();
             });
 
+            BsonClassMap.RegisterClassMap<ProductAgreement>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<ProductConfiguration>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<ProductFeature>(cm =>
+            {
+                cm.AutoMap();
+            });
+
             BsonClassMap.RegisterClassMap<MessageEnvelop>(cm =>
             {
                 cm.AutoMap();
                 cm.MapIdField(a => a.EntityId);
-                cm.MapMember(a => a.State).SetSerializer(new EnumSerializer<EntityState>(MongoDB.Bson.BsonType.String));
+                cm.MapMember(a => a.State).SetSerializer(new EnumSerializer<EntityState>(BsonType.String));
                 cm.MapMember(a => a.Name).SetDefaultValue(EntityName.Contact);
                 cm.MapMember(a => a.Change).SetDefaultValue(ChangeType.Read);
                 cm.UnmapMember(c => c.Change);
@@ -66,7 +76,7 @@ namespace Infrastructure.EntityConfig
             BsonClassMap.RegisterClassMap<Feedback>(cm =>
             {
                 cm.AutoMap();
-                cm.MapMember(a => a.Type).SetSerializer(new EnumSerializer<FeedbackType>(MongoDB.Bson.BsonType.String));
+                cm.MapMember(a => a.Type).SetSerializer(new EnumSerializer<FeedbackType>(BsonType.String));
             });
 
             BsonClassMap.RegisterClassMap<OrchestrationData>(cm =>
@@ -145,6 +155,22 @@ namespace Infrastructure.EntityConfig
                 if (receivedBankAccount.Iban != null)
                 {
                     storedBankAccount.Iban = receivedBankAccount.Iban;
+                }
+            }
+
+            if (messageEnvelop.Name == EntityName.ProductAgreement && messageEnvelop.Change == ChangeType.Update)
+            {
+                var receivedProductAgreement = receivedEntity as ProductAgreement;
+                var storedProductAgreement = storedEntity as ProductAgreement;
+
+                if (receivedProductAgreement.DisplayName != null)
+                {
+                    storedProductAgreement.DisplayName = receivedProductAgreement.DisplayName;
+                }
+
+                if (receivedProductAgreement.RateCardId != null)
+                {
+                    storedProductAgreement.RateCardId = receivedProductAgreement.RateCardId;
                 }
             }
 
