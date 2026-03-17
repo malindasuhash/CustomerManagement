@@ -42,7 +42,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit(envelop);
+            return await Submit<BillingGroup>(envelop);
         }
 
         [HttpDelete("{customerId}/billing-groups/{billingGroupId}")]
@@ -70,13 +70,13 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create(envelop);
+            return await Create<Contact>(envelop);
         }
 
         [HttpGet("{customerId}/billing-groups/{billingGroupId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetContactById(string customerId, string billingGroupId)
         {
-            return await GetById(EntityName.BillingGroup, customerId, billingGroupId);
+            return await GetById<BillingGroup>(customerId, billingGroupId);
         }
 
         [HttpPatch("{customerId}/billing-groups/{billingGroupId}")]
@@ -96,7 +96,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            var billingGroup = await customerDatabase.GetEntityDocument(EntityName.BillingGroup, customerId, billingGroupId);
+            var billingGroup = await customerDatabase.GetEntityDocument2<BillingGroup>(customerId, billingGroupId);
 
             return Translate(billingGroup);
         }

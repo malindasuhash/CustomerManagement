@@ -50,7 +50,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit(envelop);
+            return await Submit<BankAccount>(envelop);
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -84,13 +84,13 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create(envelop);
+            return await Create<BankAccount>(envelop);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetBankAccountById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            return await GetById(EntityName.BankAccount, customerId, bankAccountId);
+            return await GetById<BankAccount>(customerId, bankAccountId);
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -110,7 +110,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            var contactEntity = await customerDatabase.GetEntityDocument(EntityName.BankAccount, bankAccountId, customerId);
+            var contactEntity = await customerDatabase.GetEntityDocument2<BankAccount>(bankAccountId, customerId);
 
             return Translate(contactEntity);
         }

@@ -50,7 +50,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit(envelop);
+            return await Submit<ProductAgreement>(envelop);
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
@@ -84,13 +84,13 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create(envelop);
+            return await Create<ProductAgreement>(envelop);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetBankAccountById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId)
         {
-            return await GetById(EntityName.ProductAgreement, customerId, productAgreementId);
+            return await GetById<ProductAgreement>(customerId, productAgreementId);
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
@@ -110,7 +110,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            var contactEntity = await customerDatabase.GetEntityDocument(EntityName.ProductAgreement, productAgreementId, customerId);
+            var contactEntity = await customerDatabase.GetEntityDocument2<ProductAgreement>( productAgreementId, customerId);
 
             return Translate(contactEntity);
         }

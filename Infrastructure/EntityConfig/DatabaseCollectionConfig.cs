@@ -66,7 +66,7 @@ namespace Infrastructure.EntityConfig
                 cm.AutoMap();
                 cm.MapIdField(a => a.EntityId);
                 cm.MapMember(a => a.State).SetSerializer(new EnumSerializer<EntityState>(BsonType.String));
-                cm.MapMember(a => a.Name).SetDefaultValue(EntityName.Contact);
+                cm.MapMember(a => a.Name).SetDefaultValue(EntityName.None);
                 cm.MapMember(a => a.Change).SetDefaultValue(ChangeType.Read);
                 cm.UnmapMember(c => c.Change);
                 cm.UnmapMember(c => c.Name);
@@ -181,7 +181,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.DraftVersion, latestDraftVersion)
             .Set(a => a.Draft, storedEntity);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(messageEnvelop.Name));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(messageEnvelop.Name));
 
             return new DbEexecutionParams
             {
@@ -204,7 +204,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
 
             return new DbEexecutionParams
             {
@@ -227,7 +227,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
 
             return new DbEexecutionParams
             {
@@ -250,7 +250,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateUser, updatedUser)
             .Set(a => a.Removed, confirmRemoval);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
 
             return new DbEexecutionParams
             {
@@ -291,7 +291,7 @@ namespace Infrastructure.EntityConfig
             .SetOnInsert(a => a.CreatedUser, messageEnvelop.CreatedUser)
             .SetOnInsert(a => a.EntityId, messageEnvelop.EntityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(messageEnvelop.Name));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(messageEnvelop.Name));
 
             return Task.FromResult(new DbEexecutionParams
             {
@@ -307,7 +307,7 @@ namespace Infrastructure.EntityConfig
             var onInsert = Builders<MessageEnvelop>.Update
             .Set(a => a.RemoveRequested, true);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
 
             return Task.FromResult(new DbEexecutionParams
             {
@@ -321,7 +321,16 @@ namespace Infrastructure.EntityConfig
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
-            var entities = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var entities = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
+
+            return entities.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public static Task<MessageEnvelop> GetById2<T>(string entityId, IMongoDatabase db) where T : IEntity
+        {
+            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+
+            var entities = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return entities.Find(filter).FirstOrDefaultAsync();
         }
@@ -330,7 +339,7 @@ namespace Infrastructure.EntityConfig
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
 
             return contacts.Find(filter)
                 .Project(p => new EntityBasics

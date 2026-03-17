@@ -42,7 +42,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit(envelop);
+            return await Submit<Contact>(envelop);
         }
 
         [HttpDelete("{customerId}/contacts/{contactId}")]
@@ -70,13 +70,13 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create(envelop);
+            return await Create<Contact>(envelop);
         }
 
         [HttpGet("{customerId}/contacts/{contactId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetContactById(string customerId, string contactId)
         {
-            return await GetById(EntityName.Contact, customerId, contactId);
+            return await GetById<Contact>(customerId, contactId);
         }
 
         [HttpPatch("{customerId}/contacts/{contactId}")]
@@ -95,7 +95,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            var contactEntity = await customerDatabase.GetEntityDocument(EntityName.Contact, customerId, contactId);
+            var contactEntity = await customerDatabase.GetEntityDocument2<Contact>(customerId, contactId);
 
             return Translate(contactEntity);
         }

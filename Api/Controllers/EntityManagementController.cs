@@ -1,5 +1,6 @@
 ﻿using Api.ApiModels;
 using Microsoft.AspNetCore.Mvc;
+using StateManagment.Entity;
 using StateManagment.Models;
 
 namespace Api.Controllers
@@ -15,18 +16,18 @@ namespace Api.Controllers
             this.customerDatabase = customerDatabase;
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> GetById(EntityName entityName, string customerId, string entityId)
+        internal async Task<ActionResult<EntityDocumentModel>> GetById<T>(string customerId, string entityId) where T : IEntity
         {
-            var contact = await customerDatabase.GetEntityDocument(entityName, entityId, customerId);
+            var contact = await customerDatabase.GetEntityDocument2<T>(entityId, customerId);
 
             return Translate(contact);
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> Create(MessageEnvelop envelop)
+        internal async Task<ActionResult<EntityDocumentModel>> Create<T>(MessageEnvelop envelop) where T : IEntity
         {
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            var specificEntity = await customerDatabase.GetEntityDocument(envelop.Name, envelop.EntityId, envelop.CustomerId);
+            var specificEntity = await customerDatabase.GetEntityDocument2<T>(envelop.EntityId, envelop.CustomerId);
 
             return Translate(specificEntity);
         }
@@ -46,7 +47,7 @@ namespace Api.Controllers
             return Translate(specificEntity);
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> Submit(MessageEnvelop envelop)
+        internal async Task<ActionResult<EntityDocumentModel>> Submit<T>(MessageEnvelop envelop) where T : IEntity
         {
             var result = await changeProcessor.ProcessChangeAsync(envelop);
 
@@ -55,7 +56,7 @@ namespace Api.Controllers
                 return BadRequest(result);
             }
 
-            var contactEntity = await customerDatabase.GetEntityDocument(envelop.Name, envelop.EntityId, envelop.CustomerId);
+            var contactEntity = await customerDatabase.GetEntityDocument2<T>(envelop.EntityId, envelop.CustomerId);
 
             return Translate(contactEntity);
         }

@@ -50,7 +50,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit(envelop);
+            return await Submit<LegalEntity>(envelop);
         }
 
         [HttpDelete("{customerId}/legal-entities/{entityId}")]
@@ -86,7 +86,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create(envelop);
+            return await Create<LegalEntity>(envelop);
         }
 
         [HttpGet("{customerId}/legal-entities/{entityId}")]
@@ -95,7 +95,7 @@ namespace Api.Controllers
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
-            return await GetById(EntityName.LegalEntity, customerId, entityId);
+            return await GetById<LegalEntity>(customerId, entityId);
         }
 
         [HttpPatch("{customerId}/legal-entities/{entityId}")]
