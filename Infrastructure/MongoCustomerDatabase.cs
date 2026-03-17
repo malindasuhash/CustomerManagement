@@ -175,7 +175,7 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<MessageEnvelop> GetEntityDocument2<T>(string entityId, string? customerId = null) where T : IEntity
+        public async Task<MessageEnvelop> GetEntity<T>(string entityId, string? customerId = null) where T : IEntity
         {
             var storedEntity = await DatabaseCollectionConfig.GetById2<T>(entityId, database);
             storedEntity.Name = EntityCollectionConfig.Config<T>().Name;

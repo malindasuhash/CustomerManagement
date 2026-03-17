@@ -110,7 +110,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            var contactEntity = await customerDatabase.GetEntityDocument2<BankAccount>(bankAccountId, customerId);
+            var contactEntity = await customerDatabase.GetEntity<BankAccount>(bankAccountId, customerId);
 
             return Translate(contactEntity);
         }

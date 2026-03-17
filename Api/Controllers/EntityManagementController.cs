@@ -18,7 +18,7 @@ namespace Api.Controllers
 
         internal async Task<ActionResult<EntityDocumentModel>> GetById<T>(string customerId, string entityId) where T : IEntity
         {
-            var contact = await customerDatabase.GetEntityDocument2<T>(entityId, customerId);
+            var contact = await customerDatabase.GetEntity<T>(entityId, customerId);
 
             return Translate(contact);
         }
@@ -27,7 +27,7 @@ namespace Api.Controllers
         {
             await changeProcessor.ProcessChangeAsync(envelop);
 
-            var specificEntity = await customerDatabase.GetEntityDocument2<T>(envelop.EntityId, envelop.CustomerId);
+            var specificEntity = await customerDatabase.GetEntity<T>(envelop.EntityId, envelop.CustomerId);
 
             return Translate(specificEntity);
         }
@@ -56,7 +56,7 @@ namespace Api.Controllers
                 return BadRequest(result);
             }
 
-            var contactEntity = await customerDatabase.GetEntityDocument2<T>(envelop.EntityId, envelop.CustomerId);
+            var contactEntity = await customerDatabase.GetEntity<T>(envelop.EntityId, envelop.CustomerId);
 
             return Translate(contactEntity);
         }
