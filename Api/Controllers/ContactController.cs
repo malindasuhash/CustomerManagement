@@ -95,7 +95,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            var contactEntity = await customerDatabase.GetEntity<Contact>(customerId, contactId);
+            var contactEntity = await customerDatabase.GetEntity<Contact>(contactId, customerId);
 
             return Translate(contactEntity);
         }

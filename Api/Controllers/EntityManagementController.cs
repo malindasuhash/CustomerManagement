@@ -42,7 +42,7 @@ namespace Api.Controllers
                 return BadRequest(result);
             }
 
-            var specificEntity = await customerDatabase.GetEntityDocument(messageEnvelop.Name, messageEnvelop.EntityId, messageEnvelop.CustomerId);
+            var specificEntity = await customerDatabase.GetEntity<T>(messageEnvelop.EntityId, messageEnvelop.CustomerId);
 
             return Translate(specificEntity);
         }
@@ -65,7 +65,7 @@ namespace Api.Controllers
         {
             await changeProcessor.ProcessChangeAsync<T>(envelop);
 
-            var contactEntity = await customerDatabase.GetEntityDocument(envelop.Name, envelop.EntityId, envelop.CustomerId);
+            var contactEntity = await customerDatabase.GetEntity<T>(envelop.EntityId, envelop.CustomerId);
 
             return Translate(contactEntity);
         }
