@@ -30,7 +30,7 @@ namespace Api.Controllers
                 }
             };
 
-            return await Touch(envelop);
+            return await Touch<LegalEntity>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/submit")]
@@ -68,7 +68,7 @@ namespace Api.Controllers
                 },
             };
 
-            return await Remove(envelop);
+            return await Remove<BankAccount>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts")]
@@ -108,7 +108,7 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<BankAccount>(envelop);
 
             var contactEntity = await customerDatabase.GetEntity<BankAccount>(bankAccountId, customerId);
 

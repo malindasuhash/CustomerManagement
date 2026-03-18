@@ -26,7 +26,7 @@ namespace Api.Controllers
                 Change = ChangeType.Touch
             };
 
-           return await Touch(envelop);
+           return await Touch<Contact>(envelop);
         }
 
         [HttpPost("{customerId}/contacts/{contactId}/submit")]
@@ -56,7 +56,7 @@ namespace Api.Controllers
                 EntityId = contactId,
             };
 
-            return await Remove(envelop);
+            return await Remove<Contact>(envelop);
         }
 
         [HttpPost("{customerId}/contacts")]
@@ -93,7 +93,7 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             var contactEntity = await customerDatabase.GetEntity<Contact>(customerId, contactId);
 

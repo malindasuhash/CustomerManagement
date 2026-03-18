@@ -30,7 +30,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Touch(envelop);
+            return await Touch<LegalEntity>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/submit")]
@@ -68,7 +68,7 @@ namespace Api.Controllers
                 EntityId = entityId
             };
 
-            return await Remove(envelop);
+            return await Remove<LegalEntity>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities")]
@@ -117,7 +117,7 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<LegalEntity>(envelop);
 
             var contactEntity = await customerDatabase.GetEntityDocument(EntityName.LegalEntity, customerId, entityId);
 

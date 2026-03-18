@@ -25,17 +25,17 @@ namespace Api.Controllers
 
         internal async Task<ActionResult<EntityDocumentModel>> Create<T>(MessageEnvelop envelop) where T : IEntity
         {
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<T>(envelop);
 
             var specificEntity = await customerDatabase.GetEntity<T>(envelop.EntityId, envelop.CustomerId);
 
             return Translate(specificEntity);
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> Touch(MessageEnvelop messageEnvelop)
+        internal async Task<ActionResult<EntityDocumentModel>> Touch<T>(MessageEnvelop messageEnvelop) where T : IEntity
         {
             // Authorisation layer may go here
-            var result = await changeProcessor.ProcessChangeAsync(messageEnvelop);
+            var result = await changeProcessor.ProcessChangeAsync<T>(messageEnvelop);
 
             if (result != TaskOutcome.OK)
             {
@@ -49,7 +49,7 @@ namespace Api.Controllers
 
         internal async Task<ActionResult<EntityDocumentModel>> Submit<T>(MessageEnvelop envelop) where T : IEntity
         {
-            var result = await changeProcessor.ProcessChangeAsync(envelop);
+            var result = await changeProcessor.ProcessChangeAsync<T>(envelop);
 
             if (result != TaskOutcome.OK)
             {
@@ -61,9 +61,9 @@ namespace Api.Controllers
             return Translate(contactEntity);
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> Remove(MessageEnvelop envelop)
+        internal async Task<ActionResult<EntityDocumentModel>> Remove<T>(MessageEnvelop envelop) where T : IEntity
         {
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<T>(envelop);
 
             var contactEntity = await customerDatabase.GetEntityDocument(envelop.Name, envelop.EntityId, envelop.CustomerId);
 

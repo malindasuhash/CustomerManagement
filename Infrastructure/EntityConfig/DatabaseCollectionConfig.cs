@@ -87,7 +87,7 @@ namespace Infrastructure.EntityConfig
 
         public static async Task<DbEexecutionParams> Patch<T>(MessageEnvelop messageEnvelop, int latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
         {
-            var stored = await GetById(messageEnvelop.EntityId, messageEnvelop.Name, db);
+            var stored = await GetById2<T>(messageEnvelop.EntityId, db);
 
             var receivedEntity = (T)messageEnvelop.Draft;
             var storedEntity = (T)stored.Draft;

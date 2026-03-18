@@ -30,7 +30,7 @@ namespace Api.Controllers
                 }
             };
 
-            return await Touch(envelop);
+            return await Touch<ProductAgreement>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}/submit")]
@@ -68,7 +68,7 @@ namespace Api.Controllers
                 },
             };
 
-            return await Remove(envelop);
+            return await Remove<ProductAgreement>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements")]
@@ -108,7 +108,7 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<ProductAgreement>(envelop);
 
             var contactEntity = await customerDatabase.GetEntity<ProductAgreement>( productAgreementId, customerId);
 

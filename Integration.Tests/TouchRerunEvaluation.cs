@@ -40,7 +40,7 @@ namespace Integration.Tests
                 CustomerId = "Cus123"
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             var entityId = envelop.EntityId;
 
@@ -80,7 +80,7 @@ namespace Integration.Tests
                 CustomerId = "Cus123"
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             contactDocument = await database.GetEntityDocument(EntityName.Contact, entityId);
             Console.WriteLine($"Contact after TOUCHED: {contactDocument}"); Console.WriteLine();

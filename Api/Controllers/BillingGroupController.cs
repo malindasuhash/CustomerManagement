@@ -26,7 +26,7 @@ namespace Api.Controllers
                 Name = EntityName.BillingGroup
             };
 
-            return await Touch(envelop);
+            return await Touch<BillingGroup>(envelop);
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/submit")]
@@ -56,7 +56,7 @@ namespace Api.Controllers
                 EntityId = billingGroupId,
             };
 
-            return await Remove(envelop);
+            return await Remove<BillingGroup>(envelop);
         }
 
         [HttpPost("{customerId}/billing-groups")]
@@ -94,7 +94,7 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<BillingGroup>(envelop);
 
             var billingGroup = await customerDatabase.GetEntity<BillingGroup>(customerId, billingGroupId);
 

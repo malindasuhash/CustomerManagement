@@ -1,4 +1,5 @@
-﻿using StateManagment.Models;
+﻿using StateManagment.Entity;
+using StateManagment.Models;
 
 namespace StateManagment
 {
@@ -17,7 +18,7 @@ namespace StateManagment
         /// Processes the change based on the type of change and whether it is submitted or not.
         /// It handles the creation and updating of changes, as well as the submission process.
         /// </summary>
-        public async Task<TaskOutcome> ProcessChangeAsync(MessageEnvelop envelop)
+        public async Task<TaskOutcome> ProcessChangeAsync<T>(MessageEnvelop envelop) where T : IEntity
         {
             if (envelop.Change == ChangeType.Touch)
             {

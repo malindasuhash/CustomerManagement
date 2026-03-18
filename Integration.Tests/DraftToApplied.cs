@@ -40,7 +40,7 @@ namespace Integration.Tests
                 CustomerId = "Cus123"
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             var contactDocument = await database.GetEntityDocument(EntityName.Contact, envelop.EntityId);
 
