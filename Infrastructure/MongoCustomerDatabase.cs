@@ -25,7 +25,7 @@ namespace Infrastructure
 
         public async Task<EntityBasics> GetBasicInfo<T>(LookupPredicate predicate) where T : IEntity
         {
-            var storedBasics = await DatabaseCollectionConfig.GetEntityBasics<T>(predicate.EntityId, predicate.CustomerId, predicate.LegalEntityId, database);
+            var storedBasics = await DatabaseCollectionConfig.GetEntityBasics<T>(predicate, database);
             return storedBasics;
         }
 
@@ -95,9 +95,9 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<MessageEnvelop> GetEntity<T>(LookupPredicate lookupPredicate) where T : IEntity
+        public async Task<MessageEnvelop> FindEntity<T>(LookupPredicate lookupPredicate) where T : IEntity
         {
-            var storedEntity = await DatabaseCollectionConfig.GetById2<T>(lookupPredicate, database);
+            var storedEntity = await DatabaseCollectionConfig.FindBy<T>(lookupPredicate, database);
             storedEntity.Name = EntityCollectionConfig.Config<T>().Name;
             storedEntity.Change = ChangeType.Read;
          

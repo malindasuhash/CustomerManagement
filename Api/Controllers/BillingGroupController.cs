@@ -96,7 +96,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync<BillingGroup>(envelop);
 
-            var billingGroup = await customerDatabase.GetEntity<BillingGroup>(envelop.SearchBy());
+            var billingGroup = await customerDatabase.FindEntity<BillingGroup>(envelop.SearchBy());
 
             return Translate(billingGroup);
         }

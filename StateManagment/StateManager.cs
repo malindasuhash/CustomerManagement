@@ -18,7 +18,7 @@ namespace StateManagment
 
         public async Task<TaskOutcome> Evaluate<T>(MessageEnvelop envelop) where T : IEntity
         {
-            var latestEntity = await dataStore.GetEntity<T>(envelop.SearchBy()); 
+            var latestEntity = await dataStore.FindEntity<T>(envelop.SearchBy()); 
 
             return await ProcessUpdateAsync<T>(new OrchestrationEnvelop
             {

@@ -119,7 +119,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync<LegalEntity>(envelop);
 
-            var contactEntity = await customerDatabase.GetEntity<LegalEntity>(envelop.SearchBy());
+            var contactEntity = await customerDatabase.FindEntity<LegalEntity>(envelop.SearchBy());
 
             return Translate(contactEntity);
         }

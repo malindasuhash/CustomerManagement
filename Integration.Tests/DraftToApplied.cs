@@ -43,7 +43,7 @@ namespace Integration.Tests
 
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            var contactDocument = await database.GetEntity<Contact>(envelop.SearchBy());
+            var contactDocument = await database.FindEntity<Contact>(envelop.SearchBy());
 
             Console.WriteLine($"-> Before orchestration - Contact: {contactDocument}"); Console.WriteLine();
 
@@ -51,14 +51,14 @@ namespace Integration.Tests
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($" Contact: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED"); Console.WriteLine();
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [new Feedback() { Type = FeedbackType.Warning, Key = "FINE", Value = "S" }], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
 
@@ -66,7 +66,7 @@ namespace Integration.Tests
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [], [new OrchestrationData() { Key = "AMAZING", Value = "WORLD"}])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
             Console.ReadKey();

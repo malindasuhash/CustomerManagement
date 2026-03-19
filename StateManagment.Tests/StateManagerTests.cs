@@ -436,7 +436,7 @@ namespace StateManagment.Tests
             };
 
             var predicate = envelop.SearchBy();
-            database.GetEntity<Contact>(predicate).Returns(envelop);
+            database.FindEntity<Contact>(predicate).Returns(envelop);
 
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
@@ -444,7 +444,7 @@ namespace StateManagment.Tests
             await stateManager.Evaluate<Contact>(envelop);
 
             // Assert
-            await database.Received(1).GetEntity<Contact>(predicate);
+            await database.Received(1).FindEntity<Contact>(predicate);
         }
     }
 }

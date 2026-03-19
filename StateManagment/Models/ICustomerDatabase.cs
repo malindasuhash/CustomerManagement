@@ -10,7 +10,7 @@ namespace StateManagment.Models
     public interface ICustomerDatabase
     {
         Task<EntityBasics> GetBasicInfo<T>(LookupPredicate predicate) where T : IEntity;
-        Task<MessageEnvelop> GetEntity<T>(LookupPredicate predicate) where T : IEntity;
+        Task<MessageEnvelop> FindEntity<T>(LookupPredicate predicate) where T : IEntity;
         Task<TaskOutcome> StoreDraft<T>(MessageEnvelop messageEnvelop, int incrementalDraftVersion) where T : IEntity;
         Task<TaskOutcome> StoreSubmitted<T>(LookupPredicate predicate, string updatedUser) where T : IEntity;
         Task<TaskOutcome> UpdateData<T>(LookupPredicate predicate, EntityState targetState, Feedback[] feedbacks, OrchestrationData[] orchestrationData) where T : IEntity;

@@ -110,7 +110,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync<ProductAgreement>(envelop);
 
-            var contactEntity = await customerDatabase.GetEntity<ProductAgreement>(envelop.SearchBy());
+            var contactEntity = await customerDatabase.FindEntity<ProductAgreement>(envelop.SearchBy());
 
             return Translate(contactEntity);
         }

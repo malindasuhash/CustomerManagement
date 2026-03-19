@@ -28,14 +28,14 @@ namespace StateManagment
 
             if (entityState == EntityState.SYNCHRONISED)
             {
-                var before = await database.GetEntity<T>(predicate);
+                var before = await database.FindEntity<T>(predicate);
                 await database.StoreApplied<T>(predicate, before.RemoveRequested);
-                var after = await database.GetEntity<T>(predicate);
+                var after = await database.FindEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Applied, after, before);
             }
 
-            var entityDocument = await database.GetEntity<T>(predicate);
+            var entityDocument = await database.FindEntity<T>(predicate);
 
             return await eventPublisher.DataChangedAsync(entityDocument);
         }
@@ -48,7 +48,7 @@ namespace StateManagment
         {
             await database.StoreDraft<T>(envelop, envelop.DraftVersion + 1);
 
-            var storedEntity = await database.GetEntity<T>(envelop.SearchBy());
+            var storedEntity = await database.FindEntity<T>(envelop.SearchBy());
 
             await auditManager.Write(AuditTarget.Draft, storedEntity);
 
@@ -74,9 +74,9 @@ namespace StateManagment
         {
             var lookupPredicate = envelop.SearchBy();
 
-            var before = await database.GetEntity<T>(lookupPredicate);
+            var before = await database.FindEntity<T>(lookupPredicate);
             await database.StoreSubmitted<T>(lookupPredicate, envelop.UpdateUser);
-            var after = await database.GetEntity<T>(lookupPredicate);
+            var after = await database.FindEntity<T>(lookupPredicate);
 
             await auditManager.Write(AuditTarget.Submitted, after, before);
 
@@ -114,7 +114,7 @@ namespace StateManagment
                 // Therefore we'll not be checking requested version against stored version.
                 var predicate = envelop.SearchBy();
 
-                var before = await database.GetEntity<T>(predicate);
+                var before = await database.FindEntity<T>(predicate);
 
                 if (envelop.Change != ChangeType.Delete)
                 {
@@ -131,7 +131,7 @@ namespace StateManagment
                     await database.MergeDraft<T>(envelop, basicInfo.DraftVersion + 1);
                 }
 
-                var after = await database.GetEntity<T>(predicate);
+                var after = await database.FindEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Draft, after, before);
                 return await eventPublisher.DataChangedAsync(after);
@@ -153,7 +153,7 @@ namespace StateManagment
                 await distributedLock.Lock(envelop.EntityId);
                 var predicate = envelop.SearchBy();
 
-                var before = await database.GetEntity<T>(predicate);
+                var before = await database.FindEntity<T>(predicate);
 
                 if (envelop.Change == ChangeType.Submit && envelop.DraftVersion != before.DraftVersion)
                 {
@@ -167,7 +167,7 @@ namespace StateManagment
                 }
 
                 await database.StoreSubmitted<T>(predicate, envelop.UpdateUser);
-                var after = await database.GetEntity<T>(predicate);
+                var after = await database.FindEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Submitted, after, before);
                 return await eventPublisher.DataChangedAsync(after);
@@ -185,11 +185,11 @@ namespace StateManagment
                 await distributedLock.Lock(envelop.EntityId);
                 var predicate = envelop.SearchBy();
 
-                var before = await database.GetEntity<T>(predicate);
+                var before = await database.FindEntity<T>(predicate);
 
                 await database.MarkForRemoval<T>(envelop.SearchBy());
 
-                var after = await database.GetEntity<T>(predicate);
+                var after = await database.FindEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Document, after, before);
                 return await eventPublisher.DataChangedAsync(after);

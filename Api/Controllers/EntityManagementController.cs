@@ -18,7 +18,7 @@ namespace Api.Controllers
 
         internal async Task<ActionResult<EntityDocumentModel>> GetById<T>(LookupPredicate lookupPredicate) where T : IEntity
         {
-            var contact = await customerDatabase.GetEntity<T>(lookupPredicate);
+            var contact = await customerDatabase.FindEntity<T>(lookupPredicate);
 
             return Translate(contact);
         }
@@ -27,7 +27,7 @@ namespace Api.Controllers
         {
             await changeProcessor.ProcessChangeAsync<T>(envelop);
 
-            var specificEntity = await customerDatabase.GetEntity<T>(envelop.SearchBy());
+            var specificEntity = await customerDatabase.FindEntity<T>(envelop.SearchBy());
 
             return Translate(specificEntity);
         }
@@ -42,7 +42,7 @@ namespace Api.Controllers
                 return BadRequest(result);
             }
 
-            var specificEntity = await customerDatabase.GetEntity<T>(messageEnvelop.SearchBy());
+            var specificEntity = await customerDatabase.FindEntity<T>(messageEnvelop.SearchBy());
 
             return Translate(specificEntity);
         }
@@ -56,7 +56,7 @@ namespace Api.Controllers
                 return BadRequest(result);
             }
 
-            var contactEntity = await customerDatabase.GetEntity<T>(envelop.SearchBy());
+            var contactEntity = await customerDatabase.FindEntity<T>(envelop.SearchBy());
 
             return Translate(contactEntity);
         }
@@ -65,7 +65,7 @@ namespace Api.Controllers
         {
             await changeProcessor.ProcessChangeAsync<T>(envelop);
 
-            var contactEntity = await customerDatabase.GetEntity<T>(envelop.SearchBy());
+            var contactEntity = await customerDatabase.FindEntity<T>(envelop.SearchBy());
 
             return Translate(contactEntity);
         }

@@ -45,7 +45,7 @@ namespace Integration.Tests
 
             var entityId = envelop.EntityId;
 
-            var contactDocument = await database.GetEntity<Contact>(envelop.SearchBy());
+            var contactDocument = await database.FindEntity<Contact>(envelop.SearchBy());
 
             Console.WriteLine($"-> Before orchestration - Contact: {contactDocument}"); Console.WriteLine();
 
@@ -53,14 +53,14 @@ namespace Integration.Tests
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($" Contact: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED"); Console.WriteLine();
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
 
@@ -68,7 +68,7 @@ namespace Integration.Tests
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
             // Deleting 
@@ -86,7 +86,7 @@ namespace Integration.Tests
 
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            contactDocument = await database.GetEntity<Contact>(envelop.SearchBy());
+            contactDocument = await database.FindEntity<Contact>(envelop.SearchBy());
             Console.WriteLine($"Contact after delete: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED after DELETE"); Console.WriteLine();
@@ -101,7 +101,7 @@ namespace Integration.Tests
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(entityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact after DELETE: {contactDocument}"); Console.WriteLine();
 
             Console.ReadKey();
