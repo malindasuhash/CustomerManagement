@@ -17,6 +17,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Touch,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
@@ -39,6 +40,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Submit,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
@@ -61,6 +63,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Submit,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
@@ -84,6 +87,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Submit,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
@@ -108,6 +112,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Delete,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
@@ -130,6 +135,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Delete,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = true
             };
             var stateManager = Substitute.For<IStateManager>();
@@ -137,7 +143,7 @@ namespace StateManagment.Tests
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
-            var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
             await changeHandler.Received(1).TryMarkForRemoval<Contact>(envelop);
@@ -153,6 +159,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Create,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 1,
                 SubmittedVersion = 0,
                 IsSubmitted = false
@@ -177,6 +184,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Create,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 1,
                 SubmittedVersion = 5,
                 IsSubmitted = true
@@ -208,6 +216,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = false
@@ -236,6 +245,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true
@@ -269,6 +279,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true
@@ -295,6 +306,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true
@@ -326,6 +338,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.None,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true

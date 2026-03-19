@@ -411,7 +411,7 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task Initiate_ReadsLatestData_AndStartsStateManager()
+        public async Task Evaluate_ReadsLatestData_AndStartsStateManager()
         {
             var orchestrationEnvelop = new OrchestrationEnvelop
             {
@@ -432,6 +432,7 @@ namespace StateManagment.Tests
             {
                 Name = orchestrationEnvelop.Name,
                 EntityId = orchestrationEnvelop.EntityId,
+                CustomerId= orchestrationEnvelop.CustomerId,
                 SubmittedVersion = orchestrationEnvelop.SubmittedVersion
             };
 

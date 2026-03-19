@@ -1,9 +1,4 @@
 ﻿using StateManagment.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StateManagment.Models
 {
@@ -14,8 +9,8 @@ namespace StateManagment.Models
         public ChangeType Change { get; set; }
         public EntityName Name { get; set; }
 
-        public string CustomerId { get; set; }
-        public string EntityId { get; set; }
+        public required string CustomerId { get; set; }
+        public string? EntityId { get; set; }
         public int DraftVersion { get; set; }
         public int SubmittedVersion { get; set; }
         public int AppliedVersion { get; set; }
@@ -29,20 +24,20 @@ namespace StateManagment.Models
             }
         }
 
-        public dynamic Draft { get; set; }
+        public dynamic? Draft { get; set; }
 
-        public dynamic Submitted { get; set; }
+        public dynamic? Submitted { get; set; }
 
-        public dynamic Applied { get; set; }
+        public dynamic? Applied { get; set; }
 
-        public string UpdateUser { get; set; }
-        public DateTime UpdateTimestamp { get; set; }
+        public string? UpdateUser { get; set; }
+        public DateTime? UpdateTimestamp { get; set; }
 
-        public string CreatedUser { get; set; }
-        public DateTime CreatedTimestamp { get; set; }
+        public string? CreatedUser { get; set; }
+        public DateTime? CreatedTimestamp { get; set; }
 
-        public Feedback[] Feedback { get; set; }
-        public OrchestrationData[] OrchestrationData { get; set; }
+        public Feedback[]? Feedback { get; set; }
+        public OrchestrationData[]? OrchestrationData { get; set; }
 
         // Approach for handling deletes
 
@@ -64,7 +59,7 @@ namespace StateManagment.Models
         // MIDs or ApplicationIDs or third party references that logically
         // belong to this entity. System Data is access controlled
         // e.g. READ_SYSTEM_DATA, SET_SYSTEM_DATA permission.
-        public SystemData[] SystemData { get; set; }
+        public SystemData[]? SystemData { get; set; }
 
         public void SetState(EntityState targetState)
         {
@@ -78,9 +73,12 @@ namespace StateManagment.Models
 
         public LookupPredicate SearchBy()
         {
-            var withLegalEntity = Draft as ILegalEntityAttached;
+            if (Draft is ILegalEntityAttached withLegalEntity)
+            {
+                return new LookupPredicate(EntityId, CustomerId, withLegalEntity.LegalEntityId);
+            }
 
-            return new LookupPredicate(EntityId, CustomerId, withLegalEntity?.LegalEntityId);
+            return new LookupPredicate(EntityId, CustomerId, null);
         }
     }
 }

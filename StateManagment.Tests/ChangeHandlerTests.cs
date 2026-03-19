@@ -18,6 +18,7 @@ namespace StateManagment.Tests
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = "entity1",
+                CustomerId = "customer1",
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" }
             };
@@ -135,9 +136,11 @@ namespace StateManagment.Tests
             var eventPublisher = Substitute.For<IEventPublisher>();
             var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);
             var entityId = "entity1";
+            var customerId = "customer1";
             var before = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
@@ -145,6 +148,7 @@ namespace StateManagment.Tests
             var after = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Cactus", LastName = "Mango" },
                 DraftVersion = 5,
@@ -176,10 +180,11 @@ namespace StateManagment.Tests
             var database = Substitute.For<ICustomerDatabase>();
             var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), Substitute.For<IAuditManager>());
             var entityId = "entity1";
-
+            var customerId = "customer1";
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 1,
@@ -207,11 +212,12 @@ namespace StateManagment.Tests
             var database = Substitute.For<ICustomerDatabase>();
             var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), auditManager);
             var entityId = "entity1";
-
+            var customerId = "customer1";
             var before = new MessageEnvelop
             {
                 Change = ChangeType.Delete,
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 5,
@@ -220,6 +226,7 @@ namespace StateManagment.Tests
             {
                 Change = ChangeType.Delete,
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Green", LastName = "Black" },
                 DraftVersion = 5,
@@ -251,10 +258,11 @@ namespace StateManagment.Tests
             var database = Substitute.For<ICustomerDatabase>();
             var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), Substitute.For<IAuditManager>());
             var entityId = "entity1";
-
+            var customerId = "customer1";
             var stored = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
@@ -266,6 +274,7 @@ namespace StateManagment.Tests
             var received = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 4,
@@ -293,10 +302,11 @@ namespace StateManagment.Tests
             var database = Substitute.For<ICustomerDatabase>();
             var changeHandler = new ChangeHandler(database, distributedLock, Substitute.For<IEventPublisher>(), Substitute.For<IAuditManager>());
             var entityId = "entity1";
-
+            var customerId = "customer1";
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
@@ -311,6 +321,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = entityId,
+                CustomerId= customerId,
                 Draft = storedDraft,
                 DraftVersion = 2,
                 SubmittedVersion = 2,
@@ -475,6 +486,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.None,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "342",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true
