@@ -16,6 +16,6 @@ namespace StateManagment.Models
         Task<TaskOutcome> UpdateData<T>(LookupPredicate predicate, EntityState targetState, Feedback[] feedbacks, OrchestrationData[] orchestrationData) where T : IEntity;
         Task<TaskOutcome> StoreApplied<T>(LookupPredicate predicate, bool confirmRemoval) where T : IEntity;
         Task<TaskOutcome> MergeDraft<T>(MessageEnvelop envelop, int latestDraftVersion) where T : IEntity;
-        Task<TaskOutcome> MarkForRemoval<T>(string entityId) where T : IEntity;
+        Task<TaskOutcome> MarkForRemoval<T>(LookupPredicate predicate) where T : IEntity;
     }
 }

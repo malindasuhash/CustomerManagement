@@ -22,7 +22,7 @@ namespace StateManagment
         {
             if (envelop.Change == ChangeType.Touch)
             {
-                return await stateManager.Initiate<T>(envelop);
+                return await stateManager.Evaluate<T>(envelop);
             }
 
             if (envelop.Change == ChangeType.Submit)
@@ -34,7 +34,7 @@ namespace StateManagment
                     return lockedResult;
                 }
 
-                return await stateManager.Initiate<T>(envelop);
+                return await stateManager.Evaluate<T>(envelop);
             }
 
             if (envelop.Change == ChangeType.Delete)
@@ -43,7 +43,7 @@ namespace StateManagment
 
                 if (envelop.IsSubmitted)
                 {
-                    return await stateManager.Initiate<T>(envelop);
+                    return await stateManager.Evaluate<T>(envelop);
                 }
 
                 return TaskOutcome.OK;
@@ -56,7 +56,7 @@ namespace StateManagment
                 if (envelop.IsSubmitted)
                 {
                     await changeHandler.Submitted<T>(envelop);
-                    var result = await stateManager.Initiate<T>(envelop);
+                    var result = await stateManager.Evaluate<T>(envelop);
                     return result;
                 }
 
@@ -80,7 +80,7 @@ namespace StateManagment
                             return submitOutcome;
                         }
 
-                        var result = await stateManager.Initiate<T>(envelop);
+                        var result = await stateManager.Evaluate<T>(envelop);
 
                         return result;
                     }

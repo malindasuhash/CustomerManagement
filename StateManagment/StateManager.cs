@@ -16,7 +16,7 @@ namespace StateManagment
             this.changeHandler = changeHandler;
         }
 
-        public async Task<TaskOutcome> Initiate<T>(MessageEnvelop envelop) where T : IEntity
+        public async Task<TaskOutcome> Evaluate<T>(MessageEnvelop envelop) where T : IEntity
         {
             var latestEntity = await dataStore.GetEntity<T>(envelop.SearchBy()); 
 

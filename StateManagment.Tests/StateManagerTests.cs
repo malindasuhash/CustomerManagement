@@ -441,7 +441,7 @@ namespace StateManagment.Tests
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             // Act
-            await stateManager.Initiate<Contact>(envelop);
+            await stateManager.Evaluate<Contact>(envelop);
 
             // Assert
             await database.Received(1).GetEntity<Contact>(predicate);

@@ -187,7 +187,7 @@ namespace StateManagment
 
                 var before = await database.GetEntity<T>(predicate);
 
-                await database.MarkForRemoval<T>(envelop.EntityId);
+                await database.MarkForRemoval<T>(envelop.SearchBy());
 
                 var after = await database.GetEntity<T>(predicate);
 

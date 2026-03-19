@@ -516,7 +516,7 @@ namespace StateManagment.Tests
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true,
-                CustomerId = "123"
+                CustomerId = "1234"
             };
 
             var database = Substitute.For<ICustomerDatabase>();
@@ -532,7 +532,7 @@ namespace StateManagment.Tests
             await changeHandler.TryMarkForRemoval<Contact>(before);
 
             // Assert
-            await database.Received(1).MarkForRemoval<Contact>(before.EntityId);
+            await database.Received(1).MarkForRemoval<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals("123") && p.CustomerId.Equals("1234")));
             await auditManager.Received(1).Write(AuditTarget.Document, after, before);
             await eventPublisher.Received(1).DataChangedAsync(after);
         }

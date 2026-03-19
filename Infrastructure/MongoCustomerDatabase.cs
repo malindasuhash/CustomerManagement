@@ -84,11 +84,11 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> MarkForRemoval<T>(string entityId) where T : IEntity
+        public async Task<TaskOutcome> MarkForRemoval<T>(LookupPredicate predicate) where T : IEntity
         {
             DbEexecutionParams dbEexecution;
 
-            dbEexecution = await DatabaseCollectionConfig.SetMarkForRemoval<T>(entityId, database);
+            dbEexecution = await DatabaseCollectionConfig.SetMarkForRemoval<T>(predicate, database);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 

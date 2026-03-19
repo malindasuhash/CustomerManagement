@@ -300,9 +300,9 @@ namespace Infrastructure.EntityConfig
             });
         }
 
-        public static Task<DbEexecutionParams> SetMarkForRemoval<T>(string entityId, IMongoDatabase db) where T : IEntity
+        public static Task<DbEexecutionParams> SetMarkForRemoval<T>(LookupPredicate predicate, IMongoDatabase db) where T : IEntity
         {
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, predicate.EntityId);
             var onInsert = Builders<MessageEnvelop>.Update
             .Set(a => a.RemoveRequested, true);
 

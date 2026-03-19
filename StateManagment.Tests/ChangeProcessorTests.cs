@@ -9,7 +9,7 @@ namespace StateManagment.Tests
     public class ChangeProcessorTests
     {
         [Fact]
-        public async Task ProcessChangeAsync_WhenTouched_ThenInitiatesStateManager()
+        public async Task Evaluate_WhenTouched_ThenInitiatesStateManager()
         {
             // Arrange
             var envelop = new MessageEnvelop
@@ -27,7 +27,7 @@ namespace StateManagment.Tests
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await stateManager.Received(1).Initiate<Contact>(envelop);
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace StateManagment.Tests
             var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await stateManager.Received(1).Initiate<Contact>(envelop);
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
         [Fact]
@@ -141,7 +141,7 @@ namespace StateManagment.Tests
 
             // Assert
             await changeHandler.Received(1).TryMarkForRemoval<Contact>(envelop);
-            await stateManager.Received(1).Initiate<Contact>(envelop);
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
         [Fact]
@@ -195,7 +195,7 @@ namespace StateManagment.Tests
             // Assert
             await changeHandler.Received(1).Draft<Contact>(envelop);
             await changeHandler.Received(1).Submitted<Contact>(Arg.Any<MessageEnvelop>());
-            await stateManager.Received(1).Initiate<Contact>(envelop);
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
 
@@ -257,7 +257,7 @@ namespace StateManagment.Tests
             // Assert
             await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
             await changeHandler.Received(1).TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
-            await stateManager.Received(1).Initiate<Contact>(envelop);
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
         [Fact]

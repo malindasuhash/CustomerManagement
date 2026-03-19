@@ -6,6 +6,6 @@ namespace StateManagment.Models
     {
         Task<TaskOutcome> ProcessUpdateAsync<T>(OrchestrationEnvelop orchestrationEnvelop) where T : IEntity;
 
-        Task<TaskOutcome> Initiate<T>(MessageEnvelop envelop) where T : IEntity;
+        Task<TaskOutcome> Evaluate<T>(MessageEnvelop envelop) where T : IEntity;
     }
 }
