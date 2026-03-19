@@ -191,9 +191,9 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> UpdateData(EntityName entityName, string entityId, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM")
+        public static async Task<DbEexecutionParams> UpdateData<T>(string entityId, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM") where T : IEntity
         {
-            var contact = await GetById(entityId, entityName, db);
+            var contact = await GetById2<T>(entityId, db);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -204,7 +204,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return new DbEexecutionParams
             {
@@ -214,10 +214,10 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToSubmitted<T>(IEntity entity, string entityId, string updatedUser, EntityName entityName, IMongoDatabase db) where T : IEntity
+        public static async Task<DbEexecutionParams> AddToSubmitted<T>(IEntity entity, string entityId, string updatedUser, IMongoDatabase db) where T : IEntity
         {
             // Read the entity document - I need the latest document here.
-            var contact = await GetById(entityId, entityName, db);
+            var contact = await GetById2<T>(entityId, db);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -227,7 +227,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return new DbEexecutionParams
             {
@@ -237,9 +237,9 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToApplied(string entityId, IEntity entity, bool confirmRemoval, IMongoDatabase db, EntityName entityName, string updatedUser = "SYSTEM")
+        public static async Task<DbEexecutionParams> AddToApplied<T>(string entityId, IEntity entity, bool confirmRemoval, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
         {
-            var contact = await GetById(entityId, entityName, db);
+            var contact = await GetById2<T>(entityId, db);
 
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
@@ -250,7 +250,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateUser, updatedUser)
             .Set(a => a.Removed, confirmRemoval);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return new DbEexecutionParams
             {
@@ -301,13 +301,13 @@ namespace Infrastructure.EntityConfig
             });
         }
 
-        public static Task<DbEexecutionParams> SetMarkForRemoval(string entityId, EntityName entityName, IMongoDatabase db)
+        public static Task<DbEexecutionParams> SetMarkForRemoval<T>(string entityId, IMongoDatabase db) where T : IEntity
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
             var onInsert = Builders<MessageEnvelop>.Update
             .Set(a => a.RemoveRequested, true);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return Task.FromResult(new DbEexecutionParams
             {
@@ -315,15 +315,6 @@ namespace Infrastructure.EntityConfig
                 Definition = onInsert,
                 Filter = filter
             });
-        }
-
-        public static Task<MessageEnvelop> GetById(string entityId, EntityName entityName, IMongoDatabase db)
-        {
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
-
-            var entities = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
-
-            return entities.Find(filter).FirstOrDefaultAsync();
         }
 
         public static Task<MessageEnvelop> GetById2<T>(string entityId, IMongoDatabase db) where T : IEntity
@@ -335,18 +326,19 @@ namespace Infrastructure.EntityConfig
             return entities.Find(filter).FirstOrDefaultAsync();
         }
 
-        public static Task<EntityBasics> GetEntityBasics(string entityId, EntityName entityName, IMongoDatabase db)
+        public static Task<EntityBasics> GetEntityBasics<T>(string entityId, IMongoDatabase db) where T : IEntity
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            var config = EntityCollectionConfig.Config<T>();
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(config.Collection);
 
             return contacts.Find(filter)
                 .Project(p => new EntityBasics
                 {
                     DraftVersion = p.DraftVersion,
                     EntityId = entityId,
-                    Name = entityName,
+                    Name = config.Name, 
                     State = p.State,
                     SubmittedVersion = p.SubmittedVersion,
                 }).FirstOrDefaultAsync();

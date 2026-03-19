@@ -22,7 +22,7 @@ namespace StateManagment
         {
             if (envelop.Change == ChangeType.Touch)
             {
-                return await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                return await stateManager.Initiate<T>(envelop);
             }
 
             if (envelop.Change == ChangeType.Submit)
@@ -34,16 +34,16 @@ namespace StateManagment
                     return lockedResult;
                 }
 
-                return await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                return await stateManager.Initiate<T>(envelop);
             }
 
             if (envelop.Change == ChangeType.Delete)
             {
-                await changeHandler.TryMarkForRemoval(envelop);
+                await changeHandler.TryMarkForRemoval<T>(envelop);
 
                 if (envelop.IsSubmitted)
                 {
-                    return await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                    return await stateManager.Initiate<T>(envelop);
                 }
 
                 return TaskOutcome.OK;
@@ -56,7 +56,7 @@ namespace StateManagment
                 if (envelop.IsSubmitted)
                 {
                     await changeHandler.Submitted<T>(envelop);
-                    var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                    var result = await stateManager.Initiate<T>(envelop);
                     return result;
                 }
 
@@ -80,7 +80,7 @@ namespace StateManagment
                             return submitOutcome;
                         }
 
-                        var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                        var result = await stateManager.Initiate<T>(envelop);
 
                         return result;
                     }

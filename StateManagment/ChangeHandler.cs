@@ -22,20 +22,20 @@ namespace StateManagment
         /// Changes the status of the specified entity in the database to the provided entity state 
         /// and publishes a state changed event.
         /// </summary>
-        public async Task<TaskOutcome> ChangeStatusTo(string entityId, EntityName name, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null)
+        public async Task<TaskOutcome> ChangeStatusTo<T>(string entityId, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null) where T : IEntity
         {
-            await database.UpdateData(name, entityId, entityState, feedbacks ?? [], orchestrationData ?? []);
+            await database.UpdateData<T>(entityId, entityState, feedbacks ?? [], orchestrationData ?? []);
 
             if (entityState == EntityState.SYNCHRONISED)
             {
-                var before = await database.GetEntityDocument(name, entityId);
-                await database.StoreApplied(name, before.Submitted, entityId, before.RemoveRequested);
-                var after = await database.GetEntityDocument(name, entityId);
+                var before = await database.GetEntity<T>(entityId);
+                await database.StoreApplied<T>(before.Submitted, entityId, before.RemoveRequested);
+                var after = await database.GetEntity<T>(entityId);
 
                 await auditManager.Write(AuditTarget.Applied, after, before);
             }
 
-            var entityDocument = await database.GetEntityDocument(name, entityId);
+            var entityDocument = await database.GetEntity<T>(entityId);
 
             return await eventPublisher.DataChangedAsync(entityDocument);
         }
@@ -46,7 +46,7 @@ namespace StateManagment
         /// </summary>        
         public async Task<TaskOutcome> Draft<T>(MessageEnvelop envelop) where T : IEntity
         {
-            await database.StoreDraft(envelop, envelop.DraftVersion + 1);
+            await database.StoreDraft<T>(envelop, envelop.DraftVersion + 1);
 
             var storedEntity = await database.GetEntity<T>(envelop.EntityId);
 
@@ -73,7 +73,7 @@ namespace StateManagment
         public async Task<TaskOutcome> Submitted<T>(MessageEnvelop envelop) where T : IEntity
         {
             var before = await database.GetEntity<T>(envelop.EntityId);
-            await database.StoreSubmitted(envelop.Name, envelop.Draft, envelop.EntityId, envelop.UpdateUser);
+            await database.StoreSubmitted<T>(envelop.Draft, envelop.EntityId, envelop.UpdateUser);
             var after = await database.GetEntity<T>(envelop.EntityId);
 
             await auditManager.Write(AuditTarget.Submitted, after, before);
@@ -102,7 +102,7 @@ namespace StateManagment
             {
                 await distributedLock.Lock($"{envelop.EntityId}_draft");
 
-                var basicInfo = await database.GetBasicInfo(envelop.Name, envelop.EntityId);
+                var basicInfo = await database.GetBasicInfo<T>(envelop.EntityId);
 
                 // Draft versions must match to avoid lost updates. If the draft version in the message
                 // is different from the one in the database, it means that there has been an update since the draft
@@ -120,12 +120,12 @@ namespace StateManagment
                         return TaskOutcome.VERSION_MISMATCH;
                     }
                    
-                    await database.MergeDraft(envelop, envelop.DraftVersion + 1);
+                    await database.MergeDraft<T>(envelop, envelop.DraftVersion + 1);
                 }
                 else
                 {
 
-                    await database.MergeDraft(envelop, basicInfo.DraftVersion + 1);
+                    await database.MergeDraft<T>(envelop, basicInfo.DraftVersion + 1);
                 }
 
                 var after = await database.GetEntity<T>(envelop.EntityId);
@@ -162,7 +162,7 @@ namespace StateManagment
                     return TaskOutcome.NO_CHANGE_TO_SUBMIT;
                 }
 
-                await database.StoreSubmitted(before.Name, before.Draft, before.EntityId, envelop.UpdateUser);
+                await database.StoreSubmitted<T>(before.Draft, before.EntityId, envelop.UpdateUser);
                 var after = await database.GetEntity<T>(envelop.EntityId);
 
                 await auditManager.Write(AuditTarget.Submitted, after, before);
@@ -174,17 +174,17 @@ namespace StateManagment
             }
         }
 
-        public async Task<TaskOutcome> TryMarkForRemoval(MessageEnvelop envelop)
+        public async Task<TaskOutcome> TryMarkForRemoval<T>(MessageEnvelop envelop) where T : IEntity
         {
             try
             {
                 await distributedLock.Lock(envelop.EntityId);
 
-                var before = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+                var before = await database.GetEntity<T>(envelop.EntityId);
 
-                await database.MarkForRemoval(envelop.Name, envelop.EntityId);
+                await database.MarkForRemoval<T>(envelop.EntityId);
 
-                var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+                var after = await database.GetEntity<T>(envelop.EntityId);
 
                 await auditManager.Write(AuditTarget.Document, after, before);
                 return await eventPublisher.DataChangedAsync(after);

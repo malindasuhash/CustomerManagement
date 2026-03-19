@@ -27,7 +27,7 @@ namespace StateManagment.Tests
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
+            await stateManager.Received(1).Initiate<Contact>(envelop);
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace StateManagment.Tests
             var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await stateManager.Received(1).Initiate(EntityName.Contact, envelop.EntityId);
+            await stateManager.Received(1).Initiate<Contact>(envelop);
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace StateManagment.Tests
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMarkForRemoval(envelop);
+            await changeHandler.Received(1).TryMarkForRemoval<Contact>(envelop);
         }
 
         [Fact]
@@ -140,8 +140,8 @@ namespace StateManagment.Tests
             var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMarkForRemoval(envelop);
-            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
+            await changeHandler.Received(1).TryMarkForRemoval<Contact>(envelop);
+            await stateManager.Received(1).Initiate<Contact>(envelop);
         }
 
         [Fact]
@@ -195,7 +195,7 @@ namespace StateManagment.Tests
             // Assert
             await changeHandler.Received(1).Draft<Contact>(envelop);
             await changeHandler.Received(1).Submitted<Contact>(Arg.Any<MessageEnvelop>());
-            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
+            await stateManager.Received(1).Initiate<Contact>(envelop);
         }
 
 
@@ -257,7 +257,7 @@ namespace StateManagment.Tests
             // Assert
             await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
             await changeHandler.Received(1).TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
-            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
+            await stateManager.Received(1).Initiate<Contact>(envelop);
         }
 
         [Fact]
@@ -314,7 +314,7 @@ namespace StateManagment.Tests
             await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
             await changeHandler.Received(1).TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
             result.Successful.Should().BeFalse();
-            await stateManager.DidNotReceive().ProcessUpdateAsync(Arg.Any<OrchestrationEnvelop>());
+            await stateManager.DidNotReceive().ProcessUpdateAsync<Contact>(Arg.Any<OrchestrationEnvelop>());
         }
 
         [Fact]

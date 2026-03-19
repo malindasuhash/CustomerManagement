@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using StateManagment.Entity;
 using StateManagment.Models;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace Infrastructure
         {
             var envelop = JsonSerializer.Deserialize<OrchestrationEnvelop>(arg.Message.Body);
 
-            await stateManager.ProcessUpdateAsync(envelop);
+            await stateManager.ProcessUpdateAsync<Contact>(envelop); // TODO
         }
     }
 }

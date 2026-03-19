@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NSubstitute;
+using StateManagment.Entity;
 using StateManagment.Models;
 using System;
 
@@ -27,7 +28,7 @@ namespace StateManagment.Tests
             var stateManager = new StateManager(changeHandler, orchestrator, Substitute.For<ICustomerDatabase>());
 
             // Act
-            var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
             await changeHandler.Received(1).TakeEntityLock(orchestrationEnvelop.EntityId);
@@ -50,13 +51,13 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var dataRetriever = Substitute.For<ICustomerDatabase>();
-            dataRetriever.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            dataRetriever.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.None, DraftVersion = 5 });
 
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), dataRetriever);
 
             // Act
-            var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
             await changeHandler.Received(1).TakeEntityLock(orchestrationEnvelop.EntityId);
@@ -83,16 +84,16 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = currentState, SubmittedVersion = 5 });
 
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
 
             // Act
-            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATING, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.EVALUATING, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         [Fact]
@@ -112,17 +113,17 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.NEW, SubmittedVersion = 6 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             // Act
-            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.EVALUATION_RESTARTING);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.EVALUATION_RESTARTING);
 
             await orchestrator.Received(1).EvaluateAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
@@ -144,14 +145,14 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.None, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             // Act
-            var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
             result.Should().Be(TaskOutcome.TRANSITION_NOT_SUPPORTED);
@@ -176,17 +177,17 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.EVALUATING, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             // Act
-            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_PROGRESS, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.IN_PROGRESS, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.Received(1).ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -209,17 +210,17 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.EVALUATING, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             // Act
-            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.DidNotReceive().ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -241,17 +242,17 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
             var database = Substitute.For<ICustomerDatabase>();
 
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.EVALUATING, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             // Act
-            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.IN_REVIEW, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.IN_REVIEW, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.DidNotReceive().ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -269,12 +270,12 @@ namespace StateManagment.Tests
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 5 });
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
 
             // Act
-            var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
             result.Should().Be(TaskOutcome.TRANSITION_NOT_SUPPORTED);
@@ -298,15 +299,15 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
             var database = Substitute.For<ICustomerDatabase>();
 
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.IN_REVIEW, SubmittedVersion = 6 });
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
 
             // Act
-            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         [Fact]
@@ -327,15 +328,15 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
             var database = Substitute.For<ICustomerDatabase>();
 
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 6 });
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
 
             // Act
-            await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         private const int StateDoesNotChange = 0;
@@ -382,15 +383,15 @@ namespace StateManagment.Tests
 
             var orchestrator = Substitute.For<IOrchestrator>();
 
-            database.GetBasicInfo(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
                 .Returns(new EntityBasics { State = currentState, SubmittedVersion = 6 });
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             // Act
-            var result = await stateManager.ProcessUpdateAsync(orchestrationEnvelop);
+            var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(statusChangeCount).ChangeStatusTo(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name, targetState, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(statusChangeCount).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, targetState, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.Received(evalutionCount).EvaluateAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             await orchestrator.Received(applyCount).ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             await orchestrator.Received(postApplyCount).PostApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
@@ -414,21 +415,22 @@ namespace StateManagment.Tests
 
             var orchestrator = Substitute.For<IOrchestrator>();
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetEntityDocument(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId)
-                .Returns(new MessageEnvelop
-                {
-                    Name = orchestrationEnvelop.Name,
-                    EntityId = orchestrationEnvelop.EntityId,
-                    SubmittedVersion = orchestrationEnvelop.SubmittedVersion
-                });
+            var envelop = new MessageEnvelop
+            {
+                Name = orchestrationEnvelop.Name,
+                EntityId = orchestrationEnvelop.EntityId,
+                SubmittedVersion = orchestrationEnvelop.SubmittedVersion
+            };
+
+            database.GetEntity<Contact>(orchestrationEnvelop.EntityId).Returns(envelop);
 
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             // Act
-            await stateManager.Initiate(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId);
+            await stateManager.Initiate<Contact>(envelop);
 
             // Assert
-            database.Received(1).GetEntityDocument(orchestrationEnvelop.Name, orchestrationEnvelop.EntityId);
+            await database.Received(1).GetEntity<Contact>(orchestrationEnvelop.EntityId);
         }
     }
 }
