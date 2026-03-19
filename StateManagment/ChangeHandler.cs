@@ -76,7 +76,7 @@ namespace StateManagment
             var lookupPredicate = envelop.SearchBy();
 
             var before = await database.GetEntity<T>(lookupPredicate);
-            await database.StoreSubmitted<T>(envelop.Draft, envelop.EntityId, envelop.CustomerId, envelop.UpdateUser);
+            await database.StoreSubmitted<T>(lookupPredicate, envelop.UpdateUser);
             var after = await database.GetEntity<T>(lookupPredicate);
 
             await auditManager.Write(AuditTarget.Submitted, after, before);
@@ -105,7 +105,7 @@ namespace StateManagment
             {
                 await distributedLock.Lock($"{envelop.EntityId}_draft");
 
-                var basicInfo = await database.GetBasicInfo<T>(envelop.EntityId);
+                var basicInfo = await database.GetBasicInfo<T>(envelop.SearchBy());
 
                 // Draft versions must match to avoid lost updates. If the draft version in the message
                 // is different from the one in the database, it means that there has been an update since the draft
@@ -167,7 +167,7 @@ namespace StateManagment
                     return TaskOutcome.NO_CHANGE_TO_SUBMIT;
                 }
 
-                await database.StoreSubmitted<T>(before.Draft, before.EntityId, before.CustomerId, envelop.UpdateUser);
+                await database.StoreSubmitted<T>(predicate, envelop.UpdateUser);
                 var after = await database.GetEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Submitted, after, before);

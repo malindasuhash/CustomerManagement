@@ -70,7 +70,7 @@ namespace StateManagment.Tests
             await changeHandler.Submitted<Contact>(messageEnvelop);
 
             // Assert
-            await database.Received(1).StoreSubmitted<Contact>(Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", "customer1", messageEnvelop.UpdateUser);
+            await database.Received(1).StoreSubmitted<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals("entity1") && p.CustomerId.Equals(customerId)), messageEnvelop.UpdateUser);
             await database.Received(2).GetEntity<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals("entity1")));
             await auditManager.Received(1).Write(AuditTarget.Submitted, messageEnvelop2, messageEnvelop);
             await eventPublisher.Received(1).DataChangedAsync(messageEnvelop2);
@@ -154,14 +154,14 @@ namespace StateManagment.Tests
 
             database.GetEntity<Contact>(searchBy).Returns(before, after);
 
-            database.GetBasicInfo<Contact>(entityId).Returns(new EntityBasics { DraftVersion = 2 });
+            database.GetBasicInfo<Contact>(before.SearchBy()).Returns(new EntityBasics { DraftVersion = 2 });
 
             // Act  
             var result = await changeHandler.TryMergeDraft<Contact>(before);
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
-            await database.Received(1).GetBasicInfo<Contact>(entityId);
+            await database.Received(1).GetBasicInfo<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals(entityId)));
             await database.Received(1).MergeDraft<Contact>(before, before.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
             await auditManager.Received(1).Write(AuditTarget.Draft, after, before);
@@ -185,14 +185,14 @@ namespace StateManagment.Tests
                 DraftVersion = 1,
             };
 
-            database.GetBasicInfo<Contact>(entityId).Returns(new EntityBasics { DraftVersion = 2 });
+            database.GetBasicInfo<Contact>(messageEnvelop.SearchBy()).Returns(new EntityBasics { DraftVersion = 2 });
 
             // Act  
             var result = await changeHandler.TryMergeDraft<Contact>(messageEnvelop);
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
-            await database.Received(1).GetBasicInfo<Contact>(entityId);
+            await database.Received(1).GetBasicInfo<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals(entityId)));
             await database.DidNotReceive().StoreDraft<Contact>(messageEnvelop, messageEnvelop.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
             result.Should().Be(TaskOutcome.VERSION_MISMATCH);
@@ -228,7 +228,7 @@ namespace StateManagment.Tests
             var searchBy = after.SearchBy();
 
             var basics = new EntityBasics { DraftVersion = 5 };
-            database.GetBasicInfo<Contact>(entityId).Returns(basics);
+            database.GetBasicInfo<Contact>(before.SearchBy()).Returns(basics);
             database.GetEntity<Contact>(searchBy).Returns(before, after);
 
             // Act  
@@ -236,7 +236,7 @@ namespace StateManagment.Tests
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
-            await database.Received(1).GetBasicInfo<Contact>(entityId);
+            await database.Received(1).GetBasicInfo<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals(entityId)));
             await database.Received(1).MergeDraft<Contact>(before, basics.DraftVersion + 1);
             await distributedLock.Received(1).Unlock($"{entityId}_draft");
             await auditManager.Received(1).Write(AuditTarget.Draft, after, before);
@@ -382,7 +382,7 @@ namespace StateManagment.Tests
             // Assert
             await distributedLock.Received(1).Lock(entityId);
             await database.Received(2).GetEntity<Contact>(searchBy);
-            await database.Received(1).StoreSubmitted<Contact>(Arg.Is<Contact>(c => c == storedDraft), entityId, customerId, messageEnvelop.UpdateUser);
+            await database.Received(1).StoreSubmitted<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals(entityId) && p.CustomerId.Equals(customerId)), messageEnvelop.UpdateUser);
             await auditManager.Received(1).Write(AuditTarget.Submitted, after, before);
             await eventPublisher.Received(1).DataChangedAsync(after);
         }

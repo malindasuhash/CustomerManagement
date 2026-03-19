@@ -214,11 +214,9 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToSubmitted<T>(IEntity entity, string entityId, string customerId, string updatedUser, IMongoDatabase db) where T : IEntity
+        public static async Task<DbEexecutionParams> AddToSubmitted<T>(string entityId, string customerId, string legalEntityId, string updatedUser, IMongoDatabase db) where T : IEntity
         {
-            var withLegalEntity = entity as ILegalEntityAttached;
-
-            var storedEntityDocument = await GetById2<T>(entityId, customerId, db, withLegalEntity?.LegalEntityId);
+            var storedEntityDocument = await GetById2<T>(entityId, customerId, db, legalEntityId);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -339,7 +337,7 @@ namespace Infrastructure.EntityConfig
             return entities.Find(filter.And(filterDefs)).FirstOrDefaultAsync();
         }
 
-        public static Task<EntityBasics> GetEntityBasics<T>(string entityId, IMongoDatabase db) where T : IEntity
+        public static Task<EntityBasics> GetEntityBasics<T>(string entityId, string customerId, string legalEntityId, IMongoDatabase db) where T : IEntity
         {
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
             var config = EntityCollectionConfig.Config<T>();

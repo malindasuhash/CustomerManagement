@@ -30,5 +30,10 @@
                 OrchestrationData = orchestrationData
             };
         }
+
+        public LookupPredicate SearchBy()
+        {
+            return new LookupPredicate(EntityId, CustomerId, LegalEntityId);
+        }
     }
 }

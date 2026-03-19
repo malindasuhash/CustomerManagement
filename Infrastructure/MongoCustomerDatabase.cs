@@ -23,9 +23,9 @@ namespace Infrastructure
             BsonSerializer.RegisterSerializer(objectSerializer);
         }
 
-        public async Task<EntityBasics> GetBasicInfo<T>(string entityId) where T : IEntity
+        public async Task<EntityBasics> GetBasicInfo<T>(LookupPredicate predicate) where T : IEntity
         {
-            var storedBasics = await DatabaseCollectionConfig.GetEntityBasics<T>(entityId, database);
+            var storedBasics = await DatabaseCollectionConfig.GetEntityBasics<T>(predicate.EntityId, predicate.CustomerId, predicate.LegalEntityId, database);
             return storedBasics;
         }
 
@@ -62,11 +62,11 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> StoreSubmitted<T>(IEntity entity, string entityId, string customerId, string updatedUser) where T : IEntity
+        public async Task<TaskOutcome> StoreSubmitted<T>(LookupPredicate predicate, string updatedUser) where T : IEntity
         {
             DbEexecutionParams dbEexecution;
 
-            dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<Contact>(entity, entityId, customerId, updatedUser, database);
+            dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<T>(predicate.EntityId, predicate.CustomerId, predicate.LegalEntityId, updatedUser, database);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 

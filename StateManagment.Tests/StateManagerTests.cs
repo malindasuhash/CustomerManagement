@@ -53,7 +53,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var dataRetriever = Substitute.For<ICustomerDatabase>();
-            dataRetriever.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            dataRetriever.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.None, DraftVersion = 5 });
 
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), dataRetriever);
@@ -87,7 +87,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = currentState, SubmittedVersion = 5 });
 
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
@@ -117,7 +117,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.NEW, SubmittedVersion = 6 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
@@ -150,7 +150,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.None, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
@@ -183,7 +183,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.EVALUATING, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
@@ -217,7 +217,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.EVALUATING, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
@@ -250,7 +250,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
             var database = Substitute.For<ICustomerDatabase>();
 
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.EVALUATING, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
@@ -279,7 +279,7 @@ namespace StateManagment.Tests
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 5 });
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
 
@@ -309,7 +309,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
             var database = Substitute.For<ICustomerDatabase>();
 
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.IN_REVIEW, SubmittedVersion = 6 });
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
 
@@ -339,7 +339,7 @@ namespace StateManagment.Tests
             changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
             var database = Substitute.For<ICustomerDatabase>();
 
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 6 });
             var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
 
@@ -395,7 +395,7 @@ namespace StateManagment.Tests
 
             var orchestrator = Substitute.For<IOrchestrator>();
 
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.EntityId)
+            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = currentState, SubmittedVersion = 6 });
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
