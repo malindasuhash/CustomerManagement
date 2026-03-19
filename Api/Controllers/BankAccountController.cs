@@ -90,7 +90,7 @@ namespace Api.Controllers
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetBankAccountById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            return await GetById<BankAccount>(customerId, bankAccountId);
+            return await GetById<BankAccount>(LookupPredicate.Create(bankAccountId, customerId, legalEntityId));
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -110,7 +110,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync<BankAccount>(envelop);
 
-            var contactEntity = await customerDatabase.GetEntity<BankAccount>(bankAccountId, customerId);
+            var contactEntity = await customerDatabase.GetEntity<BankAccount>(envelop.SearchBy());
 
             return Translate(contactEntity);
         }

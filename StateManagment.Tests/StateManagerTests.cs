@@ -175,7 +175,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_COMPLETED,
-                Feedbacks = [new Feedback() { Type = FeedbackType.Error, Key = "EvaluationCompletedSuccessfully", Value = "OK"}],
+                Feedbacks = [new Feedback() { Type = FeedbackType.Error, Key = "EvaluationCompletedSuccessfully", Value = "OK" }],
                 OrchestrationData = [new OrchestrationData() { Key = "OK", Value = "BK" }]
             };
 
@@ -243,7 +243,7 @@ namespace StateManagment.Tests
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_REQUIRES_MANUAL_REVIEW,
-                Feedbacks = [new Feedback() { Type = FeedbackType.Error, Key = "NeedManagerCheckApproval", Value = "Waiting"}]
+                Feedbacks = [new Feedback() { Type = FeedbackType.Error, Key = "NeedManagerCheckApproval", Value = "Waiting" }]
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
@@ -435,7 +435,8 @@ namespace StateManagment.Tests
                 SubmittedVersion = orchestrationEnvelop.SubmittedVersion
             };
 
-            database.GetEntity<Contact>(orchestrationEnvelop.EntityId).Returns(envelop);
+            var predicate = envelop.SearchBy();
+            database.GetEntity<Contact>(predicate).Returns(envelop);
 
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
@@ -443,7 +444,7 @@ namespace StateManagment.Tests
             await stateManager.Initiate<Contact>(envelop);
 
             // Assert
-            await database.Received(1).GetEntity<Contact>(orchestrationEnvelop.EntityId);
+            await database.Received(1).GetEntity<Contact>(predicate);
         }
     }
 }

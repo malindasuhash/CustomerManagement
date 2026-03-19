@@ -16,9 +16,9 @@ namespace Api.Controllers
             this.customerDatabase = customerDatabase;
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> GetById<T>(string customerId, string entityId) where T : IEntity
+        internal async Task<ActionResult<EntityDocumentModel>> GetById<T>(LookupPredicate lookupPredicate) where T : IEntity
         {
-            var contact = await customerDatabase.GetEntity<T>(entityId, customerId);
+            var contact = await customerDatabase.GetEntity<T>(lookupPredicate);
 
             return Translate(contact);
         }
@@ -27,7 +27,7 @@ namespace Api.Controllers
         {
             await changeProcessor.ProcessChangeAsync<T>(envelop);
 
-            var specificEntity = await customerDatabase.GetEntity<T>(envelop.EntityId, envelop.CustomerId);
+            var specificEntity = await customerDatabase.GetEntity<T>(envelop.SearchBy());
 
             return Translate(specificEntity);
         }
@@ -42,7 +42,7 @@ namespace Api.Controllers
                 return BadRequest(result);
             }
 
-            var specificEntity = await customerDatabase.GetEntity<T>(messageEnvelop.EntityId, messageEnvelop.CustomerId);
+            var specificEntity = await customerDatabase.GetEntity<T>(messageEnvelop.SearchBy());
 
             return Translate(specificEntity);
         }
@@ -56,7 +56,7 @@ namespace Api.Controllers
                 return BadRequest(result);
             }
 
-            var contactEntity = await customerDatabase.GetEntity<T>(envelop.EntityId, envelop.CustomerId);
+            var contactEntity = await customerDatabase.GetEntity<T>(envelop.SearchBy());
 
             return Translate(contactEntity);
         }
@@ -65,7 +65,7 @@ namespace Api.Controllers
         {
             await changeProcessor.ProcessChangeAsync<T>(envelop);
 
-            var contactEntity = await customerDatabase.GetEntity<T>(envelop.EntityId, envelop.CustomerId);
+            var contactEntity = await customerDatabase.GetEntity<T>(envelop.SearchBy());
 
             return Translate(contactEntity);
         }

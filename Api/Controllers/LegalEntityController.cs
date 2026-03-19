@@ -95,7 +95,7 @@ namespace Api.Controllers
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
-            return await GetById<LegalEntity>(customerId, entityId);
+            return await GetById<LegalEntity>(LookupPredicate.Create(entityId, customerId));
         }
 
         [HttpPatch("{customerId}/legal-entities/{entityId}")]
@@ -119,7 +119,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync<LegalEntity>(envelop);
 
-            var contactEntity = await customerDatabase.GetEntity<LegalEntity>(entityId, customerId);
+            var contactEntity = await customerDatabase.GetEntity<LegalEntity>(envelop.SearchBy());
 
             return Translate(contactEntity);
         }

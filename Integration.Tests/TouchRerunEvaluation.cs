@@ -39,7 +39,7 @@ namespace Integration.Tests
 
             var entityId = envelop.EntityId;
 
-            var contactDocument = await database.GetEntity<Contact>(envelop.EntityId);
+            var contactDocument = await database.GetEntity<Contact>(envelop.SearchBy());
 
             Console.WriteLine($"-> Before orchestration - Contact: {contactDocument}"); Console.WriteLine();
 
@@ -47,14 +47,14 @@ namespace Integration.Tests
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() { Type = FeedbackType.Error, Key = "ALL_GOOD", Value = "BLA" }], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.EntityId);
+            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($" Contact: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED"); Console.WriteLine();
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.EntityId);
+            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
 
@@ -62,7 +62,7 @@ namespace Integration.Tests
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(contactDocument.EntityId);
+            contactDocument = await database.GetEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
             envelop = new MessageEnvelop
@@ -77,14 +77,14 @@ namespace Integration.Tests
 
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            contactDocument = await database.GetEntity<Contact>(entityId);
+            contactDocument = await database.GetEntity<Contact>(envelop.SearchBy());
             Console.WriteLine($"Contact after TOUCHED: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED after TOUCH"); Console.WriteLine();
 
             stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() { Type = FeedbackType.Warning, Key = "ALL_GOOD_AFTER_TOUCH", Value = "OK" }], [])).Wait();
 
-            contactDocument = await database.GetEntity<Contact>(entityId);
+            contactDocument = await database.GetEntity<Contact>(envelop.SearchBy());
             Console.WriteLine($"Contact after EVALUATION_STARTED: {contactDocument}"); Console.WriteLine();
 
             Console.ReadKey();

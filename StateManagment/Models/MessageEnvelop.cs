@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StateManagment.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,6 +74,13 @@ namespace StateManagment.Models
         override public string ToString()
         {
             return $"Change: {Change}, Name: {Name}, EntityId: {EntityId}, DraftVersion: {DraftVersion}, SubmittedVersion: {SubmittedVersion}, IsSubmitted: {IsSubmitted}, State: {State}, CreatedUser: {CreatedUser}, CreatedDate: {CreatedTimestamp}, Draft: <<{Draft}>>, Submitted: <<{Submitted}>>; Applied: <<{Applied}>>";
+        }
+
+        public LookupPredicate SearchBy()
+        {
+            var withLegalEntity = Draft as ILegalEntityAttached;
+
+            return new LookupPredicate(EntityId, CustomerId, withLegalEntity?.LegalEntityId);
         }
     }
 }

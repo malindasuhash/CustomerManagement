@@ -22,20 +22,21 @@ namespace StateManagment
         /// Changes the status of the specified entity in the database to the provided entity state 
         /// and publishes a state changed event.
         /// </summary>
-        public async Task<TaskOutcome> ChangeStatusTo<T>(string entityId, string customerId, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null) where T : IEntity
+        public async Task<TaskOutcome> ChangeStatusTo<T>(string entityId, string customerId, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null, string? legalEntityId = null) where T : IEntity
         {
             await database.UpdateData<T>(entityId, customerId, entityState, feedbacks ?? [], orchestrationData ?? []);
+            var predicate = LookupPredicate.Create(entityId, customerId, legalEntityId);
 
             if (entityState == EntityState.SYNCHRONISED)
             {
-                var before = await database.GetEntity<T>(entityId);
+                var before = await database.GetEntity<T>(predicate);
                 await database.StoreApplied<T>(before.Submitted, entityId, customerId, before.RemoveRequested);
-                var after = await database.GetEntity<T>(entityId);
+                var after = await database.GetEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Applied, after, before);
             }
 
-            var entityDocument = await database.GetEntity<T>(entityId);
+            var entityDocument = await database.GetEntity<T>(predicate);
 
             return await eventPublisher.DataChangedAsync(entityDocument);
         }
@@ -48,7 +49,7 @@ namespace StateManagment
         {
             await database.StoreDraft<T>(envelop, envelop.DraftVersion + 1);
 
-            var storedEntity = await database.GetEntity<T>(envelop.EntityId);
+            var storedEntity = await database.GetEntity<T>(envelop.SearchBy());
 
             await auditManager.Write(AuditTarget.Draft, storedEntity);
 
@@ -72,9 +73,11 @@ namespace StateManagment
         /// </summary>
         public async Task<TaskOutcome> Submitted<T>(MessageEnvelop envelop) where T : IEntity
         {
-            var before = await database.GetEntity<T>(envelop.EntityId);
+            var lookupPredicate = envelop.SearchBy();
+
+            var before = await database.GetEntity<T>(lookupPredicate);
             await database.StoreSubmitted<T>(envelop.Draft, envelop.EntityId, envelop.CustomerId, envelop.UpdateUser);
-            var after = await database.GetEntity<T>(envelop.EntityId);
+            var after = await database.GetEntity<T>(lookupPredicate);
 
             await auditManager.Write(AuditTarget.Submitted, after, before);
 
@@ -110,8 +113,9 @@ namespace StateManagment
 
                 // Special case for deletes, where we'll consider consumer is intending to remove the latest draft version.
                 // Therefore we'll not be checking requested version against stored version.
+                var predicate = envelop.SearchBy();
 
-                var before = await database.GetEntity<T>(envelop.EntityId);
+                var before = await database.GetEntity<T>(predicate);
 
                 if (envelop.Change != ChangeType.Delete)
                 {
@@ -128,7 +132,7 @@ namespace StateManagment
                     await database.MergeDraft<T>(envelop, basicInfo.DraftVersion + 1);
                 }
 
-                var after = await database.GetEntity<T>(envelop.EntityId);
+                var after = await database.GetEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Draft, after, before);
                 return await eventPublisher.DataChangedAsync(after);
@@ -148,8 +152,9 @@ namespace StateManagment
             try
             {
                 await distributedLock.Lock(envelop.EntityId);
+                var predicate = envelop.SearchBy();
 
-                var before = await database.GetEntity<T>(envelop.EntityId);
+                var before = await database.GetEntity<T>(predicate);
 
                 if (envelop.Change == ChangeType.Submit && envelop.DraftVersion != before.DraftVersion)
                 {
@@ -163,7 +168,7 @@ namespace StateManagment
                 }
 
                 await database.StoreSubmitted<T>(before.Draft, before.EntityId, before.CustomerId, envelop.UpdateUser);
-                var after = await database.GetEntity<T>(envelop.EntityId);
+                var after = await database.GetEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Submitted, after, before);
                 return await eventPublisher.DataChangedAsync(after);
@@ -179,12 +184,13 @@ namespace StateManagment
             try
             {
                 await distributedLock.Lock(envelop.EntityId);
+                var predicate = envelop.SearchBy();
 
-                var before = await database.GetEntity<T>(envelop.EntityId);
+                var before = await database.GetEntity<T>(predicate);
 
                 await database.MarkForRemoval<T>(envelop.EntityId);
 
-                var after = await database.GetEntity<T>(envelop.EntityId);
+                var after = await database.GetEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Document, after, before);
                 return await eventPublisher.DataChangedAsync(after);

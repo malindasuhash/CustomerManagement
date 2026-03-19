@@ -76,7 +76,7 @@ namespace Api.Controllers
         [HttpGet("{customerId}/billing-groups/{billingGroupId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetContactById(string customerId, string billingGroupId)
         {
-            return await GetById<BillingGroup>(customerId, billingGroupId);
+            return await GetById<BillingGroup>(LookupPredicate.Create(billingGroupId, customerId));
         }
 
         [HttpPatch("{customerId}/billing-groups/{billingGroupId}")]
@@ -96,7 +96,7 @@ namespace Api.Controllers
 
             await changeProcessor.ProcessChangeAsync<BillingGroup>(envelop);
 
-            var billingGroup = await customerDatabase.GetEntity<BillingGroup>(billingGroupId, customerId);
+            var billingGroup = await customerDatabase.GetEntity<BillingGroup>(envelop.SearchBy());
 
             return Translate(billingGroup);
         }

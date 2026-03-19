@@ -95,9 +95,9 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<MessageEnvelop> GetEntity<T>(string entityId, string? customerId = null) where T : IEntity
+        public async Task<MessageEnvelop> GetEntity<T>(LookupPredicate lookupPredicate) where T : IEntity
         {
-            var storedEntity = await DatabaseCollectionConfig.GetById2<T>(entityId, customerId, database);
+            var storedEntity = await DatabaseCollectionConfig.GetById2<T>(lookupPredicate.EntityId, lookupPredicate.CustomerId, database, lookupPredicate.LegalEntityId);
             storedEntity.Name = EntityCollectionConfig.Config<T>().Name;
             storedEntity.Change = ChangeType.Read;
          

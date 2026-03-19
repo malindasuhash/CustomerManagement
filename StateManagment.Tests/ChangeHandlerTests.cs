@@ -21,15 +21,15 @@ namespace StateManagment.Tests
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" }
             };
-
-            database.GetEntity<Contact>(messageEnvelop.EntityId).Returns(messageEnvelop);
+            var searchBy = messageEnvelop.SearchBy();
+            database.GetEntity<Contact>(searchBy).Returns(messageEnvelop);
 
             // Act
             await changeHandler.Draft<Contact>(messageEnvelop);
 
             // Assert
             await database.Received(1).StoreDraft<Contact>(messageEnvelop, messageEnvelop.DraftVersion + 1);
-            await database.Received(1).GetEntity<Contact>(messageEnvelop.EntityId);
+            await database.Received(1).GetEntity<Contact>(searchBy);
             await auditManager.Received(1).Write(AuditTarget.Draft, messageEnvelop);
             await eventPublisher.Received(1).DataChangedAsync(messageEnvelop);
         }
@@ -64,14 +64,14 @@ namespace StateManagment.Tests
                 UpdateUser = "testUser"
             };
 
-            database.GetEntity<Contact>(messageEnvelop.EntityId).Returns(messageEnvelop, messageEnvelop2);
+            database.GetEntity<Contact>(messageEnvelop.SearchBy()).Returns(messageEnvelop, messageEnvelop2);
 
             // Act
             await changeHandler.Submitted<Contact>(messageEnvelop);
 
             // Assert
             await database.Received(1).StoreSubmitted<Contact>(Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", "customer1", messageEnvelop.UpdateUser);
-            await database.Received(2).GetEntity<Contact>(messageEnvelop.EntityId);
+            await database.Received(2).GetEntity<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals("entity1")));
             await auditManager.Received(1).Write(AuditTarget.Submitted, messageEnvelop2, messageEnvelop);
             await eventPublisher.Received(1).DataChangedAsync(messageEnvelop2);
         }
@@ -150,7 +150,9 @@ namespace StateManagment.Tests
                 DraftVersion = 5,
             };
 
-            database.GetEntity<Contact>(entityId).Returns(before, after);
+            var searchBy = after.SearchBy();
+
+            database.GetEntity<Contact>(searchBy).Returns(before, after);
 
             database.GetBasicInfo<Contact>(entityId).Returns(new EntityBasics { DraftVersion = 2 });
 
@@ -223,9 +225,11 @@ namespace StateManagment.Tests
                 DraftVersion = 5,
             };
 
+            var searchBy = after.SearchBy();
+
             var basics = new EntityBasics { DraftVersion = 5 };
             database.GetBasicInfo<Contact>(entityId).Returns(basics);
-            database.GetEntity<Contact>(entityId).Returns(before, after);
+            database.GetEntity<Contact>(searchBy).Returns(before, after);
 
             // Act  
             var result = await changeHandler.TryMergeDraft<Contact>(before);
@@ -270,7 +274,9 @@ namespace StateManagment.Tests
                 Change = ChangeType.Submit
             };
 
-            database.GetEntity<Contact>(entityId).Returns(stored);
+            var searchBy = stored.SearchBy();
+
+            database.GetEntity<Contact>(searchBy).Returns(stored);
 
             // Act  
             var result = await changeHandler.TryLockSubmitted<Contact>(received);
@@ -298,8 +304,10 @@ namespace StateManagment.Tests
                 UpdateUser = "testUser"
             };
 
+            var searchBy = messageEnvelop.SearchBy();
+
             var storedDraft = new Contact() { FirstName = "Apple", LastName = "Orange" };
-            database.GetEntity<Contact>(entityId).Returns(new MessageEnvelop()
+            database.GetEntity<Contact>(searchBy).Returns(new MessageEnvelop()
             {
                 Name = EntityName.Contact,
                 EntityId = entityId,
@@ -362,7 +370,9 @@ namespace StateManagment.Tests
                 DraftVersion = 2
             };
 
-            database.GetEntity<Contact>(entityId).Returns(before, after);
+            var searchBy = messageEnvelop.SearchBy();
+
+            database.GetEntity<Contact>(searchBy).Returns(before, after);
 
             distributedLock.Lock(entityId).Returns(TaskOutcome.OK);
 
@@ -371,7 +381,7 @@ namespace StateManagment.Tests
 
             // Assert
             await distributedLock.Received(1).Lock(entityId);
-            await database.Received(2).GetEntity<Contact>(entityId);
+            await database.Received(2).GetEntity<Contact>(searchBy);
             await database.Received(1).StoreSubmitted<Contact>(Arg.Is<Contact>(c => c == storedDraft), entityId, customerId, messageEnvelop.UpdateUser);
             await auditManager.Received(1).Write(AuditTarget.Submitted, after, before);
             await eventPublisher.Received(1).DataChangedAsync(after);
@@ -398,15 +408,15 @@ namespace StateManagment.Tests
                 IsSubmitted = true
             };
             messageEnvelop.SetState(EntityState.EVALUATING);
-
-            database.GetEntity<Contact>(entityId).Returns(messageEnvelop);
+            var searchBy = messageEnvelop.SearchBy();
+            database.GetEntity<Contact>(searchBy).Returns(messageEnvelop);
             var feedbacks = new Feedback() { Type = FeedbackType.Warning, Key = "PendingRiskChecks", Value = "Waiting" };
 
             // Act
             var result = await changeHandler.ChangeStatusTo<Contact>(messageEnvelop.EntityId, messageEnvelop.CustomerId, EntityState.IN_REVIEW, [feedbacks]);
 
             // Assert
-            await database.Received(1).GetEntity<Contact>(entityId);
+            await database.Received(1).GetEntity<Contact>(searchBy);
             await database.Received(1).UpdateData<Contact>(entityId, customerId, EntityState.IN_REVIEW, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
             await eventPublisher.Received(1).DataChangedAsync(messageEnvelop);
         }
@@ -444,8 +454,8 @@ namespace StateManagment.Tests
             };
 
             before.SetState(EntityState.EVALUATING);
-
-            database.GetEntity<Contact>(entityId).Returns(before, after);
+            var searchBy = before.SearchBy();
+            database.GetEntity<Contact>(searchBy).Returns(before, after);
 
             // Act
             var result = await changeHandler.ChangeStatusTo<Contact>(before.EntityId, before.CustomerId, EntityState.SYNCHRONISED);
@@ -510,7 +520,7 @@ namespace StateManagment.Tests
             };
 
             var database = Substitute.For<ICustomerDatabase>();
-            database.GetEntity<Contact>(Arg.Any<string>(), Arg.Any<string>()).Returns(before, after);
+            database.GetEntity<Contact>(Arg.Any<LookupPredicate>()).Returns(before, after);
 
             var auditManager = Substitute.For<IAuditManager>();
             var distributedLock = Substitute.For<IDistributedLock>();
