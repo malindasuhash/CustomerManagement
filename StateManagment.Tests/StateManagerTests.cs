@@ -96,7 +96,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.EVALUATING, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.SearchBy(), EntityState.EVALUATING, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         [Fact]
@@ -127,7 +127,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.EVALUATION_RESTARTING);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.SearchBy(), EntityState.EVALUATION_RESTARTING);
 
             await orchestrator.Received(1).EvaluateAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
@@ -193,7 +193,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.IN_PROGRESS, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.SearchBy(), EntityState.IN_PROGRESS, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.Received(1).ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -227,7 +227,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.SearchBy(), EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.DidNotReceive().ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -260,7 +260,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.IN_REVIEW, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.SearchBy(), EntityState.IN_REVIEW, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.DidNotReceive().ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -317,7 +317,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.SearchBy(), EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         [Fact]
@@ -347,7 +347,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.SearchBy(), EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         private const int StateDoesNotChange = 0;
@@ -403,7 +403,7 @@ namespace StateManagment.Tests
             var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(statusChangeCount).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, targetState, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(statusChangeCount).ChangeStatusTo<Contact>(orchestrationEnvelop.SearchBy(), targetState, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.Received(evalutionCount).EvaluateAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             await orchestrator.Received(applyCount).ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             await orchestrator.Received(postApplyCount).PostApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);

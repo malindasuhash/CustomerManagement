@@ -40,11 +40,11 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> StoreApplied<T>(IEntity entity, string entityId, string customerId, bool confirmRemoval) where T : IEntity
+        public async Task<TaskOutcome> StoreApplied<T>(LookupPredicate predicate, bool confirmRemoval) where T : IEntity
         {
             DbEexecutionParams dbEexecution;
 
-            dbEexecution = await DatabaseCollectionConfig.AddToApplied<T>(entityId, customerId, entity, confirmRemoval, database);
+            dbEexecution = await DatabaseCollectionConfig.AddToApplied<T>(predicate, confirmRemoval, database);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 
@@ -66,18 +66,18 @@ namespace Infrastructure
         {
             DbEexecutionParams dbEexecution;
 
-            dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<T>(predicate.EntityId, predicate.CustomerId, predicate.LegalEntityId, updatedUser, database);
+            dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<T>(predicate, updatedUser, database);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> UpdateData<T>(string entityId, string customerId, EntityState targetState, Feedback[] feedbacks, OrchestrationData[]? orchestrationData = null, string? legalEntityId = null) where T : IEntity
+        public async Task<TaskOutcome> UpdateData<T>(LookupPredicate predicate, EntityState targetState, Feedback[] feedbacks, OrchestrationData[]? orchestrationData = null) where T : IEntity
         {
             DbEexecutionParams dbEexecution;
 
-            dbEexecution = await DatabaseCollectionConfig.UpdateData<T>(entityId, customerId, targetState, database, feedbacks, orchestrationData);
+            dbEexecution = await DatabaseCollectionConfig.UpdateData<T>(predicate, targetState, database, feedbacks, orchestrationData);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 
@@ -97,7 +97,7 @@ namespace Infrastructure
 
         public async Task<MessageEnvelop> GetEntity<T>(LookupPredicate lookupPredicate) where T : IEntity
         {
-            var storedEntity = await DatabaseCollectionConfig.GetById2<T>(lookupPredicate.EntityId, lookupPredicate.CustomerId, database, lookupPredicate.LegalEntityId);
+            var storedEntity = await DatabaseCollectionConfig.GetById2<T>(lookupPredicate, database);
             storedEntity.Name = EntityCollectionConfig.Config<T>().Name;
             storedEntity.Change = ChangeType.Read;
          

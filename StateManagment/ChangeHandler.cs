@@ -22,15 +22,14 @@ namespace StateManagment
         /// Changes the status of the specified entity in the database to the provided entity state 
         /// and publishes a state changed event.
         /// </summary>
-        public async Task<TaskOutcome> ChangeStatusTo<T>(string entityId, string customerId, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null, string? legalEntityId = null) where T : IEntity
+        public async Task<TaskOutcome> ChangeStatusTo<T>(LookupPredicate predicate, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null) where T : IEntity
         {
-            await database.UpdateData<T>(entityId, customerId, entityState, feedbacks ?? [], orchestrationData ?? []);
-            var predicate = LookupPredicate.Create(entityId, customerId, legalEntityId);
+            await database.UpdateData<T>(predicate, entityState, feedbacks ?? [], orchestrationData ?? []);
 
             if (entityState == EntityState.SYNCHRONISED)
             {
                 var before = await database.GetEntity<T>(predicate);
-                await database.StoreApplied<T>(before.Submitted, entityId, customerId, before.RemoveRequested);
+                await database.StoreApplied<T>(predicate, before.RemoveRequested);
                 var after = await database.GetEntity<T>(predicate);
 
                 await auditManager.Write(AuditTarget.Applied, after, before);

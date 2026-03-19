@@ -413,11 +413,11 @@ namespace StateManagment.Tests
             var feedbacks = new Feedback() { Type = FeedbackType.Warning, Key = "PendingRiskChecks", Value = "Waiting" };
 
             // Act
-            var result = await changeHandler.ChangeStatusTo<Contact>(messageEnvelop.EntityId, messageEnvelop.CustomerId, EntityState.IN_REVIEW, [feedbacks]);
+            var result = await changeHandler.ChangeStatusTo<Contact>(messageEnvelop.SearchBy(), EntityState.IN_REVIEW, [feedbacks]);
 
             // Assert
             await database.Received(1).GetEntity<Contact>(searchBy);
-            await database.Received(1).UpdateData<Contact>(entityId, customerId, EntityState.IN_REVIEW, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
+            await database.Received(1).UpdateData<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals(entityId) && p.CustomerId.Equals(customerId)), EntityState.IN_REVIEW, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
             await eventPublisher.Received(1).DataChangedAsync(messageEnvelop);
         }
 
@@ -458,11 +458,11 @@ namespace StateManagment.Tests
             database.GetEntity<Contact>(searchBy).Returns(before, after);
 
             // Act
-            var result = await changeHandler.ChangeStatusTo<Contact>(before.EntityId, before.CustomerId, EntityState.SYNCHRONISED);
+            var result = await changeHandler.ChangeStatusTo<Contact>(searchBy, EntityState.SYNCHRONISED);
 
             // Assert
-            await database.Received(1).StoreApplied<Contact>(Arg.Any<IEntity>(), entityId, customerId, before.RemoveRequested);
-            await database.Received(1).UpdateData<Contact>(entityId, customerId, EntityState.SYNCHRONISED, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
+            await database.Received(1).StoreApplied<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals(entityId) && p.CustomerId.Equals(customerId)), before.RemoveRequested);
+            await database.Received(1).UpdateData<Contact>(Arg.Is<LookupPredicate>(p => p.EntityId.Equals(entityId) && p.CustomerId.Equals(customerId)), EntityState.SYNCHRONISED, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
             await auditManager.Received(1).Write(AuditTarget.Applied, after, before);
         }
 
