@@ -44,7 +44,7 @@ namespace Integration.Tests
 
             var entityId = envelop.EntityId;
 
-            var contactDocument = await database.GetEntityDocument(EntityName.Contact, entityId);
+            var contactDocument = await database.GetEntity<Contact>(entityId);
 
             Console.WriteLine($"-> Created - Contact: {contactDocument}"); Console.WriteLine();
 
@@ -65,7 +65,7 @@ namespace Integration.Tests
 
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            contactDocument = await database.GetEntityDocument(EntityName.Contact, entityId);
+            contactDocument = await database.GetEntity<Contact>(entityId);
 
             Console.WriteLine($"-> Updated 1 - Contact: {contactDocument}"); Console.WriteLine();
 
@@ -86,7 +86,7 @@ namespace Integration.Tests
 
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            contactDocument = await database.GetEntityDocument(EntityName.Contact, entityId);
+            contactDocument = await database.GetEntity<Contact>(entityId);
 
             Console.WriteLine($"-> Updated 2 - Contact: {contactDocument}"); Console.WriteLine();
 

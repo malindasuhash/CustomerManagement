@@ -85,7 +85,7 @@ namespace Integration.Tests
 
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            contactDocument = await database.GetEntityDocument(EntityName.Contact, entityId);
+            contactDocument = await database.GetEntity<Contact>(entityId);
             Console.WriteLine($"Contact after delete: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED after DELETE"); Console.WriteLine();

@@ -165,7 +165,7 @@ namespace StateManagment.Tests
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert 
-            await changeHandler.Received(1).Draft(envelop);
+            await changeHandler.Received(1).Draft<Contact>(envelop);
         }
 
         [Fact]
@@ -193,8 +193,8 @@ namespace StateManagment.Tests
             await change.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).Draft(envelop);
-            await changeHandler.Received(1).Submitted(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).Draft<Contact>(envelop);
+            await changeHandler.Received(1).Submitted<Contact>(Arg.Any<MessageEnvelop>());
             await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
         }
 
@@ -216,7 +216,7 @@ namespace StateManagment.Tests
             var changeHandler = Substitute.For<IChangeHandler>();
             var stateManager = Substitute.For<IStateManager>();
 
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
 
             var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
@@ -224,7 +224,7 @@ namespace StateManagment.Tests
             var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
         }
 
         [Fact]
@@ -248,14 +248,14 @@ namespace StateManagment.Tests
 
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
 
             // Act
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
             await changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>());
             await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
         }
@@ -276,13 +276,13 @@ namespace StateManagment.Tests
 
             var changeHandler = Substitute.For<IChangeHandler>();
             var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.VERSION_MISMATCH);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.VERSION_MISMATCH);
 
             // Act
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
             await changeHandler.DidNotReceive().TryLockSubmitted(Arg.Any<MessageEnvelop>());
         }
 
@@ -301,7 +301,7 @@ namespace StateManagment.Tests
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();
@@ -311,7 +311,7 @@ namespace StateManagment.Tests
             var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
             await changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>());
             result.Successful.Should().BeFalse();
             await stateManager.DidNotReceive().ProcessUpdateAsync(Arg.Any<OrchestrationEnvelop>());
@@ -332,7 +332,7 @@ namespace StateManagment.Tests
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
             changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();

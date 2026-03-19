@@ -1,4 +1,5 @@
-﻿using StateManagment.Models;
+﻿using StateManagment.Entity;
+using StateManagment.Models;
 
 namespace StateManagment
 {
@@ -43,11 +44,11 @@ namespace StateManagment
         /// Creates a new draft for the specified entity in the database with the provided data and
         /// increments the draft version.
         /// </summary>        
-        public async Task<TaskOutcome> Draft(MessageEnvelop envelop)
+        public async Task<TaskOutcome> Draft<T>(MessageEnvelop envelop) where T : IEntity
         {
             await database.StoreDraft(envelop, envelop.DraftVersion + 1);
 
-            var storedEntity = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+            var storedEntity = await database.GetEntity<T>(envelop.EntityId);
 
             await auditManager.Write(AuditTarget.Draft, storedEntity);
 
@@ -69,11 +70,11 @@ namespace StateManagment
         /// This method is called when an entity is submitted, and it updates the database with the latest submitted data 
         /// (from latest draft) and version for that entity.
         /// </summary>
-        public async Task<TaskOutcome> Submitted(MessageEnvelop envelop)
+        public async Task<TaskOutcome> Submitted<T>(MessageEnvelop envelop) where T : IEntity
         {
-            var before = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+            var before = await database.GetEntity<T>(envelop.EntityId);
             await database.StoreSubmitted(envelop.Name, envelop.Draft, envelop.EntityId, envelop.UpdateUser);
-            var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+            var after = await database.GetEntity<T>(envelop.EntityId);
 
             await auditManager.Write(AuditTarget.Submitted, after, before);
 
@@ -95,7 +96,7 @@ namespace StateManagment
         /// Attempts to before a draft for the specified entity, ensuring that the draft version matches the current
         /// version in the database and increments the draft version as it is being updated.
         /// </summary>      
-        public async Task<TaskOutcome> TryMergeDraft(MessageEnvelop envelop)
+        public async Task<TaskOutcome> TryMergeDraft<T>(MessageEnvelop envelop) where T : IEntity
         {
             try
             {
@@ -110,7 +111,7 @@ namespace StateManagment
                 // Special case for deletes, where we'll consider consumer is intending to remove the latest draft version.
                 // Therefore we'll not be checking requested version against stored version.
 
-                var before = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+                var before = await database.GetEntity<T>(envelop.EntityId);
 
                 if (envelop.Change != ChangeType.Delete)
                 {
@@ -127,7 +128,7 @@ namespace StateManagment
                     await database.MergeDraft(envelop, basicInfo.DraftVersion + 1);
                 }
 
-                var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+                var after = await database.GetEntity<T>(envelop.EntityId);
 
                 await auditManager.Write(AuditTarget.Draft, after, before);
                 return await eventPublisher.DataChangedAsync(after);

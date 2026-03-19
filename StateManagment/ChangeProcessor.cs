@@ -51,11 +51,11 @@ namespace StateManagment
 
             if (envelop.Change == ChangeType.Create)
             {
-                await changeHandler.Draft(envelop);
+                await changeHandler.Draft<T>(envelop);
 
                 if (envelop.IsSubmitted)
                 {
-                    await changeHandler.Submitted(envelop);
+                    await changeHandler.Submitted<T>(envelop);
                     var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
                     return result;
                 }
@@ -65,7 +65,7 @@ namespace StateManagment
 
             if (envelop.Change == ChangeType.Update)
             {
-                var outcome = await changeHandler.TryMergeDraft(envelop);
+                var outcome = await changeHandler.TryMergeDraft<T>(envelop);
 
                 if (envelop.IsSubmitted)
                 {

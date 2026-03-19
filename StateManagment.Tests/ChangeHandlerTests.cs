@@ -2,11 +2,6 @@
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StateManagment.Tests
 {
@@ -27,14 +22,14 @@ namespace StateManagment.Tests
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" }
             };
 
-            database.GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId).Returns(messageEnvelop);
+            database.GetEntity<Contact>(messageEnvelop.EntityId).Returns(messageEnvelop);
 
             // Act
-            await changeHandler.Draft(messageEnvelop);
+            await changeHandler.Draft<Contact>(messageEnvelop);
 
             // Assert
             await database.Received(1).StoreDraft(messageEnvelop, messageEnvelop.DraftVersion + 1);
-            await database.Received(1).GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId);
+            await database.Received(1).GetEntity<Contact>(messageEnvelop.EntityId);
             await auditManager.Received(1).Write(AuditTarget.Draft, messageEnvelop);
             await eventPublisher.Received(1).DataChangedAsync(messageEnvelop);
         }
@@ -65,14 +60,14 @@ namespace StateManagment.Tests
                 UpdateUser = "testUser"
             };
 
-            database.GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId).Returns(messageEnvelop, messageEnvelop2);
+            database.GetEntity<Contact>(messageEnvelop.EntityId).Returns(messageEnvelop, messageEnvelop2);
 
             // Act
-            await changeHandler.Submitted(messageEnvelop);
+            await changeHandler.Submitted<Contact>(messageEnvelop);
 
             // Assert
             await database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", messageEnvelop.UpdateUser);
-            await database.Received(2).GetEntityDocument(EntityName.Contact, messageEnvelop.EntityId);
+            await database.Received(2).GetEntity<Contact>(messageEnvelop.EntityId);
             await auditManager.Received(1).Write(AuditTarget.Submitted, messageEnvelop2, messageEnvelop);
             await eventPublisher.Received(1).DataChangedAsync(messageEnvelop2);
         }
@@ -151,12 +146,12 @@ namespace StateManagment.Tests
                 DraftVersion = 5,
             };
 
-            database.GetEntityDocument(EntityName.Contact, entityId).Returns(before, after);
+            database.GetEntity<Contact>(entityId).Returns(before, after);
 
             database.GetBasicInfo(EntityName.Contact, entityId).Returns(new EntityBasics { DraftVersion = 2 });
 
             // Act  
-            var result = await changeHandler.TryMergeDraft(before);
+            var result = await changeHandler.TryMergeDraft<Contact>(before);
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
@@ -187,7 +182,7 @@ namespace StateManagment.Tests
             database.GetBasicInfo(EntityName.Contact, entityId).Returns(new EntityBasics { DraftVersion = 2 });
 
             // Act  
-            var result = await changeHandler.TryMergeDraft(messageEnvelop);
+            var result = await changeHandler.TryMergeDraft<Contact>(messageEnvelop);
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
@@ -226,10 +221,10 @@ namespace StateManagment.Tests
 
             var basics = new EntityBasics { DraftVersion = 5 };
             database.GetBasicInfo(EntityName.Contact, entityId).Returns(basics);
-            database.GetEntityDocument(EntityName.Contact, entityId).Returns(before, after);
+            database.GetEntity<Contact>(entityId).Returns(before, after);
 
             // Act  
-            var result = await changeHandler.TryMergeDraft(before);
+            var result = await changeHandler.TryMergeDraft<Contact>(before);
 
             // Assert
             await distributedLock.Received(1).Lock($"{entityId}_draft");
