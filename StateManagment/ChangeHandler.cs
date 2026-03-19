@@ -143,13 +143,13 @@ namespace StateManagment
         /// Attempts to acquire a distributed lock for the specified entity and before its latest draft as submitted data 
         /// along with latest draft version in the database.
         /// </summary>
-        public async Task<TaskOutcome> TryLockSubmitted(MessageEnvelop envelop)
+        public async Task<TaskOutcome> TryLockSubmitted<T>(MessageEnvelop envelop) where T : IEntity
         {
             try
             {
                 await distributedLock.Lock(envelop.EntityId);
 
-                var before = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+                var before = await database.GetEntity<T>(envelop.EntityId);
 
                 if (envelop.Change == ChangeType.Submit && envelop.DraftVersion != before.DraftVersion)
                 {
@@ -163,7 +163,7 @@ namespace StateManagment
                 }
 
                 await database.StoreSubmitted(before.Name, before.Draft, before.EntityId, envelop.UpdateUser);
-                var after = await database.GetEntityDocument(envelop.Name, envelop.EntityId);
+                var after = await database.GetEntity<T>(envelop.EntityId);
 
                 await auditManager.Write(AuditTarget.Submitted, after, before);
                 return await eventPublisher.DataChangedAsync(after);

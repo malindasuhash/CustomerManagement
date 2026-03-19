@@ -27,7 +27,7 @@ namespace StateManagment
 
             if (envelop.Change == ChangeType.Submit)
             {
-                var lockedResult = await changeHandler.TryLockSubmitted(envelop);
+                var lockedResult = await changeHandler.TryLockSubmitted<T>(envelop);
 
                 if (lockedResult != TaskOutcome.OK)
                 {
@@ -74,7 +74,7 @@ namespace StateManagment
                         // Consider what will happen if someone is taking a copy of submitted version
                         // whilst I am trying to update it. Should I ask for a lock at this point?
                         // If cannot take the lock, should I error out?
-                        var submitOutcome = await changeHandler.TryLockSubmitted(envelop);
+                        var submitOutcome = await changeHandler.TryLockSubmitted<T>(envelop);
                         if (submitOutcome != TaskOutcome.OK)
                         {
                             return submitOutcome;

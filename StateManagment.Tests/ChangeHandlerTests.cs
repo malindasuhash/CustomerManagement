@@ -266,10 +266,10 @@ namespace StateManagment.Tests
                 Change = ChangeType.Submit
             };
 
-            database.GetEntityDocument(EntityName.Contact, entityId).Returns(stored);
+            database.GetEntity<Contact>(entityId).Returns(stored);
 
             // Act  
-            var result = await changeHandler.TryLockSubmitted(received);
+            var result = await changeHandler.TryLockSubmitted<Contact>(received);
 
             // Assert
             result.Should().Be(TaskOutcome.VERSION_MISMATCH);
@@ -295,7 +295,7 @@ namespace StateManagment.Tests
             };
 
             var storedDraft = new Contact() { FirstName = "Apple", LastName = "Orange" };
-            database.GetEntityDocument(EntityName.Contact, entityId).Returns(new MessageEnvelop()
+            database.GetEntity<Contact>(entityId).Returns(new MessageEnvelop()
             {
                 Name = EntityName.Contact,
                 EntityId = entityId,
@@ -307,7 +307,7 @@ namespace StateManagment.Tests
             distributedLock.Lock(entityId).Returns(TaskOutcome.OK);
 
             // Act  
-            var result = await changeHandler.TryLockSubmitted(messageEnvelop);
+            var result = await changeHandler.TryLockSubmitted<Contact>(messageEnvelop);
 
             // Assert
             result.Should().Be(TaskOutcome.NO_CHANGE_TO_SUBMIT);
@@ -354,16 +354,16 @@ namespace StateManagment.Tests
                 DraftVersion = 2
             };
 
-            database.GetEntityDocument(EntityName.Contact, entityId).Returns(before, after);
+            database.GetEntity<Contact>(entityId).Returns(before, after);
 
             distributedLock.Lock(entityId).Returns(TaskOutcome.OK);
 
             // Act  
-            var result = await changeHandler.TryLockSubmitted(messageEnvelop);
+            var result = await changeHandler.TryLockSubmitted<Contact>(messageEnvelop);
 
             // Assert
             await distributedLock.Received(1).Lock(entityId);
-            await database.Received(2).GetEntityDocument(EntityName.Contact, entityId);
+            await database.Received(2).GetEntity<Contact>(entityId);
             await database.Received(1).StoreSubmitted(EntityName.Contact, Arg.Is<Contact>(c => c == storedDraft), entityId, messageEnvelop.UpdateUser);
             await auditManager.Received(1).Write(AuditTarget.Submitted, after, before);
             await eventPublisher.Received(1).DataChangedAsync(after);

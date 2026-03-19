@@ -49,7 +49,7 @@ namespace StateManagment.Tests
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryLockSubmitted(envelop);
+            await changeHandler.Received(1).TryLockSubmitted<Contact>(envelop);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace StateManagment.Tests
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
             var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
@@ -89,7 +89,7 @@ namespace StateManagment.Tests
 
             var stateManager = Substitute.For<IStateManager>();
             var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.OK);
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
@@ -249,14 +249,14 @@ namespace StateManagment.Tests
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.OK);
 
             // Act
             await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
             await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
-            await changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
             await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
         }
 
@@ -283,7 +283,7 @@ namespace StateManagment.Tests
 
             // Assert
             await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
-            await changeHandler.DidNotReceive().TryLockSubmitted(Arg.Any<MessageEnvelop>());
+            await changeHandler.DidNotReceive().TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
         }
 
         [Fact]
@@ -302,7 +302,7 @@ namespace StateManagment.Tests
 
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
@@ -312,7 +312,7 @@ namespace StateManagment.Tests
 
             // Assert
             await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
-            await changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
             result.Successful.Should().BeFalse();
             await stateManager.DidNotReceive().ProcessUpdateAsync(Arg.Any<OrchestrationEnvelop>());
         }
@@ -333,7 +333,7 @@ namespace StateManagment.Tests
 
             var changeHandler = Substitute.For<IChangeHandler>();
             changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
