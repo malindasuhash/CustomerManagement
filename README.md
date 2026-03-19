@@ -7,7 +7,7 @@
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Product agreement and APIs 
+- Refactored to use generics
 
 # PENDING
 
@@ -18,6 +18,7 @@
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Product agreement and APIs 
 - Added Bank account and APIs
 - Added billing group and APIs
 - Added Legal Entity and APIs

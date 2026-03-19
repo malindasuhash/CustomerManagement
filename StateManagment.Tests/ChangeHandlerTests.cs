@@ -42,9 +42,12 @@ namespace StateManagment.Tests
             var auditManager = Substitute.For<IAuditManager>();
             var eventPublisher = Substitute.For<IEventPublisher>();
             var changeHandler = new ChangeHandler(database, Substitute.For<IDistributedLock>(), eventPublisher, auditManager);
+            var customerId = "customer1";
+
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = "entity1",
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 3,
@@ -54,6 +57,7 @@ namespace StateManagment.Tests
             var messageEnvelop2 = new MessageEnvelop
             {
                 EntityId = "entity1",
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Pink", LastName = "Blue" },
                 DraftVersion = 3,
@@ -66,7 +70,7 @@ namespace StateManagment.Tests
             await changeHandler.Submitted<Contact>(messageEnvelop);
 
             // Assert
-            await database.Received(1).StoreSubmitted<Contact>(Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", messageEnvelop.UpdateUser);
+            await database.Received(1).StoreSubmitted<Contact>(Arg.Is<Contact>(c => c.FirstName == "Apple" && c.LastName == "Orange"), "entity1", "customer1", messageEnvelop.UpdateUser);
             await database.Received(2).GetEntity<Contact>(messageEnvelop.EntityId);
             await auditManager.Received(1).Write(AuditTarget.Submitted, messageEnvelop2, messageEnvelop);
             await eventPublisher.Received(1).DataChangedAsync(messageEnvelop2);
@@ -323,10 +327,12 @@ namespace StateManagment.Tests
             var eventPublisher = Substitute.For<IEventPublisher>();
             var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);
             var entityId = "entity1";
+            var customerId = "customerId1";
 
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
@@ -337,6 +343,7 @@ namespace StateManagment.Tests
             var after = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
@@ -350,6 +357,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = entityId,
+                CustomerId = customerId,
                 Draft = storedDraft,
                 DraftVersion = 2
             };
@@ -364,7 +372,7 @@ namespace StateManagment.Tests
             // Assert
             await distributedLock.Received(1).Lock(entityId);
             await database.Received(2).GetEntity<Contact>(entityId);
-            await database.Received(1).StoreSubmitted<Contact>(Arg.Is<Contact>(c => c == storedDraft), entityId, messageEnvelop.UpdateUser);
+            await database.Received(1).StoreSubmitted<Contact>(Arg.Is<Contact>(c => c == storedDraft), entityId, customerId, messageEnvelop.UpdateUser);
             await auditManager.Received(1).Write(AuditTarget.Submitted, after, before);
             await eventPublisher.Received(1).DataChangedAsync(after);
         }
@@ -378,10 +386,12 @@ namespace StateManagment.Tests
             var database = Substitute.For<ICustomerDatabase>();
             var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, Substitute.For<IAuditManager>());
             var entityId = "entity1";
+            var customerId = "customerId1";
 
             var messageEnvelop = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
@@ -393,11 +403,11 @@ namespace StateManagment.Tests
             var feedbacks = new Feedback() { Type = FeedbackType.Warning, Key = "PendingRiskChecks", Value = "Waiting" };
 
             // Act
-            var result = await changeHandler.ChangeStatusTo<Contact>(messageEnvelop.EntityId, EntityState.IN_REVIEW, [feedbacks]);
+            var result = await changeHandler.ChangeStatusTo<Contact>(messageEnvelop.EntityId, messageEnvelop.CustomerId, EntityState.IN_REVIEW, [feedbacks]);
 
             // Assert
             await database.Received(1).GetEntity<Contact>(entityId);
-            await database.Received(1).UpdateData<Contact>(entityId, EntityState.IN_REVIEW, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
+            await database.Received(1).UpdateData<Contact>(entityId, customerId, EntityState.IN_REVIEW, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
             await eventPublisher.Received(1).DataChangedAsync(messageEnvelop);
         }
 
@@ -411,9 +421,12 @@ namespace StateManagment.Tests
             var database = Substitute.For<ICustomerDatabase>();
             var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);
             var entityId = "entity1";
+            var customerId = "customerId1";
+
             var before = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
                 DraftVersion = 2,
@@ -423,6 +436,7 @@ namespace StateManagment.Tests
             var after = new MessageEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
                 Name = EntityName.Contact,
                 Draft = new Contact() { FirstName = "Gray", LastName = "Yellow" },
                 DraftVersion = 2,
@@ -434,11 +448,11 @@ namespace StateManagment.Tests
             database.GetEntity<Contact>(entityId).Returns(before, after);
 
             // Act
-            var result = await changeHandler.ChangeStatusTo<Contact>(before.EntityId, EntityState.SYNCHRONISED);
+            var result = await changeHandler.ChangeStatusTo<Contact>(before.EntityId, before.CustomerId, EntityState.SYNCHRONISED);
 
             // Assert
-            await database.Received(1).StoreApplied<Contact>(Arg.Any<IEntity>(), entityId, before.RemoveRequested);
-            await database.Received(1).UpdateData<Contact>(entityId, EntityState.SYNCHRONISED, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
+            await database.Received(1).StoreApplied<Contact>(Arg.Any<IEntity>(), entityId, customerId, before.RemoveRequested);
+            await database.Received(1).UpdateData<Contact>(entityId, customerId, EntityState.SYNCHRONISED, Arg.Any<Feedback[]>(), Arg.Any<OrchestrationData[]>());
             await auditManager.Received(1).Write(AuditTarget.Applied, after, before);
         }
 

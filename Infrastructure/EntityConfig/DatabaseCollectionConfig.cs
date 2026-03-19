@@ -87,7 +87,7 @@ namespace Infrastructure.EntityConfig
 
         public static async Task<DbEexecutionParams> Patch<T>(MessageEnvelop messageEnvelop, int latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
         {
-            var stored = await GetById2<T>(messageEnvelop.EntityId, db);
+            var stored = await GetById2<T>(messageEnvelop.EntityId, messageEnvelop.CustomerId, db);
 
             var receivedEntity = (T)messageEnvelop.Draft;
             var storedEntity = (T)stored.Draft;
@@ -191,9 +191,9 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> UpdateData<T>(string entityId, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM") where T : IEntity
+        public static async Task<DbEexecutionParams> UpdateData<T>(string entityId, string customerId, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM", string? legalEntityId = null) where T : IEntity
         {
-            var contact = await GetById2<T>(entityId, db);
+            var contact = await GetById2<T>(entityId, customerId, db, legalEntityId);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
@@ -214,16 +214,17 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToSubmitted<T>(IEntity entity, string entityId, string updatedUser, IMongoDatabase db) where T : IEntity
+        public static async Task<DbEexecutionParams> AddToSubmitted<T>(IEntity entity, string entityId, string customerId, string updatedUser, IMongoDatabase db) where T : IEntity
         {
-            // Read the entity document - I need the latest document here.
-            var contact = await GetById2<T>(entityId, db);
+            var withLegalEntity = entity as ILegalEntityAttached;
+
+            var storedEntityDocument = await GetById2<T>(entityId, customerId, db, withLegalEntity?.LegalEntityId);
 
             // set properties
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
             var onUpdate = Builders<MessageEnvelop>.Update
-            .Set(a => a.SubmittedVersion, contact.DraftVersion)
-            .Set(a => a.Submitted, (T)contact.Draft)
+            .Set(a => a.SubmittedVersion, storedEntityDocument.DraftVersion)
+            .Set(a => a.Submitted, (T)storedEntityDocument.Draft)
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
@@ -237,9 +238,11 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToApplied<T>(string entityId, IEntity entity, bool confirmRemoval, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
+        public static async Task<DbEexecutionParams> AddToApplied<T>(string entityId, string customerId, IEntity entity, bool confirmRemoval, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
         {
-            var contact = await GetById2<T>(entityId, db);
+            var withLegalEntity = entity as ILegalEntityAttached;
+
+            var contact = await GetById2<T>(entityId, customerId, db, withLegalEntity?.LegalEntityId);
 
             var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
 
@@ -317,13 +320,23 @@ namespace Infrastructure.EntityConfig
             });
         }
 
-        public static Task<MessageEnvelop> GetById2<T>(string entityId, IMongoDatabase db) where T : IEntity
+        public static Task<MessageEnvelop> GetById2<T>(string entityId, string customerId, IMongoDatabase db, string? legalEntityId = null) where T : IEntity
         {
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            var filter = Builders<MessageEnvelop>.Filter;
+            var filterDefs = new List<FilterDefinition<MessageEnvelop>>
+            {
+                Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId),
+                Builders<MessageEnvelop>.Filter.Eq(o => o.CustomerId, customerId)
+            };
+
+            if (legalEntityId != null)
+            {
+                filterDefs.Add(new BsonDocument("Draft.LegalEntityId", legalEntityId));
+            }
 
             var entities = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
-            return entities.Find(filter).FirstOrDefaultAsync();
+            return entities.Find(filter.And(filterDefs)).FirstOrDefaultAsync();
         }
 
         public static Task<EntityBasics> GetEntityBasics<T>(string entityId, IMongoDatabase db) where T : IEntity
@@ -338,7 +351,7 @@ namespace Infrastructure.EntityConfig
                 {
                     DraftVersion = p.DraftVersion,
                     EntityId = entityId,
-                    Name = config.Name, 
+                    Name = config.Name,
                     State = p.State,
                     SubmittedVersion = p.SubmittedVersion,
                 }).FirstOrDefaultAsync();

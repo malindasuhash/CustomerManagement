@@ -22,6 +22,7 @@ namespace ContactOrchestration
            await sender.SendAsync(OrchestrationEnvelop.Create(
                EntityName.Contact,
                runtimeInfo.EntityId,
+               runtimeInfo.CustomerId,
                runtimeInfo.SubmittedVersion,
                RuntimeStatus.CHANGE_APPLIED
            ), runtimeInfo.CorellationId);

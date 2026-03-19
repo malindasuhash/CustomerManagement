@@ -40,11 +40,11 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> StoreApplied<T>(IEntity entity, string entityId, bool confirmRemoval) where T : IEntity
+        public async Task<TaskOutcome> StoreApplied<T>(IEntity entity, string entityId, string customerId, bool confirmRemoval) where T : IEntity
         {
             DbEexecutionParams dbEexecution;
 
-            dbEexecution = await DatabaseCollectionConfig.AddToApplied<T>(entityId, entity, confirmRemoval, database);
+            dbEexecution = await DatabaseCollectionConfig.AddToApplied<T>(entityId, customerId, entity, confirmRemoval, database);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 
@@ -62,22 +62,22 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> StoreSubmitted<T>(IEntity entity, string entityId, string updatedUser) where T : IEntity
+        public async Task<TaskOutcome> StoreSubmitted<T>(IEntity entity, string entityId, string customerId, string updatedUser) where T : IEntity
         {
             DbEexecutionParams dbEexecution;
 
-            dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<Contact>(entity, entityId, updatedUser, database);
+            dbEexecution = await DatabaseCollectionConfig.AddToSubmitted<Contact>(entity, entityId, customerId, updatedUser, database);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> UpdateData<T>(string entityId, EntityState targetState, Feedback[] feedbacks, OrchestrationData[]? orchestrationData = null) where T : IEntity
+        public async Task<TaskOutcome> UpdateData<T>(string entityId, string customerId, EntityState targetState, Feedback[] feedbacks, OrchestrationData[]? orchestrationData = null, string? legalEntityId = null) where T : IEntity
         {
             DbEexecutionParams dbEexecution;
 
-            dbEexecution = await DatabaseCollectionConfig.UpdateData<T>(entityId, targetState, database, feedbacks, orchestrationData);
+            dbEexecution = await DatabaseCollectionConfig.UpdateData<T>(entityId, customerId, targetState, database, feedbacks, orchestrationData);
 
             await dbEexecution.Collection.UpdateOneAsync(dbEexecution.Filter, dbEexecution.Definition);
 
@@ -97,11 +97,11 @@ namespace Infrastructure
 
         public async Task<MessageEnvelop> GetEntity<T>(string entityId, string? customerId = null) where T : IEntity
         {
-            var storedEntity = await DatabaseCollectionConfig.GetById2<T>(entityId, database);
+            var storedEntity = await DatabaseCollectionConfig.GetById2<T>(entityId, customerId, database);
             storedEntity.Name = EntityCollectionConfig.Config<T>().Name;
             storedEntity.Change = ChangeType.Read;
+         
             return storedEntity;
-            throw new NotImplementedException();
         }
     }
 }

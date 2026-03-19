@@ -15,6 +15,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "456",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 Status = RuntimeStatus.EVALUATION_STARTED
@@ -42,6 +43,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "786",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 Status = RuntimeStatus.EVALUATION_STARTED
@@ -73,6 +75,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "999",
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_STARTED,
@@ -93,7 +96,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.EVALUATING, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.EVALUATING, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         [Fact]
@@ -104,6 +107,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_STARTED
@@ -123,7 +127,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.EVALUATION_RESTARTING);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.EVALUATION_RESTARTING);
 
             await orchestrator.Received(1).EvaluateAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
@@ -136,6 +140,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "666",
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_STARTED
@@ -166,6 +171,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "894",
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_COMPLETED,
@@ -187,7 +193,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.IN_PROGRESS, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.IN_PROGRESS, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.Received(1).ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -199,6 +205,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "672",
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_INCOMPLETE,
@@ -220,7 +227,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.DidNotReceive().ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -232,6 +239,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "8783",
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_REQUIRES_MANUAL_REVIEW,
@@ -252,7 +260,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.IN_REVIEW, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.IN_REVIEW, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.DidNotReceive().ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
         }
 
@@ -263,6 +271,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "8837",
                 DraftVersion = 10,
                 SubmittedVersion = 5,
                 Status = RuntimeStatus.EVALUATION_STARTED
@@ -289,6 +298,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "4343",
                 DraftVersion = 10,
                 SubmittedVersion = 6,
                 Status = RuntimeStatus.EVALUATION_INCOMPLETE,
@@ -307,7 +317,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         [Fact]
@@ -318,6 +328,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "C1234",
                 DraftVersion = 10,
                 SubmittedVersion = 6,
                 Status = RuntimeStatus.CHANGE_FAILED,
@@ -336,7 +347,7 @@ namespace StateManagment.Tests
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, EntityState.ATTENTION_REQUIRED, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
         }
 
         private const int StateDoesNotChange = 0;
@@ -371,6 +382,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "C1873",
                 DraftVersion = 10,
                 SubmittedVersion = 6,
                 Status = action,
@@ -391,7 +403,7 @@ namespace StateManagment.Tests
             var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
 
             // Assert
-            await changeHandler.Received(statusChangeCount).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, targetState, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
+            await changeHandler.Received(statusChangeCount).ChangeStatusTo<Contact>(orchestrationEnvelop.EntityId, orchestrationEnvelop.CustomerId, targetState, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
             await orchestrator.Received(evalutionCount).EvaluateAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             await orchestrator.Received(applyCount).ApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
             await orchestrator.Received(postApplyCount).PostApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
@@ -405,6 +417,7 @@ namespace StateManagment.Tests
             {
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "8893",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 Status = RuntimeStatus.EVALUATION_STARTED

@@ -22,14 +22,14 @@ namespace StateManagment
         /// Changes the status of the specified entity in the database to the provided entity state 
         /// and publishes a state changed event.
         /// </summary>
-        public async Task<TaskOutcome> ChangeStatusTo<T>(string entityId, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null) where T : IEntity
+        public async Task<TaskOutcome> ChangeStatusTo<T>(string entityId, string customerId, EntityState entityState, Feedback[]? feedbacks = null, OrchestrationData[]? orchestrationData = null) where T : IEntity
         {
-            await database.UpdateData<T>(entityId, entityState, feedbacks ?? [], orchestrationData ?? []);
+            await database.UpdateData<T>(entityId, customerId, entityState, feedbacks ?? [], orchestrationData ?? []);
 
             if (entityState == EntityState.SYNCHRONISED)
             {
                 var before = await database.GetEntity<T>(entityId);
-                await database.StoreApplied<T>(before.Submitted, entityId, before.RemoveRequested);
+                await database.StoreApplied<T>(before.Submitted, entityId, customerId, before.RemoveRequested);
                 var after = await database.GetEntity<T>(entityId);
 
                 await auditManager.Write(AuditTarget.Applied, after, before);
@@ -73,7 +73,7 @@ namespace StateManagment
         public async Task<TaskOutcome> Submitted<T>(MessageEnvelop envelop) where T : IEntity
         {
             var before = await database.GetEntity<T>(envelop.EntityId);
-            await database.StoreSubmitted<T>(envelop.Draft, envelop.EntityId, envelop.UpdateUser);
+            await database.StoreSubmitted<T>(envelop.Draft, envelop.EntityId, envelop.CustomerId, envelop.UpdateUser);
             var after = await database.GetEntity<T>(envelop.EntityId);
 
             await auditManager.Write(AuditTarget.Submitted, after, before);
@@ -162,7 +162,7 @@ namespace StateManagment
                     return TaskOutcome.NO_CHANGE_TO_SUBMIT;
                 }
 
-                await database.StoreSubmitted<T>(before.Draft, before.EntityId, envelop.UpdateUser);
+                await database.StoreSubmitted<T>(before.Draft, before.EntityId, before.CustomerId, envelop.UpdateUser);
                 var after = await database.GetEntity<T>(envelop.EntityId);
 
                 await auditManager.Write(AuditTarget.Submitted, after, before);
