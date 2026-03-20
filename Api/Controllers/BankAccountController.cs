@@ -30,7 +30,7 @@ namespace Api.Controllers
                 }
             };
 
-            return await Touch<LegalEntity>(envelop);
+            return await Touch<BankAccount>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/submit")]
