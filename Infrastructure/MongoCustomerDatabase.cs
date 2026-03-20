@@ -98,9 +98,16 @@ namespace Infrastructure
         public async Task<MessageEnvelop> FindEntity<T>(LookupPredicate lookupPredicate) where T : IEntity
         {
             var storedEntity = await DatabaseCollectionConfig.FindBy<T>(lookupPredicate, database);
+
+            if (storedEntity == null)
+            {
+                // Entity not found
+                return MessageEnvelop.NONE; 
+            }
+
             storedEntity.Name = EntityCollectionConfig.Config<T>().Name;
             storedEntity.Change = ChangeType.Read;
-         
+
             return storedEntity;
         }
     }

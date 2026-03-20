@@ -4,6 +4,8 @@ namespace StateManagment.Models
 {
     public class MessageEnvelop
     {
+        public static readonly MessageEnvelop NONE = new() { CustomerId = "NONE" };
+
         private EntityState defaultState = EntityState.NEW;
 
         public ChangeType Change { get; set; }

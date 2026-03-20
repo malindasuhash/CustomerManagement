@@ -7,17 +7,17 @@
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Refactored to use generics
+- Adding some tests to controller to increase confidence.
+- Implementation of Trading Location API
 
 # PENDING
-
 - Concept of operation data store as an event stream storage.
-- Sample implementation of Legal Entity, Product and Trading Location
 - Complete sample implementation of validation for Contact
 - Runtime to host Contact orchestration.
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Refactored to use generics
 - Product agreement and APIs 
 - Added Bank account and APIs
 - Added billing group and APIs

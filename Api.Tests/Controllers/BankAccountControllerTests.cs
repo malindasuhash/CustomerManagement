@@ -5,7 +5,7 @@ using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
 
-namespace Api.Tests
+namespace Api.Tests.Controllers
 {
     public class BankAccountControllerTests
     {

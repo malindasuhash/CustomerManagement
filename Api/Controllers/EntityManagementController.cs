@@ -10,9 +10,13 @@ namespace Api.Controllers
         protected readonly IChangeProcessor changeProcessor = changeProcessor;
         protected readonly ICustomerDatabase customerDatabase = customerDatabase;
 
-        internal async Task<ActionResult<EntityDocumentModel>> GetById<T>(LookupPredicate lookupPredicate) where T : IEntity
+        protected async Task<ActionResult<EntityDocumentModel>> GetById<T>(LookupPredicate lookupPredicate) where T : IEntity
         {
             var contact = await customerDatabase.FindEntity<T>(lookupPredicate);
+
+            if (contact == MessageEnvelop.NONE) {
+                return NotFound(TaskOutcome.NOT_FOUND);
+            }
 
             return Translate(contact);
         }
