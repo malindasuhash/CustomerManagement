@@ -5,16 +5,10 @@ using StateManagment.Models;
 
 namespace Api.Controllers
 {
-    public abstract class EntityManagementController : ControllerBase
+    public abstract class EntityManagementController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : ControllerBase
     {
-        protected readonly IChangeProcessor changeProcessor;
-        protected readonly ICustomerDatabase customerDatabase;
-
-        protected EntityManagementController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase)
-        {
-            this.changeProcessor = changeProcessor;
-            this.customerDatabase = customerDatabase;
-        }
+        protected readonly IChangeProcessor changeProcessor = changeProcessor;
+        protected readonly ICustomerDatabase customerDatabase = customerDatabase;
 
         internal async Task<ActionResult<EntityDocumentModel>> GetById<T>(LookupPredicate lookupPredicate) where T : IEntity
         {

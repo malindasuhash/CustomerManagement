@@ -518,7 +518,7 @@ namespace StateManagment.Tests
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true,
-                CustomerId = "123",
+                CustomerId = "1234",
             };
             var after = new MessageEnvelop
             {
