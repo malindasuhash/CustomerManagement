@@ -30,7 +30,7 @@ namespace Api.Controllers
                 }
             };
 
-            return await Touch<ProductAgreement>(envelop);
+            return await Process<ProductAgreement>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}/submit")]
@@ -50,7 +50,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit<ProductAgreement>(envelop);
+            return await Process<ProductAgreement>(envelop);
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
@@ -68,7 +68,7 @@ namespace Api.Controllers
                 },
             };
 
-            return await Remove<ProductAgreement>(envelop);
+            return await Process<ProductAgreement>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements")]
@@ -84,7 +84,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create<ProductAgreement>(envelop);
+            return await Process<ProductAgreement>(envelop);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
@@ -96,7 +96,7 @@ namespace Api.Controllers
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
         public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId, [FromBody] ProductAgreementModel patch)
         {
-            var patchModel = ContactToPatch(patch);
+            var patchModel = ContactToPatch(patch, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
@@ -115,11 +115,11 @@ namespace Api.Controllers
             return Translate(contactEntity);
         }
 
-        private static ProductAgreement ContactToPatch(ProductAgreementModel patchModel)
+        private static ProductAgreement ContactToPatch(ProductAgreementModel patchModel, string legalEntityId)
         {
             var productAgreement = new ProductAgreement
             {
-                LegalEntityId = patchModel.LegalEntityId,
+                LegalEntityId = legalEntityId,
                 ProductType = patchModel.ProductType,
                 DisplayName = patchModel.DisplayName,
                 RateCardId = patchModel.RateCardId,

@@ -12,60 +12,19 @@ namespace Api.Controllers
 
         protected async Task<ActionResult<EntityDocumentModel>> GetById<T>(LookupPredicate lookupPredicate) where T : IEntity
         {
-            var contact = await customerDatabase.FindEntity<T>(lookupPredicate);
+            var entityDocument = await customerDatabase.FindEntity<T>(lookupPredicate);
 
-            if (contact == MessageEnvelop.NONE) {
+            if (entityDocument == MessageEnvelop.NONE)
+            {
                 return NotFound(TaskOutcome.NOT_FOUND);
             }
 
-            return Translate(contact);
+            return Translate(entityDocument);
         }
 
-        internal async Task<ActionResult<EntityDocumentModel>> Create<T>(MessageEnvelop envelop) where T : IEntity
+        protected async Task<ActionResult<EntityDocumentModel>> Process<T>(MessageEnvelop messageEnvelop) where T : IEntity
         {
-            await changeProcessor.ProcessChangeAsync<T>(envelop);
-
-            var specificEntity = await customerDatabase.FindEntity<T>(envelop.SearchBy());
-
-            return Translate(specificEntity);
-        }
-
-        internal async Task<ActionResult<EntityDocumentModel>> Touch<T>(MessageEnvelop messageEnvelop) where T : IEntity
-        {
-            // Authorisation layer may go here
-            var result = await changeProcessor.ProcessChangeAsync<T>(messageEnvelop);
-
-            if (result != TaskOutcome.OK)
-            {
-                return BadRequest(result);
-            }
-
-            var specificEntity = await customerDatabase.FindEntity<T>(messageEnvelop.SearchBy());
-
-            return Translate(specificEntity);
-        }
-
-        internal async Task<ActionResult<EntityDocumentModel>> Submit<T>(MessageEnvelop envelop) where T : IEntity
-        {
-            var result = await changeProcessor.ProcessChangeAsync<T>(envelop);
-
-            if (result != TaskOutcome.OK)
-            {
-                return BadRequest(result);
-            }
-
-            var contactEntity = await customerDatabase.FindEntity<T>(envelop.SearchBy());
-
-            return Translate(contactEntity);
-        }
-
-        internal async Task<ActionResult<EntityDocumentModel>> Remove<T>(MessageEnvelop envelop) where T : IEntity
-        {
-            await changeProcessor.ProcessChangeAsync<T>(envelop);
-
-            var contactEntity = await customerDatabase.FindEntity<T>(envelop.SearchBy());
-
-            return Translate(contactEntity);
+            return await Process<T>(messageEnvelop);
         }
 
         protected EntityDocumentModel Translate(MessageEnvelop messageEnvelop)
@@ -90,6 +49,5 @@ namespace Api.Controllers
 
             return model;
         }
-
     }
 }

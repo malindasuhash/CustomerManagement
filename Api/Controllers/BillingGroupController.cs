@@ -26,7 +26,7 @@ namespace Api.Controllers
                 Name = EntityName.BillingGroup
             };
 
-            return await Touch<BillingGroup>(envelop);
+            return await Process<BillingGroup>(envelop);
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/submit")]
@@ -42,7 +42,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit<BillingGroup>(envelop);
+            return await Process<BillingGroup>(envelop);
         }
 
         [HttpDelete("{customerId}/billing-groups/{billingGroupId}")]
@@ -56,7 +56,7 @@ namespace Api.Controllers
                 EntityId = billingGroupId,
             };
 
-            return await Remove<BillingGroup>(envelop);
+            return await Process<BillingGroup>(envelop);
         }
 
         [HttpPost("{customerId}/billing-groups")]
@@ -70,7 +70,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create<Contact>(envelop);
+            return await Process<Contact>(envelop);
         }
 
         [HttpGet("{customerId}/billing-groups/{billingGroupId}")]

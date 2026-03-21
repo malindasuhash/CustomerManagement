@@ -42,7 +42,7 @@ namespace Api.Tests.Controllers
             await entityManagementControllerHelper.CallGetById<BankAccount>(messageEnvelop.SearchBy());
 
             // Assert
-            await customerDatabase.Received(1).FindEntity<BankAccount>(Arg.Is<LookupPredicate>(p => p.CustomerId.Equals(CustomerId) && p.EntityId.Equals(BankAccountId) && p.LegalEntityId.Equals(LegalEntityId)));
+            await customerDatabase.Received(1).FindEntity<BankAccount>(Arg.Is<LookupPredicate>(p => PredicateMatch(p)));
         }
 
         [Fact]
@@ -59,6 +59,39 @@ namespace Api.Tests.Controllers
             notFound.Should().NotBeNull();
             notFound.Value.Should().Be(TaskOutcome.NOT_FOUND);
         }
+
+        [Fact]
+        public async Task Process_OnceEntityIsCreated_ThenReturnsIt()
+        {
+            // Arrange
+            changeProcessor.ProcessChangeAsync<BankAccount>(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.OK);
+
+            // Act
+            var result = await entityManagementControllerHelper.CallProcess<BankAccount>(messageEnvelop);
+
+            // Assert
+            await customerDatabase.Received(1).FindEntity<BankAccount>(Arg.Is<LookupPredicate>(p => PredicateMatch(p)));
+        }
+
+        [Fact]
+        public async Task Proess_WhenProcessIsNotSuccessful_ThenReturnsBadRequest()
+        {
+            // Arrange
+            changeProcessor.ProcessChangeAsync<BankAccount>(Arg.Any<MessageEnvelop>()).Returns(TaskOutcome.LOCK_UNAVAILABLE);
+
+            // Act
+            var result = await entityManagementControllerHelper.CallProcess<BankAccount>(messageEnvelop);
+
+            // Assert
+            var badRequest = result.Result as BadRequestObjectResult;
+            badRequest.Should().NotBeNull();
+            badRequest.Value.Should().Be(TaskOutcome.LOCK_UNAVAILABLE);
+        }
+
+        private static bool PredicateMatch(LookupPredicate lookupPredicate)
+        {
+            return lookupPredicate.EntityId.Equals(BankAccountId) && lookupPredicate.CustomerId.Equals(CustomerId) && lookupPredicate.LegalEntityId.Equals(LegalEntityId);
+        }
     }
 
     internal class EntityManagementControllerHelper : EntityManagementController
@@ -71,6 +104,11 @@ namespace Api.Tests.Controllers
         public Task<ActionResult<EntityDocumentModel>> CallGetById<T>(LookupPredicate predicate) where T : IEntity
         {
             return GetById<T>(predicate);
+        }
+
+        public Task<ActionResult<EntityDocumentModel>> CallProcess<T>(MessageEnvelop envelop) where T : IEntity
+        {
+            return Process<T>(envelop);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Touch<LegalEntity>(envelop);
+            return await Process<LegalEntity>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/submit")]
@@ -50,7 +50,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit<LegalEntity>(envelop);
+            return await Process<LegalEntity>(envelop);
         }
 
         [HttpDelete("{customerId}/legal-entities/{entityId}")]
@@ -68,7 +68,7 @@ namespace Api.Controllers
                 EntityId = entityId
             };
 
-            return await Remove<LegalEntity>(envelop);
+            return await Process<LegalEntity>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities")]
@@ -86,7 +86,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create<LegalEntity>(envelop);
+            return await Process<LegalEntity>(envelop);
         }
 
         [HttpGet("{customerId}/legal-entities/{entityId}")]

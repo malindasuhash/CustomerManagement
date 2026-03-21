@@ -26,7 +26,7 @@ namespace Api.Controllers
                 Change = ChangeType.Touch
             };
 
-           return await Touch<Contact>(envelop);
+           return await Process<Contact>(envelop);
         }
 
         [HttpPost("{customerId}/contacts/{contactId}/submit")]
@@ -42,7 +42,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit<Contact>(envelop);
+            return await Process<Contact>(envelop);
         }
 
         [HttpDelete("{customerId}/contacts/{contactId}")]
@@ -56,7 +56,7 @@ namespace Api.Controllers
                 EntityId = contactId,
             };
 
-            return await Remove<Contact>(envelop);
+            return await Process<Contact>(envelop);
         }
 
         [HttpPost("{customerId}/contacts")]
@@ -70,7 +70,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create<Contact>(envelop);
+            return await Process<Contact>(envelop);
         }
 
         [HttpGet("{customerId}/contacts/{contactId}")]

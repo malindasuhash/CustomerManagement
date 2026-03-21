@@ -30,7 +30,7 @@ namespace Api.Controllers
                 }
             };
 
-            return await Touch<BankAccount>(envelop);
+            return await Process<BankAccount>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/submit")]
@@ -50,7 +50,7 @@ namespace Api.Controllers
                 DraftVersion = submitModel.TargetVersion
             };
 
-            return await Submit<BankAccount>(envelop);
+            return await Process<BankAccount>(envelop);
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -68,7 +68,7 @@ namespace Api.Controllers
                 },
             };
 
-            return await Remove<BankAccount>(envelop);
+            return await Process<BankAccount>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts")]
@@ -84,7 +84,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Create<BankAccount>(envelop);
+            return await Process<BankAccount>(envelop);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -96,7 +96,7 @@ namespace Api.Controllers
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
         public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] BankAccountModel patch)
         {
-            var patchModel = ContactToPatch(patch);
+            var patchModel = ContactToPatch(patch, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
@@ -115,7 +115,7 @@ namespace Api.Controllers
             return Translate(contactEntity);
         }
 
-        private static BankAccount ContactToPatch(BankAccountModel patchModel)
+        private static BankAccount ContactToPatch(BankAccountModel patchModel, string legalEntityId)
         {
             var bankAccount = new BankAccount
             {
@@ -128,7 +128,7 @@ namespace Api.Controllers
                 BankName = patchModel.BankName,
                 BillingDefault = patchModel.BillingDefault,
                 Iban = patchModel.Iban,
-                LegalEntityId = patchModel.LegalEntityId,
+                LegalEntityId = legalEntityId,
                 Swift = patchModel.Swift,
                 SortCode = patchModel.SortCode
             };
