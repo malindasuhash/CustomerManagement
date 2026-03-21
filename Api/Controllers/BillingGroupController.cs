@@ -16,7 +16,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/touch")]
-        public async Task<ActionResult<EntityDocumentModel>> TouchContact([FromRoute] string customerId, [FromRoute] string billingGroupId)
+        public async Task<ActionResult<EntityDocumentModel>> TouchBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
         {
             var envelop = new MessageEnvelop()
             {
@@ -30,7 +30,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/submit")]
-        public async Task<ActionResult<EntityDocumentModel>> SubmitContact([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] SubmitEntityModel submitModel)
+        public async Task<ActionResult<EntityDocumentModel>> SubmitBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] SubmitEntityModel submitModel)
         {
             var envelop = new MessageEnvelop()
             {
@@ -46,7 +46,7 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{customerId}/billing-groups/{billingGroupId}")]
-        public async Task<ActionResult<EntityDocumentModel>> RemoveContact([FromRoute] string customerId, [FromRoute] string billingGroupId)
+        public async Task<ActionResult<EntityDocumentModel>> RemoveBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
         {
             var envelop = new MessageEnvelop()
             {
@@ -60,29 +60,29 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/billing-groups")]
-        public async Task<ActionResult<EntityDocumentModel>> CreateContact([FromRoute] string customerId, [FromBody] BillingGroup billingGroup)
+        public async Task<ActionResult<EntityDocumentModel>> CreateBillingGroup([FromRoute] string customerId, [FromBody] BillingGroup billingGroup)
         {
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
-                Name = EntityName.BankAccount,
+                Name = EntityName.BillingGroup,
                 Draft = billingGroup,
                 CustomerId = customerId
             };
 
-            return await Process<Contact>(envelop);
+            return await Process<BillingGroup>(envelop);
         }
 
         [HttpGet("{customerId}/billing-groups/{billingGroupId}")]
-        public async Task<ActionResult<EntityDocumentModel>> GetContactById(string customerId, string billingGroupId)
+        public async Task<ActionResult<EntityDocumentModel>> GetBillingGroupById(string customerId, string billingGroupId)
         {
             return await GetById<BillingGroup>(LookupPredicate.Create(billingGroupId, customerId));
         }
 
         [HttpPatch("{customerId}/billing-groups/{billingGroupId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] BillingGroupModel patch)
+        public async Task<ActionResult<EntityDocumentModel>> UpateBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] BillingGroupModel patch)
         {
-            var patchModel = ContactToPatch(patch);
+            var patchModel = BillingGroupToPatch(patch);
             
             var envelop = new MessageEnvelop
             {
@@ -94,14 +94,10 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync<BillingGroup>(envelop);
-
-            var billingGroup = await customerDatabase.FindEntity<BillingGroup>(envelop.SearchBy());
-
-            return Translate(billingGroup);
+            return await Process<BillingGroup>(envelop);
         }
 
-        private static BillingGroup ContactToPatch(BillingGroupModel patchModel)
+        private static BillingGroup BillingGroupToPatch(BillingGroupModel patchModel)
         {
             var billingGroup = new BillingGroup
             {
