@@ -94,9 +94,9 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] BankAccountModel patch)
+        public async Task<ActionResult<EntityDocumentModel>> UpdateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] BankAccountModel patch)
         {
-            var patchModel = ContactToPatch(patch, legalEntityId);
+            var patchModel = BankAccountToPatch(patch, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
@@ -108,14 +108,10 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync<BankAccount>(envelop);
-
-            var contactEntity = await customerDatabase.FindEntity<BankAccount>(envelop.SearchBy());
-
-            return Translate(contactEntity);
+            return await Process<BankAccount>(envelop);
         }
 
-        private static BankAccount ContactToPatch(BankAccountModel patchModel, string legalEntityId)
+        private static BankAccount BankAccountToPatch(BankAccountModel patchModel, string legalEntityId)
         {
             var bankAccount = new BankAccount
             {

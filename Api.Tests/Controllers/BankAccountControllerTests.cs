@@ -22,7 +22,7 @@ namespace Api.Tests.Controllers
         {
             changeProcessor = Substitute.For<IChangeProcessor>();
             customerDatabase = Substitute.For<ICustomerDatabase>();
-            customerDatabase.FindEntity<BankAccount>(Arg.Any<LookupPredicate>()).Returns(new MessageEnvelop() { CustomerId = CustomerId});
+            customerDatabase.FindEntity<BankAccount>(Arg.Any<LookupPredicate>()).Returns(new MessageEnvelop() { CustomerId = CustomerId });
             bankAccountController = new BankAccountController(changeProcessor, customerDatabase);
         }
 
@@ -78,6 +78,39 @@ namespace Api.Tests.Controllers
             await customerDatabase.Received(1).FindEntity<BankAccount>(Arg.Is<LookupPredicate>(p => p.CustomerId.Equals(CustomerId) && p.LegalEntityId.Equals(LegalEntityId) && p.EntityId.Equals(BankAccountId)));
         }
 
+        [Fact]
+        public async Task UpdateBankAccount_WhenUpdating_ThenIssuesTheAppropriateCommand()
+        {
+            // Arrange
+            var patchModel = new BankAccountModel()
+            {
+                Iban = "IBAN",
+                BankName = "BankName",
+                Label = "Label",
+                BankCountry = "Country",
+                TargetVersion = 10
+            };
+
+            // Act
+            await bankAccountController.UpdateBankAccount(CustomerId, LegalEntityId, BankAccountId, patchModel);
+
+            // Assert
+            await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(m => SameAfterMapped(patchModel, m)));
+        }
+
+        private static bool SameAfterMapped(BankAccountModel bankAccount, MessageEnvelop messageEnvelop)
+        {
+            var bankAccountMapped = messageEnvelop.Draft as BankAccount;
+
+            return messageEnvelop.Name == EntityName.BankAccount 
+                && messageEnvelop.Change == ChangeType.Update
+                && messageEnvelop.DraftVersion == 10
+                && bankAccountMapped.Iban.Equals(bankAccount.Iban)
+                && bankAccountMapped.BankName.Equals(bankAccountMapped.BankName)
+                && bankAccountMapped.Label.Equals(bankAccount.Label)
+                && bankAccountMapped.BankCountry.Equals(bankAccount.BankCountry);
+        }
+
         private static bool LegalEntityIdCheck(MessageEnvelop envelop, string legalEntityId)
         {
             var bankAccount = envelop.Draft as BankAccount;
@@ -85,8 +118,8 @@ namespace Api.Tests.Controllers
             return bankAccount.LegalEntityId.Equals(legalEntityId);
         }
 
-        private static bool SameDraft(BankAccount bankAccount, MessageEnvelop messageEnvelop) 
-        { 
+        private static bool SameDraft(BankAccount bankAccount, MessageEnvelop messageEnvelop)
+        {
             return bankAccount == messageEnvelop.Draft;
         }
     }

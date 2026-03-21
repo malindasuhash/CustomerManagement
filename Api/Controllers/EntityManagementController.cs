@@ -24,7 +24,14 @@ namespace Api.Controllers
 
         protected async Task<ActionResult<EntityDocumentModel>> Process<T>(MessageEnvelop messageEnvelop) where T : IEntity
         {
-            return await Process<T>(messageEnvelop);
+            var result = await changeProcessor.ProcessChangeAsync<T>(messageEnvelop);
+
+            if (result != TaskOutcome.OK)
+            {
+                return BadRequest(result);
+            }
+
+            return await GetById<T>(messageEnvelop.SearchBy());
         }
 
         protected EntityDocumentModel Translate(MessageEnvelop messageEnvelop)
