@@ -43,7 +43,7 @@ namespace Api.Controllers
             var envelop = new MessageEnvelop()
             {
                 Change = ChangeType.Submit,
-                Name = EntityName.BillingGroup,
+                Name = EntityName.LegalEntity,
                 CustomerId = customerId,
                 EntityId = entityId,
                 IsSubmitted = true,
@@ -63,7 +63,7 @@ namespace Api.Controllers
             var envelop = new MessageEnvelop()
             {
                 Change = ChangeType.Delete,
-                Name = EntityName.Contact,
+                Name = EntityName.LegalEntity,
                 CustomerId = customerId,
                 EntityId = entityId
             };
@@ -99,13 +99,13 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/legal-entities/{entityId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] LegalEntityModel patch)
+        public async Task<ActionResult<EntityDocumentModel>> UpdateLegalEntity([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] LegalEntityModel patch)
         {
             // LEGAL_ENTITY_UPDATE
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
-            var patchModel = ContactToPatch(patch);
+            var patchModel = LegalEntityToPatch(patch);
 
             var envelop = new MessageEnvelop
             {
@@ -117,14 +117,10 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync<LegalEntity>(envelop);
-
-            var contactEntity = await customerDatabase.FindEntity<LegalEntity>(envelop.SearchBy());
-
-            return Translate(contactEntity);
+            return await Process<LegalEntity>(envelop);
         }
 
-        private LegalEntity ContactToPatch(LegalEntityModel patch)
+        private static LegalEntity LegalEntityToPatch(LegalEntityModel patch)
         {
             var legalEntity = new LegalEntity()
             {
