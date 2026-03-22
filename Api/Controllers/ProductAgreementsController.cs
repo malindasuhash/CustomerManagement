@@ -88,13 +88,13 @@ namespace Api.Controllers
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
-        public async Task<ActionResult<EntityDocumentModel>> GetBankAccountById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId)
+        public async Task<ActionResult<EntityDocumentModel>> GetProductAgreementById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId)
         {
             return await GetById<ProductAgreement>(LookupPredicate.Create(productAgreementId, customerId, legalEntityId));
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId, [FromBody] ProductAgreementModel patch)
+        public async Task<ActionResult<EntityDocumentModel>> UpdateProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId, [FromBody] ProductAgreementModel patch)
         {
             var patchModel = ContactToPatch(patch, legalEntityId);
 

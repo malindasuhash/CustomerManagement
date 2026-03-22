@@ -1,6 +1,5 @@
 ﻿using Api.ApiModels;
 using Api.Controllers;
-using FluentAssertions;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
