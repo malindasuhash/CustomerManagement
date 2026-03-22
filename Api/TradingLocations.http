@@ -1,0 +1,51 @@
+@Api_HostAddress = https://localhost:7296/api/v1
+
+GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08
+Accept: application/json
+
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations
+Content-Type: application/json
+{
+  "address":  {
+      "code": "89",
+      "name": "M",
+      "line1": "Line 111",
+      "line2": "Line 222",
+      "line3": "Line 333",
+      "region": "region 1",
+      "country": "country 1",
+      "locality": "GB"
+    },
+  "contacts": [
+    {
+      "contactId": "123",
+      "contactType": "Account"
+    }
+  ],
+  "name": "trading name",
+  "website": "https://example.com"
+}
+###
+
+PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08
+Content-Type: application/json
+{
+  "name": "Description Updated 5",
+  "targetVersion": 7
+}
+###
+
+DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08/submit
+Content-Type: application/json
+{
+  "targetVersion": 3
+}
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08/touch
+###

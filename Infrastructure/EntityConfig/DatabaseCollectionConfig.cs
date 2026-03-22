@@ -61,6 +61,17 @@ namespace Infrastructure.EntityConfig
                 cm.AutoMap();
             });
 
+            BsonClassMap.RegisterClassMap<TradingLocation>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<ContactReference>(cm =>
+            {
+                cm.AutoMap();
+                cm.MapMember(a => a.ContactType).SetSerializer(new EnumSerializer<ContactType>(BsonType.String));
+            });
+
             BsonClassMap.RegisterClassMap<MessageEnvelop>(cm =>
             {
                 cm.AutoMap();
@@ -175,6 +186,22 @@ namespace Infrastructure.EntityConfig
                 }
             }
 
+            if (messageEnvelop.Name == EntityName.TradingLocation && messageEnvelop.Change == ChangeType.Update)
+            {
+                var receivedTradingLocation = receivedEntity as TradingLocation;
+                var storedTradingLocation = storedEntity as TradingLocation;
+
+                if (receivedTradingLocation.Name != null)
+                {
+                    storedTradingLocation.Name = receivedTradingLocation.Name;
+                }
+
+                if (receivedTradingLocation.Website != null)
+                {
+                    storedTradingLocation.Website = receivedTradingLocation.Website;
+                }
+            }
+
             BuildFilters(predicate, out FilterDefinitionBuilder<MessageEnvelop> filter, out List<FilterDefinition<MessageEnvelop>> filterDefs);
             var onUpdate = Builders<MessageEnvelop>.Update
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
@@ -182,7 +209,7 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.DraftVersion, latestDraftVersion)
             .Set(a => a.Draft, storedEntity);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(messageEnvelop.Name));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return new DbEexecutionParams
             {
@@ -286,7 +313,7 @@ namespace Infrastructure.EntityConfig
             .SetOnInsert(a => a.CreatedUser, messageEnvelop.CreatedUser)
             .SetOnInsert(a => a.EntityId, messageEnvelop.EntityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.GetCollectionName(messageEnvelop.Name));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return Task.FromResult(new DbEexecutionParams
             {

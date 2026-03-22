@@ -1,28 +1,10 @@
 ﻿using StateManagment.Entity;
 using StateManagment.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure
 {
     internal partial class EntityCollectionConfig
     {
-        public static string GetCollectionName(EntityName entityName)
-        {
-            return entityName switch
-            {
-                EntityName.Contact => "contacts",
-                EntityName.LegalEntity => "legal-entities",
-                EntityName.BillingGroup => "billing-groups",
-                EntityName.BankAccount => "bank-accounts",
-                EntityName.ProductAgreement => "product-agreements",
-                _ => "none",
-            };
-        }
-
         public static EntityMap Config<T>() where T : IEntity
         {
             if (typeof(T).IsAssignableFrom(typeof(Contact)))
@@ -48,6 +30,11 @@ namespace Infrastructure
             if (typeof(T).IsAssignableFrom(typeof(ProductAgreement)))
             {
                 return EntityMap.Create(EntityName.ProductAgreement, "product-agreements");
+            }
+
+            if (typeof(T).IsAssignableFrom(typeof(TradingLocation)))
+            {
+                return EntityMap.Create(EntityName.TradingLocation, "trading-locations");
             }
 
             return EntityMap.None;

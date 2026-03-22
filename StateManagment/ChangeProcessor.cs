@@ -67,6 +67,8 @@ namespace StateManagment
             {
                 var outcome = await changeHandler.TryMergeDraft<T>(envelop);
 
+                if (outcome != TaskOutcome.OK) { return outcome; }
+
                 if (envelop.IsSubmitted)
                 {
                     if (outcome == TaskOutcome.OK)
@@ -85,6 +87,8 @@ namespace StateManagment
                         return result;
                     }
                 }
+
+                return outcome;
             }
 
             return TaskOutcome.CHANGE_NOT_SUPPORTED;

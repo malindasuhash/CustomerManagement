@@ -96,7 +96,7 @@ namespace Api.Controllers
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
         public async Task<ActionResult<EntityDocumentModel>> UpdateProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId, [FromBody] ProductAgreementModel patch)
         {
-            var patchModel = ContactToPatch(patch, legalEntityId);
+            var patchModel = ProductAgreementToPatch(patch, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
@@ -108,14 +108,10 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync<ProductAgreement>(envelop);
-
-            var contactEntity = await customerDatabase.FindEntity<ProductAgreement>(envelop.SearchBy());
-
-            return Translate(contactEntity);
+            return await Process<ProductAgreement>(envelop);
         }
 
-        private static ProductAgreement ContactToPatch(ProductAgreementModel patchModel, string legalEntityId)
+        private static ProductAgreement ProductAgreementToPatch(ProductAgreementModel patchModel, string legalEntityId)
         {
             var productAgreement = new ProductAgreement
             {

@@ -7,7 +7,6 @@
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Adding some tests to controller to increase confidence.
 - Implementation of Trading Location API
 
 # PENDING
@@ -17,6 +16,7 @@
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Adding some tests to controller to increase confidence.
 - Refactored to use generics
 - Product agreement and APIs 
 - Added Bank account and APIs
