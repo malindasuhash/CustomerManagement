@@ -3,7 +3,7 @@
 # IDEAS
 - Submit all endpoint
 - Abort or reset endpoint
-- Get all changes endpoint (changed but not submitted)
+- Get all draft changes endpoint (changed but not submitted)
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV

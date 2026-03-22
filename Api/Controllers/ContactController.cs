@@ -26,7 +26,7 @@ namespace Api.Controllers
                 Change = ChangeType.Touch
             };
 
-           return await Process<Contact>(envelop);
+            return await Process<Contact>(envelop);
         }
 
         [HttpPost("{customerId}/contacts/{contactId}/submit")]
@@ -93,11 +93,7 @@ namespace Api.Controllers
                 DraftVersion = patch.TargetVersion
             };
 
-            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
-
-            var contactEntity = await customerDatabase.FindEntity<Contact>(envelop.SearchBy());
-
-            return Translate(contactEntity);
+            return await Process<Contact>(envelop);
         }
 
         private static Contact ContactToPatch(ContactModel patchModel)
