@@ -7,15 +7,15 @@
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Implementation of Trading Location API
+- Complete sample implementation of validation for Contact
 
 # PENDING
 - Concept of operation data store as an event stream storage.
-- Complete sample implementation of validation for Contact
 - Runtime to host Contact orchestration.
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Implemented Trading Location API
 - Adding some tests to controller to increase confidence.
 - Refactored to use generics
 - Product agreement and APIs 

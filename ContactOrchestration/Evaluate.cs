@@ -12,7 +12,7 @@ namespace ContactOrchestration
             this.sender = sender;
         }
 
-        public async Task Run(RuntimeInfo runtimeInfo)
+        public async Task Run(OrchestrationInfo runtimeInfo)
         {
             // Send EVALUATION_STARTED event
             await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, runtimeInfo.EntityId, runtimeInfo.CustomerId, runtimeInfo.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, null, null, runtimeInfo.LegalEntityId), runtimeInfo.CorellationId);

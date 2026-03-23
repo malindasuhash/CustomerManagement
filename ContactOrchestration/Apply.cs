@@ -16,7 +16,7 @@ namespace ContactOrchestration
             this.sender = sender;
         }
 
-        public async Task Run(RuntimeInfo runtimeInfo)
+        public async Task Run(OrchestrationInfo runtimeInfo)
         {
            // There is nothing to change
            await sender.SendAsync(OrchestrationEnvelop.Create(

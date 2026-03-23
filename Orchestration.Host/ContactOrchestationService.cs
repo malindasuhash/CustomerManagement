@@ -16,14 +16,15 @@ namespace Orchestration.Host
 
             var contactOrchestration = new ContactOrchestration.Evaluate(serviceBusQueue);
 
-            await contactOrchestration.Run(new ContactOrchestration.RuntimeInfo()
-            {
-                EntityId = "d9b15755-934b-4a57-a750-1359568e6a31",
-                CorellationId = Guid.NewGuid().ToString(),
-                AppliedVersion = 1,
-                SubmittedVersion = 1,
-                Submitted = new Contact() { FirstName = "9Malinda", LastName = "Suhash" }
-            });
+            //await contactOrchestration.Run(new ContactOrchestration.RuntimeInfo()
+            //{
+            //    EntityId = "d9b15755-934b-4a57-a750-1359568e6a31",
+            //    CorellationId = Guid.NewGuid().ToString(),
+            //    AppliedVersion = 1,
+            //    SubmittedVersion = 1,
+            //    Submitted = new Contact() { FirstName = "9Malinda", LastName = "Suhash" }
+            //});
+
         }
     }
 }

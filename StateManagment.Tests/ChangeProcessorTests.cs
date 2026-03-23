@@ -290,11 +290,12 @@ namespace StateManagment.Tests
             changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.VERSION_MISMATCH);
 
             // Act
-            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
+            var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
             await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
             await changeHandler.DidNotReceive().TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
+            result.Should().Be(TaskOutcome.VERSION_MISMATCH);
         }
 
         [Fact]
