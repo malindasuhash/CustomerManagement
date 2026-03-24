@@ -17,12 +17,13 @@ namespace ExternalAdapter.Services
             var submittedContact = orchestrationInfo.Submitted as Contact;
             var appliedContact = orchestrationInfo.Applied as Contact;
 
+            var caseSummaries = new List<CaseSummary>();
+
             if (appliedContact == null)
             {
-                yield return CaseSummary.ONBOARDING; // Handled during onboarding
+                caseSummaries.Add(CaseSummary.ONBOARDING);
+                return caseSummaries; // Handled during onboarding
             }
-
-            var caseSummaries = new List<CaseSummary>();
 
             // Merchant contact - Contact type = Account
             // Query1 /customers/{customer-id}/legal-entities?contact={contact-id}
@@ -36,11 +37,11 @@ namespace ExternalAdapter.Services
 
                     if (associatedContact != null)
                     {
-                        yield return new CaseSummary 
-                        { 
+                        caseSummaries.Add(new CaseSummary
+                        {
                             CaseType = CaseType.AmendContact,
-                            CaseNote = $"Maintenance for {submittedContact.FirstName} // {submittedContact.LastName}"
-                        };
+                            CaseNote = $"Maintenance change ==> {submittedContact.FirstName} // {submittedContact.LastName}"
+                        });
                     }
 
                 }
@@ -51,7 +52,7 @@ namespace ExternalAdapter.Services
             // Query trading locations and find difference
             // If differences are found, then its a Admend contact
 
-            yield return CaseSummary.NA;
+            return caseSummaries;
         }
     }
 
