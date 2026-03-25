@@ -7,7 +7,7 @@ namespace ExternalAdapter.Services
         protected IAsseement next;
         public List<CaseSummary> CaseSummaries { get; set; } = [];
 
-        public void Assess(IAsseement nextAssessement)
+        public CaseAssessment(IAsseement nextAssessement)
         {
             next = nextAssessement;
         }
