@@ -19,15 +19,18 @@ namespace ExternalAdapter.Tests.Services
 
         private readonly IQuery query;
         private readonly List<CaseSummary> caseSummaries;
-        private readonly MerchantContactUpdateAssessment merchantContactUpdateAssessment;
+        private readonly MerchantContactCaseAssessment merchantContactCaseAssessment;
+        private readonly IAsseement asseement;
+
         public MerchantContactUpdateAssessmentTests()
         {
             query = Substitute.For<IQuery>();
-            merchantContactUpdateAssessment = new MerchantContactUpdateAssessment(query, caseSummaries);
+            asseement = Substitute.For<IAsseement>();
+            merchantContactCaseAssessment = new MerchantContactCaseAssessment(query, asseement);
         }
 
         [Fact]
-        public void GetSummary_WhenContactHasChangedAndLinkedToAccount_ThenReturnsSummary()
+        public void Assess_WhenContactHasChangedAndLinkedToAccount_ThenReturnsSummary()
         {
             // Arrange
             var contactApplied = new Contact() { FirstName = "A", LastName = "B" };
@@ -64,27 +67,10 @@ namespace ExternalAdapter.Tests.Services
             query.GetLegalEntitiesByContactId(CustomerId, ContactId1).Returns(legalEntities);
 
             // Act
-            merchantContactUpdateAssessment.Assess(orchestrationInfo);
+            merchantContactCaseAssessment.Assess(orchestrationInfo);
 
             // Assert
-            caseSummaries.First().CaseType.Should().Be(CaseType.AmendContact);
-        }
-
-        [Fact]
-        public void GetSummary_WhenThereIsNoAppliedState_ThenMarksAsOnboarding()
-        {
-            // Arrange
-            var orchestrationInfo = new OrchestrationInfo()
-            {
-                Applied = null,
-                Submitted = new Contact()
-            };
-
-            // Act
-            merchantContactUpdateAssessment.Assess(orchestrationInfo);
-
-            // Assert
-            caseSummaries.First().Should().Be(CaseSummary.ONBOARDING);
+            merchantContactCaseAssessment.CaseSummaries.First().CaseType.Should().Be(CaseType.AmendContact);
         }
     }
 }

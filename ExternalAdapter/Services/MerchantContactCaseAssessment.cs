@@ -4,29 +4,23 @@ using StateManagment.Models;
 namespace ExternalAdapter.Services
 {
     /// <summary>
-    /// Determines whether contact that was changed is linked to Legal Entity business 
-    /// contact of type 'Account'.
+    /// Aim of this class is to determine whether AmendContact maintenance
+    /// can be created as a result of changes to Merchant account contact.
     /// </summary>
-    public class MerchantContactUpdateAssessment
+    public class MerchantContactCaseAssessment : CaseAssessment
     {
         private readonly IQuery query;
-        private readonly IList<CaseSummary> caseSummaries;
 
-        public MerchantContactUpdateAssessment(IQuery query, IList<CaseSummary> caseSummaries)
+        public MerchantContactCaseAssessment(IQuery query, IAsseement asseement)
         {
             this.query = query;
-            this.caseSummaries = caseSummaries;
+            this.next = asseement;
         }
 
-        public void Assess(OrchestrationInfo orchestrationInfo)
+        public override Task Assess(OrchestrationInfo orchestrationInfo)
         {
             var submittedContact = orchestrationInfo.Submitted as Contact;
-            var appliedContact = orchestrationInfo.Applied as Contact;
 
-            // If there are no changes then assessement stops.
-            if (submittedContact == appliedContact) return;
-
-            // Merchant contact - Contact type = Account
             // Query1 /customers/{customer-id}/legal-entities?contact={contact-id}
             var legalEntities = query.GetLegalEntitiesByContactId(orchestrationInfo.CustomerId, orchestrationInfo.EntityId);
             if (legalEntities.Any())
@@ -38,7 +32,7 @@ namespace ExternalAdapter.Services
 
                     if (associatedContact != null)
                     {
-                        caseSummaries.Add(new CaseSummary
+                        CaseSummaries.Add(new CaseSummary
                         {
                             CaseType = CaseType.AmendContact,
                             CaseNote = $"Maintenance change ==> {submittedContact.FirstName} // {submittedContact.LastName}"
@@ -52,13 +46,13 @@ namespace ExternalAdapter.Services
 
             // Query trading locations and find difference
             // If differences are found, then its a Admend contact
+            return next.Assess(orchestrationInfo);
         }
     }
 
     public enum CaseType
     {
         NA,
-        Onboarding,
         AmendContact
     }
 
