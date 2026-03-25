@@ -3,27 +3,28 @@ using StateManagment.Models;
 
 namespace ExternalAdapter.Services
 {
-    public class AmendContactAssessment
+    /// <summary>
+    /// Determines whether contact that was changed is linked to Legal Entity business 
+    /// contact of type 'Account'.
+    /// </summary>
+    public class MerchantContactUpdateAssessment
     {
         private readonly IQuery query;
+        private readonly IList<CaseSummary> caseSummaries;
 
-        public AmendContactAssessment(IQuery query)
+        public MerchantContactUpdateAssessment(IQuery query, IList<CaseSummary> caseSummaries)
         {
             this.query = query;
+            this.caseSummaries = caseSummaries;
         }
 
-        public IEnumerable<CaseSummary> GetSummaries(OrchestrationInfo orchestrationInfo)
+        public void Assess(OrchestrationInfo orchestrationInfo)
         {
             var submittedContact = orchestrationInfo.Submitted as Contact;
             var appliedContact = orchestrationInfo.Applied as Contact;
 
-            var caseSummaries = new List<CaseSummary>();
-
-            if (appliedContact == null)
-            {
-                caseSummaries.Add(CaseSummary.ONBOARDING);
-                return caseSummaries; // Handled during onboarding
-            }
+            // If there are no changes then assessement stops.
+            if (submittedContact == appliedContact) return;
 
             // Merchant contact - Contact type = Account
             // Query1 /customers/{customer-id}/legal-entities?contact={contact-id}
@@ -51,8 +52,6 @@ namespace ExternalAdapter.Services
 
             // Query trading locations and find difference
             // If differences are found, then its a Admend contact
-
-            return caseSummaries;
         }
     }
 

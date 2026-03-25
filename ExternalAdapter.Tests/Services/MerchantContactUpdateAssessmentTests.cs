@@ -11,18 +11,19 @@ using System.Threading.Tasks;
 
 namespace ExternalAdapter.Tests.Services
 {
-    public class AmendContactAssessmentTests
+    public class MerchantContactUpdateAssessmentTests
     {
         const string CustomerId = "CustomerId1";
         const string ContactId1 = "1";
         const string ContactId2 = "2";
 
         private readonly IQuery query;
-        private readonly AmendContactAssessment amendContactAssessment;
-        public AmendContactAssessmentTests()
+        private readonly List<CaseSummary> caseSummaries;
+        private readonly MerchantContactUpdateAssessment merchantContactUpdateAssessment;
+        public MerchantContactUpdateAssessmentTests()
         {
             query = Substitute.For<IQuery>();
-            amendContactAssessment = new AmendContactAssessment(query);
+            merchantContactUpdateAssessment = new MerchantContactUpdateAssessment(query, caseSummaries);
         }
 
         [Fact]
@@ -63,10 +64,10 @@ namespace ExternalAdapter.Tests.Services
             query.GetLegalEntitiesByContactId(CustomerId, ContactId1).Returns(legalEntities);
 
             // Act
-            var result = amendContactAssessment.GetSummaries(orchestrationInfo);
+            merchantContactUpdateAssessment.Assess(orchestrationInfo);
 
             // Assert
-            result.First().CaseType.Should().Be(CaseType.AmendContact);
+            caseSummaries.First().CaseType.Should().Be(CaseType.AmendContact);
         }
 
         [Fact]
@@ -80,10 +81,10 @@ namespace ExternalAdapter.Tests.Services
             };
 
             // Act
-            var result = amendContactAssessment.GetSummaries(orchestrationInfo);
+            merchantContactUpdateAssessment.Assess(orchestrationInfo);
 
             // Assert
-            result.First().Should().Be(CaseSummary.ONBOARDING);
+            caseSummaries.First().Should().Be(CaseSummary.ONBOARDING);
         }
     }
 }
