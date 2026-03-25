@@ -1,6 +1,6 @@
 ﻿using StateManagment.Models;
 
-namespace ExternalAdapter.Services
+namespace ExternalAdapter.Interfaces
 {
     public abstract class CaseAssessment
     {

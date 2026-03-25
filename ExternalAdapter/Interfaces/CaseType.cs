@@ -1,4 +1,4 @@
-﻿namespace ExternalAdapter.Services
+﻿namespace ExternalAdapter.Interfaces
 {
     public enum CaseType
     {

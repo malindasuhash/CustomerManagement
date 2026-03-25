@@ -1,7 +1,7 @@
 ﻿using StateManagment.Entity;
 using StateManagment.Models;
 
-namespace ExternalAdapter.Services
+namespace ExternalAdapter.Interfaces
 {
     public interface IQuery
     {

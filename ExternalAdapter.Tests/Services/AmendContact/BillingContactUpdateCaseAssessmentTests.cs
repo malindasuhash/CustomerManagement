@@ -1,25 +1,26 @@
-﻿using ExternalAdapter.Services;
+﻿using ExternalAdapter.Interfaces;
+using ExternalAdapter.Services.AmendContact;
 using FluentAssertions;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
 
-namespace ExternalAdapter.Tests.Services
+namespace ExternalAdapter.Tests.Services.AmendContact
 {
-    public class MerchantContactCaseAssessmentTests
+    public class BillingContactUpdateCaseAssessmentTests
     {
         const string CustomerId = "CustomerId1";
         const string ContactId1 = "1";
 
         private readonly IQuery query;
-        private readonly MerchantContactCaseAssessment merchantContactCaseAssessment;
+        private readonly BillingContactUpdateCaseAssessment billingContactUpdateCaseAssessment;
         private readonly IAsseement asseement;
 
-        public MerchantContactCaseAssessmentTests()
+        public BillingContactUpdateCaseAssessmentTests()
         {
             query = Substitute.For<IQuery>();
             asseement = Substitute.For<IAsseement>();
-            merchantContactCaseAssessment = new MerchantContactCaseAssessment(query, asseement);
+            billingContactUpdateCaseAssessment = new BillingContactUpdateCaseAssessment(query, asseement);
         }
 
         [Fact]
@@ -38,20 +39,21 @@ namespace ExternalAdapter.Tests.Services
             };
             var legalEntities = new List<MessageEnvelop>()
             {
-                new MessageEnvelop()
-                { CustomerId = CustomerId,
+                new()
+                { 
+                    CustomerId = CustomerId,
                     Applied = new LegalEntity()
                         {
                            BusinessContacts =
                            [
-                               new() { ContactType = ContactType.Account, ContactId = ContactId1 }
+                               new() { ContactType = ContactType.Financial, ContactId = ContactId1 }
                            ]
                         },
                     Submitted = new LegalEntity()
                         {
                            BusinessContacts =
                            [
-                               new() { ContactType = ContactType.Account, ContactId = ContactId1 }
+                               new() { ContactType = ContactType.Financial, ContactId = ContactId1 }
                            ]
                         }
                 }
@@ -60,11 +62,11 @@ namespace ExternalAdapter.Tests.Services
             query.GetLegalEntitiesByContactId(CustomerId, ContactId1).Returns(legalEntities);
 
             // Act
-            await merchantContactCaseAssessment.Assess(orchestrationInfo);
+            await billingContactUpdateCaseAssessment.Assess(orchestrationInfo);
 
             // Assert
-            merchantContactCaseAssessment.CaseSummaries.Count().Should().Be(1);
-            merchantContactCaseAssessment.CaseSummaries.First().CaseType.Should().Be(CaseType.AmendContact);
+            billingContactUpdateCaseAssessment.CaseSummaries.Count().Should().Be(1);
+            billingContactUpdateCaseAssessment.CaseSummaries.First().CaseType.Should().Be(CaseType.AmendContact);
             await asseement.Received(1).Assess(orchestrationInfo);
         }
     }

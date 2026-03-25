@@ -1,7 +1,8 @@
-﻿using StateManagment.Entity;
+﻿using ExternalAdapter.Interfaces;
+using StateManagment.Entity;
 using StateManagment.Models;
 
-namespace ExternalAdapter.Services
+namespace ExternalAdapter.Services.AmendContact
 {
     /// <summary>
     /// This class inspects changes to Billing contact and if a

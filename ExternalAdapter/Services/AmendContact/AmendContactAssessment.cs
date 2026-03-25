@@ -1,7 +1,8 @@
-﻿using StateManagment.Entity;
+﻿using ExternalAdapter.Interfaces;
+using StateManagment.Entity;
 using StateManagment.Models;
 
-namespace ExternalAdapter.Services
+namespace ExternalAdapter.Services.AmendContact
 {
     /// <summary>
     /// Helper class to capture common legal entity query capability
