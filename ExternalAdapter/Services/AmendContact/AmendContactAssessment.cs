@@ -1,4 +1,5 @@
-﻿using ExternalAdapter.Interfaces;
+﻿using ExternalAdapter.Extensions;
+using ExternalAdapter.Interfaces;
 using StateManagment.Entity;
 using StateManagment.Models;
 
@@ -21,17 +22,13 @@ namespace ExternalAdapter.Services.AmendContact
                 foreach (var entity in legalEntities)
                 {
                     var legalEntityInQuestion = (LegalEntity)entity.Submitted;
-                    var associatedContact = legalEntityInQuestion.BusinessContacts.FirstOrDefault(contact => contact.ContactId.Equals(orchestrationInfo.EntityId) && contact.ContactType == expectedContactType);
-
-                    if (associatedContact != null)
-                    {
-                        caseSummaries.Add(new CaseSummary
+                    legalEntityInQuestion?.BusinessContacts
+                        .Where(contact => contact.ContactId.Equals(orchestrationInfo.EntityId) && contact.ContactType == expectedContactType)
+                        .ForEach(i => caseSummaries.Add(new CaseSummary
                         {
                             CaseType = CaseType.AmendContact,
                             CaseNote = $"Maintenance change ==> {submittedContact.FirstName} // {submittedContact.LastName}"
-                        });
-                    }
-
+                        }));
                 }
             }
         }
