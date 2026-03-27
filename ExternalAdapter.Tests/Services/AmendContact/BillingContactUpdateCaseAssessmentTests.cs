@@ -14,12 +14,12 @@ namespace ExternalAdapter.Tests.Services.AmendContact
 
         private readonly IQuery query;
         private readonly BillingContactUpdateCaseAssessment billingContactUpdateCaseAssessment;
-        private readonly IAsseement asseement;
+        private readonly CaseAssessment asseement;
 
         public BillingContactUpdateCaseAssessmentTests()
         {
             query = Substitute.For<IQuery>();
-            asseement = Substitute.For<IAsseement>();
+            asseement = Substitute.For<CaseAssessment>();
             billingContactUpdateCaseAssessment = new BillingContactUpdateCaseAssessment(query, asseement);
         }
 

@@ -9,7 +9,7 @@ namespace ExternalAdapter.Services.AmendContact
     {
         private readonly IQuery query;
 
-        public TradingLocationContactUpdateCaseAssessement(IQuery query, IAsseement nextAssessement) : base(nextAssessement)
+        public TradingLocationContactUpdateCaseAssessement(IQuery query, CaseAssessment nextAssessement) : base(nextAssessement)
         {
             this.query = query;
         }

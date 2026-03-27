@@ -17,13 +17,13 @@ namespace ExternalAdapter.Tests.Services.AmendContact
 
 
         private readonly IQuery query;
-        private readonly IAsseement nextAssessement;
+        private readonly CaseAssessment nextAssessement;
         private readonly TradingLocationContactUpdateCaseAssessement tradingLocationContactUpdateCaseAssessement;
 
         public TradingLocationContactUpdateCaseAssessementTests()
         {
             query = Substitute.For<IQuery>();
-            nextAssessement = Substitute.For<IAsseement>();
+            nextAssessement = Substitute.For<CaseAssessment>();
             tradingLocationContactUpdateCaseAssessement = new TradingLocationContactUpdateCaseAssessement(query, nextAssessement);
         }
 

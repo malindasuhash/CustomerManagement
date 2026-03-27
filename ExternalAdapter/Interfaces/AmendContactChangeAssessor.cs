@@ -6,9 +6,9 @@ namespace ExternalAdapter.Interfaces
 
     public class AmendContactChangeAssessor
     {
-        private readonly IAsseement asseement;
+        private readonly CaseAssessment asseement;
 
-        public AmendContactChangeAssessor(IAsseement asseement)
+        public AmendContactChangeAssessor(CaseAssessment asseement)
         {
             this.asseement = asseement;
         }
@@ -30,6 +30,8 @@ namespace ExternalAdapter.Interfaces
                 && submittedContact.LastName.Equals(appliedContact.LastName)) return;
 
             await asseement.Assess(orchestrationInfo);
+
+            // Assessement is complete now, do next.
         }
     }
 }

@@ -13,7 +13,7 @@ namespace ExternalAdapter.Services.AmendContact
     {
         private readonly IQuery query;
 
-        public BillingContactUpdateCaseAssessment(IQuery query, IAsseement nextAssessment) : base(nextAssessment)
+        public BillingContactUpdateCaseAssessment(IQuery query, CaseAssessment nextAssessment) : base(nextAssessment)
         {
             this.query = query;
         }

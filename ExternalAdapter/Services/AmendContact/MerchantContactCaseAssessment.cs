@@ -12,7 +12,7 @@ namespace ExternalAdapter.Services.AmendContact
     {
         private readonly IQuery query;
 
-        public MerchantContactCaseAssessment(IQuery query, IAsseement nextAssessment) : base(nextAssessment) 
+        public MerchantContactCaseAssessment(IQuery query, CaseAssessment nextAssessment) : base(nextAssessment) 
         {
             this.query = query;
         }
@@ -20,8 +20,6 @@ namespace ExternalAdapter.Services.AmendContact
         public override Task Assess(OrchestrationInfo orchestrationInfo)
         {
             // Query1 /customers/{customer-id}/legal-entities?contact={contact-id}
-            var legalEntities = query.GetLegalEntitiesByContactId(orchestrationInfo.CustomerId, orchestrationInfo.EntityId);
-
             AmendContactAssessment.AssessByAccountType(query, orchestrationInfo, ContactType.Account, CaseSummaries);
             
             return next.Assess(orchestrationInfo);

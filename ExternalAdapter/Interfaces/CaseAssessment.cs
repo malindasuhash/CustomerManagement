@@ -1,13 +1,19 @@
-﻿using StateManagment.Models;
+﻿using ExternalAdapter.Services;
+using StateManagment.Models;
 
 namespace ExternalAdapter.Interfaces
 {
     public abstract class CaseAssessment
     {
-        protected IAsseement next;
+        protected CaseAssessment next;
         public List<CaseSummary> CaseSummaries { get; set; } = [];
 
-        public CaseAssessment(IAsseement nextAssessement)
+        protected CaseAssessment()
+        {
+            next = null;
+        }
+
+        public CaseAssessment(CaseAssessment nextAssessement)
         {
             next = nextAssessement;
         }
