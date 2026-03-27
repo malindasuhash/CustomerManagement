@@ -15,7 +15,7 @@ namespace StateManagment.Tests.Models
         public void State_WhenStateIsNotSet_ThenDefaultsToNew()
         {
             // Arrange
-            var envelop = new MessageEnvelop() { EntityId = "123" };
+            var envelop = new MessageEnvelop() { EntityId = "123", CustomerId = "888" };
 
             // Act
             var state = envelop.State;
@@ -28,7 +28,7 @@ namespace StateManagment.Tests.Models
         public void State_WhenStateIsSet_ThenReturnsSetValue()
         {
             // Arrange
-            var envelop = new MessageEnvelop() { EntityId = "123" };
+            var envelop = new MessageEnvelop() { EntityId = "123", CustomerId = "888" };
 
             // Act
             envelop.SetState(EntityState.EVALUATING);

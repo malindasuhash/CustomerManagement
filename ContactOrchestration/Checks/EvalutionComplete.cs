@@ -1,4 +1,6 @@
-﻿namespace ContactOrchestration.Checks
+﻿using StateManagment.Models;
+
+namespace ContactOrchestration.Checks
 {
     internal class EvalutionComplete : Check
     {
@@ -7,7 +9,7 @@
             
         }
 
-        public override Task RunCheckAsync(RuntimeInfo runtimeInfo)
+        public override Task RunCheckAsync(OrchestrationInfo runtimeInfo)
         {
             //NOP - This is the end of the chain, there is nothing to do here.
             return Task.CompletedTask; 

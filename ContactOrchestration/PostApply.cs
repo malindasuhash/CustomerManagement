@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StateManagment.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace ContactOrchestration
 {
     internal class PostApply
     {
-        public async Task Run(RuntimeInfo runtimeInfo)
+        public async Task Run(OrchestrationInfo runtimeInfo)
         {
             // Retrieve list of legal entities associated
             // with the contact and touch them.

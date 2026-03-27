@@ -2,7 +2,6 @@
 {
     public class BankAccountModel
     {
-        public string LegalEntityId { get; set; }
         public string BankAccountHolderNames { get; set; }
         public string AccountNumber { get; set; }
         public string BankCity { get; set; }

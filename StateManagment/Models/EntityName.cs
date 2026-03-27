@@ -6,7 +6,9 @@
         Contact,
         BankAccount,
         LegalEntity,
-        BillingGroup
+        BillingGroup,
+        ProductAgreement,
+        TradingLocation
     }
 
     public enum EntityState

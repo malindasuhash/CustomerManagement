@@ -3,7 +3,6 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
 using StateManagment.Models;
-using StateManagment.Services;
 
 namespace Api.Controllers
 {
@@ -12,11 +11,8 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class BankAccountController : EntityManagementController
     {
-        private readonly CustomerManagementService customerManager;
-
-        public BankAccountController(CustomerManagementService customerManager) : base(customerManager)
+        public BankAccountController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
         {
-            this.customerManager = customerManager;
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/touch")]
@@ -34,45 +30,88 @@ namespace Api.Controllers
                 }
             };
 
-            return await Touch(envelop);
+            return await Process<BankAccount>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/submit")]
         public async Task<ActionResult<EntityDocumentModel>> SubmitBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] SubmitEntityModel submitModel)
         {
-            return await Submit(EntityName.BankAccount, customerId, bankAccountId, submitModel);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.BankAccount,
+                CustomerId = customerId,
+                EntityId = bankAccountId,
+                IsSubmitted = true,
+                Draft = new BankAccount()
+                {
+                    LegalEntityId = legalEntityId
+                },
+                DraftVersion = submitModel.TargetVersion
+            };
+
+            return await Process<BankAccount>(envelop);
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
         public async Task<ActionResult<EntityDocumentModel>> RemoveBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            return await Remove(EntityName.BankAccount, customerId, bankAccountId);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Delete,
+                Name = EntityName.BankAccount,
+                CustomerId = customerId,
+                EntityId = bankAccountId,
+                Draft = new BankAccount()
+                {
+                    LegalEntityId = legalEntityId
+                },
+            };
+
+            return await Process<BankAccount>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts")]
         public async Task<ActionResult<EntityDocumentModel>> CreateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] BankAccount bankAccount)
         {
-            return await Create(EntityName.BankAccount, customerId, bankAccount);
+            bankAccount.LegalEntityId = legalEntityId; // Legal entity scoped.
+
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Create,
+                Name = EntityName.BankAccount,
+                Draft = bankAccount,
+                CustomerId = customerId
+            };
+
+            return await Process<BankAccount>(envelop);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
         public async Task<ActionResult<EntityDocumentModel>> GetBankAccountById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            return await GetById(EntityName.BankAccount, customerId, bankAccountId);
+            return await GetById<BankAccount>(LookupPredicate.Create(bankAccountId, customerId, legalEntityId));
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] BankAccountModel patch)
+        public async Task<ActionResult<EntityDocumentModel>> UpdateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] BankAccountModel patch)
         {
-            var patchModel = ContactToPatch(patch);
-            await customerManager.Patch(patchModel, EntityName.BankAccount, customerId, bankAccountId, patch.TargetVersion, false);
+            var patchModel = BankAccountToPatch(patch, legalEntityId);
 
-            var contactEntity = await customerManager.Get(EntityName.BankAccount, customerId, bankAccountId);
+            var envelop = new MessageEnvelop
+            {
+                EntityId = bankAccountId,
+                Change = ChangeType.Update,
+                Name = EntityName.BankAccount,
+                Draft = patchModel,
+                CustomerId = customerId,
+                DraftVersion = patch.TargetVersion
+            };
 
-            return Translate(contactEntity);
+            return await Process<BankAccount>(envelop);
         }
 
-        private static BankAccount ContactToPatch(BankAccountModel patchModel)
+        private static BankAccount BankAccountToPatch(BankAccountModel patchModel, string legalEntityId)
         {
             var bankAccount = new BankAccount
             {
@@ -85,7 +124,7 @@ namespace Api.Controllers
                 BankName = patchModel.BankName,
                 BillingDefault = patchModel.BillingDefault,
                 Iban = patchModel.Iban,
-                LegalEntityId = patchModel.LegalEntityId,
+                LegalEntityId = legalEntityId,
                 Swift = patchModel.Swift,
                 SortCode = patchModel.SortCode
             };

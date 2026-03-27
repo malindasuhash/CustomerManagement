@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using NSubstitute;
 using StateManagment;
+using StateManagment.Entity;
 using StateManagment.Models;
 
 namespace StateManagment.Tests
@@ -8,7 +9,7 @@ namespace StateManagment.Tests
     public class ChangeProcessorTests
     {
         [Fact]
-        public async Task ProcessChangeAsync_WhenTouched_ThenInitiatesStateManager()
+        public async Task Evaluate_WhenTouched_ThenInitiatesStateManager()
         {
             // Arrange
             var envelop = new MessageEnvelop
@@ -16,6 +17,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Touch,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
@@ -23,10 +25,10 @@ namespace StateManagment.Tests
             var changeProcessor = new ChangeProcessor(Substitute.For<IChangeHandler>(), stateManager);
 
             // Act
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
         [Fact]
@@ -38,6 +40,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Submit,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
@@ -45,10 +48,10 @@ namespace StateManagment.Tests
             var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryLockSubmitted(envelop);
+            await changeHandler.Received(1).TryLockSubmitted<Contact>(envelop);
         }
 
         [Fact]
@@ -60,15 +63,16 @@ namespace StateManagment.Tests
                 Change = ChangeType.Submit,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
             var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
-            var result = await changeProcessor.ProcessChangeAsync(envelop);
+            var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
             result.Should().Be(TaskOutcome.LOCK_UNAVAILABLE);
@@ -83,19 +87,20 @@ namespace StateManagment.Tests
                 Change = ChangeType.Submit,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
             var stateManager = Substitute.For<IStateManager>();
             var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.OK);
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
-            var result = await changeProcessor.ProcessChangeAsync(envelop);
+            var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await stateManager.Received(1).Initiate(EntityName.Contact, envelop.EntityId);
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
         [Fact]
@@ -107,6 +112,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Delete,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = false
             };
 
@@ -114,10 +120,10 @@ namespace StateManagment.Tests
             var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMarkForRemoval(envelop);
+            await changeHandler.Received(1).TryMarkForRemoval<Contact>(envelop);
         }
 
         [Fact]
@@ -129,6 +135,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Delete,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 IsSubmitted = true
             };
             var stateManager = Substitute.For<IStateManager>();
@@ -136,11 +143,11 @@ namespace StateManagment.Tests
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
-            var result = await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMarkForRemoval(envelop);
-            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
+            await changeHandler.Received(1).TryMarkForRemoval<Contact>(envelop);
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
         [Fact]
@@ -152,6 +159,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Create,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 1,
                 SubmittedVersion = 0,
                 IsSubmitted = false
@@ -161,10 +169,10 @@ namespace StateManagment.Tests
             var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert 
-            await changeHandler.Received(1).Draft(envelop);
+            await changeHandler.Received(1).Draft<Contact>(envelop);
         }
 
         [Fact]
@@ -176,6 +184,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Create,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 1,
                 SubmittedVersion = 5,
                 IsSubmitted = true
@@ -189,12 +198,12 @@ namespace StateManagment.Tests
             var change = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
-            await change.ProcessChangeAsync(envelop);
+            await change.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).Draft(envelop);
-            changeHandler.Received(1).Submitted(Arg.Any<MessageEnvelop>());
-            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
+            await changeHandler.Received(1).Draft<Contact>(envelop);
+            await changeHandler.Received(1).Submitted<Contact>(Arg.Any<MessageEnvelop>());
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
 
@@ -207,6 +216,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = false
@@ -215,15 +225,15 @@ namespace StateManagment.Tests
             var changeHandler = Substitute.For<IChangeHandler>();
             var stateManager = Substitute.For<IStateManager>();
 
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
 
             var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
 
             // Act
-            var result = await changeProcessor.ProcessChangeAsync(envelop);
+            var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
         }
 
         [Fact]
@@ -235,6 +245,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true
@@ -247,16 +258,16 @@ namespace StateManagment.Tests
 
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.OK);
 
             // Act
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(Arg.Any<MessageEnvelop>());
-            await changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>());
-            await stateManager.Received(1).Initiate(envelop.Name, envelop.EntityId);
+            await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
+            await stateManager.Received(1).Evaluate<Contact>(envelop);
         }
 
         [Fact]
@@ -268,6 +279,7 @@ namespace StateManagment.Tests
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true
@@ -275,14 +287,15 @@ namespace StateManagment.Tests
 
             var changeHandler = Substitute.For<IChangeHandler>();
             var changeProcessor = new ChangeProcessor(changeHandler, Substitute.For<IStateManager>());
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.VERSION_MISMATCH);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.VERSION_MISMATCH);
 
             // Act
-            await changeProcessor.ProcessChangeAsync(envelop);
+            var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(Arg.Any<MessageEnvelop>());
-            await changeHandler.DidNotReceive().TryLockSubmitted(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
+            await changeHandler.DidNotReceive().TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
+            result.Should().Be(TaskOutcome.VERSION_MISMATCH);
         }
 
         [Fact]
@@ -294,26 +307,27 @@ namespace StateManagment.Tests
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
-            var result = await changeProcessor.ProcessChangeAsync(envelop);
+            var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
-            await changeHandler.Received(1).TryMergeDraft(Arg.Any<MessageEnvelop>());
-            await changeHandler.Received(1).TryLockSubmitted(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryMergeDraft<Contact>(Arg.Any<MessageEnvelop>());
+            await changeHandler.Received(1).TryLockSubmitted<Contact>(Arg.Any<MessageEnvelop>());
             result.Successful.Should().BeFalse();
-            await stateManager.DidNotReceive().ProcessUpdateAsync(Arg.Any<OrchestrationEnvelop>());
+            await stateManager.DidNotReceive().ProcessUpdateAsync<Contact>(Arg.Any<OrchestrationEnvelop>());
         }
 
         [Fact]
@@ -325,20 +339,21 @@ namespace StateManagment.Tests
                 Change = ChangeType.None,
                 Name = EntityName.Contact,
                 EntityId = "123",
+                CustomerId = "888",
                 DraftVersion = 2,
                 SubmittedVersion = 1,
                 IsSubmitted = true
             };
 
             var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TryMergeDraft(envelop).Returns(TaskOutcome.OK);
-            changeHandler.TryLockSubmitted(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
+            changeHandler.TryMergeDraft<Contact>(envelop).Returns(TaskOutcome.OK);
+            changeHandler.TryLockSubmitted<Contact>(envelop).Returns(TaskOutcome.LOCK_UNAVAILABLE);
 
             var stateManager = Substitute.For<IStateManager>();
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
 
             // Act
-            var result = await changeProcessor.ProcessChangeAsync(envelop);
+            var result = await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             // Assert
             result.Successful.Should().BeFalse();

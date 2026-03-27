@@ -40,11 +40,11 @@ namespace Integration.Tests
                 CustomerId = "Cus123"
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             var entityId = envelop.EntityId;
 
-            var contactDocument = await database.GetEntityDocument(EntityName.Contact, entityId);
+            var contactDocument = await database.FindEntity<Contact>(envelop.SearchBy());
 
             Console.WriteLine($"-> Created - Contact: {contactDocument}"); Console.WriteLine();
 
@@ -63,9 +63,9 @@ namespace Integration.Tests
                 CustomerId = "Cus123"
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            contactDocument = await database.GetEntityDocument(EntityName.Contact, entityId);
+            contactDocument = await database.FindEntity<Contact>(envelop.SearchBy());
 
             Console.WriteLine($"-> Updated 1 - Contact: {contactDocument}"); Console.WriteLine();
 
@@ -84,9 +84,9 @@ namespace Integration.Tests
                 CustomerId = "Cus123"
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            contactDocument = await database.GetEntityDocument(EntityName.Contact, entityId);
+            contactDocument = await database.FindEntity<Contact>(envelop.SearchBy());
 
             Console.WriteLine($"-> Updated 2 - Contact: {contactDocument}"); Console.WriteLine();
 
@@ -105,7 +105,7 @@ namespace Integration.Tests
                 CustomerId = "Cus123"
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
             Console.WriteLine($"-> Updated 3 (after submitting) - Contact: {contactDocument}"); Console.WriteLine();
 

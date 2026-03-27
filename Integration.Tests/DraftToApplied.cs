@@ -27,6 +27,7 @@ namespace Integration.Tests
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
+            var customerId = "customer1";
 
             // Create new Contact
             var envelop = new MessageEnvelop
@@ -37,45 +38,47 @@ namespace Integration.Tests
                 Draft = new Contact { FirstName = "John", LastName = "Doe" },
                 CreatedUser = "Tester",
                 UpdateUser = "Malinda",
-                CustomerId = "Cus123"
+                CustomerId = customerId
             };
 
-            await changeProcessor.ProcessChangeAsync(envelop);
+            await changeProcessor.ProcessChangeAsync<Contact>(envelop);
 
-            var contactDocument = await database.GetEntityDocument(EntityName.Contact, envelop.EntityId);
+            var contactDocument = await database.FindEntity<Contact>(envelop.SearchBy());
 
             Console.WriteLine($"-> Before orchestration - Contact: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [], [])).Wait();
+            stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [], [])).Wait();
 
-            contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($" Contact: {contactDocument}"); Console.WriteLine();
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [new Feedback() { Type = FeedbackType.Warning, Key = "FINE", Value = "S" }], [])).Wait();
+            stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [new Feedback() { Type = FeedbackType.Warning, Key = "FINE", Value = "S" }], [])).Wait();
 
-            contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
 
             Console.WriteLine($"--> Sent CHANGE_APPLIED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync(StepToSend(contactDocument.EntityId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [], [new OrchestrationData() { Key = "AMAZING", Value = "WORLD"}])).Wait();
+            stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED, [], [new OrchestrationData() { Key = "AMAZING", Value = "WORLD"}])).Wait();
 
-            contactDocument = await database.GetEntityDocument(EntityName.Contact, contactDocument.EntityId);
+            contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();
 
             Console.ReadKey();
         }
 
-        private static OrchestrationEnvelop StepToSend(string entityId, int submittedVersion, RuntimeStatus runtimeStatus, Feedback[] feedbacks, OrchestrationData[] orchestrationData)
+        private static OrchestrationEnvelop StepToSend(string entityId, string customerId, int submittedVersion, RuntimeStatus runtimeStatus, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string? legalEntityId = null)
         {
             var step = new OrchestrationEnvelop
             {
                 EntityId = entityId,
+                CustomerId = customerId,
+                LegalEntityId = legalEntityId,
                 Name = EntityName.Contact,
                 SubmittedVersion = submittedVersion,
                 Status = runtimeStatus,

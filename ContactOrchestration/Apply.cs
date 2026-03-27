@@ -16,12 +16,13 @@ namespace ContactOrchestration
             this.sender = sender;
         }
 
-        public async Task Run(RuntimeInfo runtimeInfo)
+        public async Task Run(OrchestrationInfo runtimeInfo)
         {
            // There is nothing to change
            await sender.SendAsync(OrchestrationEnvelop.Create(
                EntityName.Contact,
                runtimeInfo.EntityId,
+               runtimeInfo.CustomerId,
                runtimeInfo.SubmittedVersion,
                RuntimeStatus.CHANGE_APPLIED
            ), runtimeInfo.CorellationId);

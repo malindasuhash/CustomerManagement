@@ -1,4 +1,5 @@
-﻿using StateManagment.Models;
+﻿using StateManagment.Entity;
+using StateManagment.Models;
 
 namespace StateManagment
 {
@@ -17,32 +18,32 @@ namespace StateManagment
         /// Processes the change based on the type of change and whether it is submitted or not.
         /// It handles the creation and updating of changes, as well as the submission process.
         /// </summary>
-        public async Task<TaskOutcome> ProcessChangeAsync(MessageEnvelop envelop)
+        public async Task<TaskOutcome> ProcessChangeAsync<T>(MessageEnvelop envelop) where T : IEntity
         {
             if (envelop.Change == ChangeType.Touch)
             {
-                return await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                return await stateManager.Evaluate<T>(envelop);
             }
 
             if (envelop.Change == ChangeType.Submit)
             {
-                var lockedResult = await changeHandler.TryLockSubmitted(envelop);
+                var lockedResult = await changeHandler.TryLockSubmitted<T>(envelop);
 
                 if (lockedResult != TaskOutcome.OK)
                 {
                     return lockedResult;
                 }
 
-                return await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                return await stateManager.Evaluate<T>(envelop);
             }
 
             if (envelop.Change == ChangeType.Delete)
             {
-                await changeHandler.TryMarkForRemoval(envelop);
+                await changeHandler.TryMarkForRemoval<T>(envelop);
 
                 if (envelop.IsSubmitted)
                 {
-                    return await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                    return await stateManager.Evaluate<T>(envelop);
                 }
 
                 return TaskOutcome.OK;
@@ -50,12 +51,12 @@ namespace StateManagment
 
             if (envelop.Change == ChangeType.Create)
             {
-                await changeHandler.Draft(envelop);
+                await changeHandler.Draft<T>(envelop);
 
                 if (envelop.IsSubmitted)
                 {
-                    await changeHandler.Submitted(envelop);
-                    var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                    await changeHandler.Submitted<T>(envelop);
+                    var result = await stateManager.Evaluate<T>(envelop);
                     return result;
                 }
 
@@ -64,7 +65,9 @@ namespace StateManagment
 
             if (envelop.Change == ChangeType.Update)
             {
-                var outcome = await changeHandler.TryMergeDraft(envelop);
+                var outcome = await changeHandler.TryMergeDraft<T>(envelop);
+
+                if (outcome != TaskOutcome.OK) { return outcome; }
 
                 if (envelop.IsSubmitted)
                 {
@@ -73,17 +76,19 @@ namespace StateManagment
                         // Consider what will happen if someone is taking a copy of submitted version
                         // whilst I am trying to update it. Should I ask for a lock at this point?
                         // If cannot take the lock, should I error out?
-                        var submitOutcome = await changeHandler.TryLockSubmitted(envelop);
+                        var submitOutcome = await changeHandler.TryLockSubmitted<T>(envelop);
                         if (submitOutcome != TaskOutcome.OK)
                         {
                             return submitOutcome;
                         }
 
-                        var result = await stateManager.Initiate(envelop.Name, envelop.EntityId);
+                        var result = await stateManager.Evaluate<T>(envelop);
 
                         return result;
                     }
                 }
+
+                return outcome;
             }
 
             return TaskOutcome.CHANGE_NOT_SUPPORTED;

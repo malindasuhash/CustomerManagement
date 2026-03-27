@@ -1,13 +1,9 @@
-﻿using MongoDB.Bson.Serialization;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using StateManagment.Entity;
 using StateManagment.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.EntityConfig
 {
@@ -45,12 +41,43 @@ namespace Infrastructure.EntityConfig
                 cm.AutoMap();
             });
 
+            BsonClassMap.RegisterClassMap<BankAccount>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<ProductAgreement>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<ProductConfiguration>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<ProductFeature>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<TradingLocation>(cm =>
+            {
+                cm.AutoMap();
+            });
+
+            BsonClassMap.RegisterClassMap<ContactReference>(cm =>
+            {
+                cm.AutoMap();
+                cm.MapMember(a => a.ContactType).SetSerializer(new EnumSerializer<ContactType>(BsonType.String));
+            });
+
             BsonClassMap.RegisterClassMap<MessageEnvelop>(cm =>
             {
                 cm.AutoMap();
                 cm.MapIdField(a => a.EntityId);
-                cm.MapMember(a => a.State).SetSerializer(new EnumSerializer<EntityState>(MongoDB.Bson.BsonType.String));
-                cm.MapMember(a => a.Name).SetDefaultValue(EntityName.Contact);
+                cm.MapMember(a => a.State).SetSerializer(new EnumSerializer<EntityState>(BsonType.String));
+                cm.MapMember(a => a.Name).SetDefaultValue(EntityName.None);
                 cm.MapMember(a => a.Change).SetDefaultValue(ChangeType.Read);
                 cm.UnmapMember(c => c.Change);
                 cm.UnmapMember(c => c.Name);
@@ -60,7 +87,7 @@ namespace Infrastructure.EntityConfig
             BsonClassMap.RegisterClassMap<Feedback>(cm =>
             {
                 cm.AutoMap();
-                cm.MapMember(a => a.Type).SetSerializer(new EnumSerializer<FeedbackType>(MongoDB.Bson.BsonType.String));
+                cm.MapMember(a => a.Type).SetSerializer(new EnumSerializer<FeedbackType>(BsonType.String));
             });
 
             BsonClassMap.RegisterClassMap<OrchestrationData>(cm =>
@@ -71,7 +98,8 @@ namespace Infrastructure.EntityConfig
 
         public static async Task<DbEexecutionParams> Patch<T>(MessageEnvelop messageEnvelop, int latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
         {
-            var stored = await GetById(messageEnvelop.EntityId, messageEnvelop.Name, db);
+            var predicate = messageEnvelop.SearchBy();
+            var stored = await FindBy<T>(predicate, db);
 
             var receivedEntity = (T)messageEnvelop.Draft;
             var storedEntity = (T)stored.Draft;
@@ -126,29 +154,77 @@ namespace Infrastructure.EntityConfig
                 }
             }
 
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, messageEnvelop.EntityId);
+            if (messageEnvelop.Name == EntityName.BankAccount && messageEnvelop.Change == ChangeType.Update)
+            {
+                var receivedBankAccount = receivedEntity as BankAccount;
+                var storedBankAccount = storedEntity as BankAccount;
+
+                if (receivedBankAccount.Name != null)
+                {
+                    storedBankAccount.Name = receivedBankAccount.Name;
+                }
+
+                if (receivedBankAccount.Iban != null)
+                {
+                    storedBankAccount.Iban = receivedBankAccount.Iban;
+                }
+            }
+
+            if (messageEnvelop.Name == EntityName.ProductAgreement && messageEnvelop.Change == ChangeType.Update)
+            {
+                var receivedProductAgreement = receivedEntity as ProductAgreement;
+                var storedProductAgreement = storedEntity as ProductAgreement;
+
+                if (receivedProductAgreement.DisplayName != null)
+                {
+                    storedProductAgreement.DisplayName = receivedProductAgreement.DisplayName;
+                }
+
+                if (receivedProductAgreement.RateCardId != null)
+                {
+                    storedProductAgreement.RateCardId = receivedProductAgreement.RateCardId;
+                }
+            }
+
+            if (messageEnvelop.Name == EntityName.TradingLocation && messageEnvelop.Change == ChangeType.Update)
+            {
+                var receivedTradingLocation = receivedEntity as TradingLocation;
+                var storedTradingLocation = storedEntity as TradingLocation;
+
+                if (receivedTradingLocation.Name != null)
+                {
+                    storedTradingLocation.Name = receivedTradingLocation.Name;
+                }
+
+                if (receivedTradingLocation.Website != null)
+                {
+                    storedTradingLocation.Website = receivedTradingLocation.Website;
+                }
+            }
+
+            BuildFilters(predicate, out FilterDefinitionBuilder<MessageEnvelop> filter, out List<FilterDefinition<MessageEnvelop>> filterDefs);
             var onUpdate = Builders<MessageEnvelop>.Update
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser)
             .Set(a => a.DraftVersion, latestDraftVersion)
             .Set(a => a.Draft, storedEntity);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(messageEnvelop.Name));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return new DbEexecutionParams
             {
                 Collection = contacts,
                 Definition = onUpdate,
-                Filter = filter
+                Filter = filter.And(filterDefs)
             };
         }
 
-        public static async Task<DbEexecutionParams> UpdateData(EntityName entityName, string entityId, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM")
+        public static async Task<DbEexecutionParams> UpdateData<T>(LookupPredicate predicate, EntityState entityState, IMongoDatabase db, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string updatedUser = "SYSTEM") where T : IEntity
         {
-            var contact = await GetById(entityId, entityName, db);
+            var contact = await FindBy<T>(predicate, db);
 
             // set properties
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            BuildFilters(predicate, out FilterDefinitionBuilder<MessageEnvelop> filter, out List<FilterDefinition<MessageEnvelop>> filterDefs);
             var onUpdate = Builders<MessageEnvelop>.Update
             .Set(a => a.State, entityState)
             .Set(b => b.Feedback, feedbacks)
@@ -156,70 +232,72 @@ namespace Infrastructure.EntityConfig
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return new DbEexecutionParams
             {
                 Collection = contacts,
                 Definition = onUpdate,
-                Filter = filter
+                Filter = filter.And(filterDefs)
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToSubmitted<T>(IEntity entity, string entityId, string updatedUser, EntityName entityName, IMongoDatabase db) where T : IEntity
+        public static async Task<DbEexecutionParams> AddToSubmitted<T>(LookupPredicate predicate, string updatedUser, IMongoDatabase db) where T : IEntity
         {
-            // Read the entity document - I need the latest document here.
-            var contact = await GetById(entityId, entityName, db);
+            var storedEntityDocument = await FindBy<T>(predicate, db);
 
-            // set properties
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            BuildFilters(predicate, out FilterDefinitionBuilder<MessageEnvelop> filter, out List<FilterDefinition<MessageEnvelop>> filterDefs);
+
             var onUpdate = Builders<MessageEnvelop>.Update
-            .Set(a => a.SubmittedVersion, contact.DraftVersion)
-            .Set(a => a.Submitted, (T)contact.Draft)
+            .Set(a => a.SubmittedVersion, storedEntityDocument.DraftVersion)
+            .Set(a => a.Submitted, (T)storedEntityDocument.Draft)
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return new DbEexecutionParams
             {
                 Collection = contacts,
                 Definition = onUpdate,
-                Filter = filter
+                Filter = filter.And(filterDefs)
             };
         }
 
-        public static async Task<DbEexecutionParams> AddToApplied(string entityId, IEntity entity, bool confirmRemoval, IMongoDatabase db, EntityName entityName, string updatedUser = "SYSTEM")
+        public static async Task<DbEexecutionParams> AddToApplied<T>(LookupPredicate predicate, bool confirmRemoval, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
         {
-            var contact = await GetById(entityId, entityName, db);
+            var contact = await FindBy<T>(predicate, db);
 
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            BuildFilters(predicate, out FilterDefinitionBuilder<MessageEnvelop> filter, out List<FilterDefinition<MessageEnvelop>> filterDefs);
 
             var onUpdate = Builders<MessageEnvelop>.Update;
             var definition = onUpdate.Set(a => a.AppliedVersion, contact.SubmittedVersion)
-            .Set(a => a.Applied, (Contact)entity)
+            .Set(a => a.Applied, (T)contact.Submitted)
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser)
             .Set(a => a.Removed, confirmRemoval);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return new DbEexecutionParams
             {
                 Collection = contacts,
                 Definition = definition,
-                Filter = filter
+                Filter = filter.And(filterDefs)
             };
         }
 
-        public static Task<DbEexecutionParams> AddToDraft<T>(MessageEnvelop messageEnvelop, int incrementalDraftVersion, string collectionName, IMongoDatabase db) where T : IEntity
+        public static Task<DbEexecutionParams> AddToDraft<T>(MessageEnvelop messageEnvelop, int incrementalDraftVersion, IMongoDatabase db) where T : IEntity
         {
             messageEnvelop.EntityId = Guid.NewGuid().ToString();
             messageEnvelop.DraftVersion = incrementalDraftVersion;
 
-            var filter = Builders<MessageEnvelop>.Filter.And(
+            var filter = Builders<MessageEnvelop>.Filter;
+            var filterDefs = new List<FilterDefinition<MessageEnvelop>>
+            {
                 Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, messageEnvelop.EntityId),
-                Builders<MessageEnvelop>.Filter.Eq(o => o.CustomerId, messageEnvelop.CustomerId));
+                Builders<MessageEnvelop>.Filter.Eq(o => o.CustomerId, messageEnvelop.CustomerId)
+            };
 
             var onInsert = Builders<MessageEnvelop>.Update
             .Set(a => a.DraftVersion, messageEnvelop.DraftVersion)
@@ -235,56 +313,72 @@ namespace Infrastructure.EntityConfig
             .SetOnInsert(a => a.CreatedUser, messageEnvelop.CreatedUser)
             .SetOnInsert(a => a.EntityId, messageEnvelop.EntityId);
 
-            var contacts = db.GetCollection<MessageEnvelop>(collectionName);
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return Task.FromResult(new DbEexecutionParams
             {
                 Collection = contacts,
                 Definition = onInsert,
-                Filter = filter
+                Filter = filter.And(filterDefs)
             });
         }
 
-        public static Task<DbEexecutionParams> SetMarkForRemoval(string entityId, EntityName entityName, IMongoDatabase db)
+        public static Task<DbEexecutionParams> SetMarkForRemoval<T>(LookupPredicate predicate, IMongoDatabase db) where T : IEntity
         {
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            BuildFilters(predicate, out FilterDefinitionBuilder<MessageEnvelop> filter, out List<FilterDefinition<MessageEnvelop>> filterDefs);
+
             var onInsert = Builders<MessageEnvelop>.Update
             .Set(a => a.RemoveRequested, true);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var contacts = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
             return Task.FromResult(new DbEexecutionParams
             {
                 Collection = contacts,
                 Definition = onInsert,
-                Filter = filter
+                Filter = filter.And(filterDefs)
             });
         }
 
-        public static Task<MessageEnvelop> GetById(string entityId, EntityName entityName, IMongoDatabase db)
+        public static Task<MessageEnvelop> FindBy<T>(LookupPredicate predicate, IMongoDatabase db) where T : IEntity
         {
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            BuildFilters(predicate, out FilterDefinitionBuilder<MessageEnvelop> filter, out List<FilterDefinition<MessageEnvelop>> filterDefs);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var entities = db.GetCollection<MessageEnvelop>(EntityCollectionConfig.Config<T>().Collection);
 
-            return contacts.Find(filter).FirstOrDefaultAsync();
+            return entities.Find(filter.And(filterDefs)).FirstOrDefaultAsync();
         }
 
-        public static Task<EntityBasics> GetEntityBasics(string entityId, EntityName entityName, IMongoDatabase db)
+        public static Task<EntityBasics> GetEntityBasics<T>(LookupPredicate predicate, IMongoDatabase db) where T : IEntity
         {
-            var filter = Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, entityId);
+            BuildFilters(predicate, out FilterDefinitionBuilder<MessageEnvelop> filter, out List<FilterDefinition<MessageEnvelop>> filterDefs);
 
-            var contacts = db.GetCollection<MessageEnvelop>(EntityNameToCollectionName.GetCollectionName(entityName));
+            var config = EntityCollectionConfig.Config<T>();
+            var contacts = db.GetCollection<MessageEnvelop>(config.Collection);
 
-            return contacts.Find(filter)
+            return contacts.Find(filter.And(filterDefs))
                 .Project(p => new EntityBasics
                 {
                     DraftVersion = p.DraftVersion,
-                    EntityId = entityId,
-                    Name = entityName,
+                    EntityId = predicate.EntityId,
+                    Name = config.Name,
                     State = p.State,
                     SubmittedVersion = p.SubmittedVersion,
                 }).FirstOrDefaultAsync();
+        }
+
+        private static void BuildFilters(LookupPredicate predicate, out FilterDefinitionBuilder<MessageEnvelop> filter, out List<FilterDefinition<MessageEnvelop>> filterDefs)
+        {
+            filter = Builders<MessageEnvelop>.Filter;
+            filterDefs =
+            [
+                Builders<MessageEnvelop>.Filter.Eq(o => o.EntityId, predicate.EntityId),
+                Builders<MessageEnvelop>.Filter.Eq(o => o.CustomerId, predicate.CustomerId)
+            ];
+            if (predicate.LegalEntityId != null)
+            {
+                filterDefs.Add(new BsonDocument("Draft.LegalEntityId", predicate.LegalEntityId));
+            }
         }
 
         public static void CreateDataChangedEvent(MessageEnvelop messageEnvelop)

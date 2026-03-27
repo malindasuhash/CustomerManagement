@@ -17,6 +17,6 @@ namespace ContactOrchestration.Checks
             this.nextCheck = nextCheck;
         }
 
-        public abstract Task RunCheckAsync(RuntimeInfo runtimeInfo);
+        public abstract Task RunCheckAsync(OrchestrationInfo runtimeInfo);
     }
 }

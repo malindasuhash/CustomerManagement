@@ -1,9 +1,11 @@
-﻿namespace StateManagment.Models
+﻿using StateManagment.Entity;
+
+namespace StateManagment.Models
 {
     public interface IStateManager
     {
-        Task<TaskOutcome> ProcessUpdateAsync(OrchestrationEnvelop orchestrationEnvelop);
+        Task<TaskOutcome> ProcessUpdateAsync<T>(OrchestrationEnvelop orchestrationEnvelop) where T : IEntity;
 
-        Task<TaskOutcome> Initiate(EntityName name, string entityId);
+        Task<TaskOutcome> Evaluate<T>(MessageEnvelop envelop) where T : IEntity;
     }
 }

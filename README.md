@@ -3,21 +3,23 @@
 # IDEAS
 - Submit all endpoint
 - Abort or reset endpoint
-- Get all changes endpoint (changed but not submitted)
+- Get all draft changes endpoint (changed but not submitted)
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Adding Bank account and APIs
+- Complete sample implementation of validation for Contact
 
 # PENDING
-
 - Concept of operation data store as an event stream storage.
-- Sample implementation of Legal Entity, Product and Trading Location
-- Complete sample implementation of validation for Contact
 - Runtime to host Contact orchestration.
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Implemented Trading Location API
+- Adding some tests to controller to increase confidence.
+- Refactored to use generics
+- Product agreement and APIs 
+- Added Bank account and APIs
 - Added billing group and APIs
 - Added Legal Entity and APIs
 - Soft deletes for entities.

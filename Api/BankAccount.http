@@ -1,45 +1,52 @@
 @Api_HostAddress = https://localhost:7296/api/v1
 
-GET  {{Api_HostAddress}}/customers/cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4
+GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24
 Accept: application/json
 
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/billing-groups
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts
 Content-Type: application/json
 {
-  "billingBankAccountId": "A1234",
-  "description": "Bank Description",
   "legalEntityId": "9938982",
-  "name": "Company billing",
-  "label": "Secondary billing account",
+  "bankAccountHolderNames": "Bank Account holder name 1",
+  "accountNumber": "9938982",
+  "bankCity": "Watford",
+  "bankCountry": "GB",
+  "bankName": "Lloyds",
+  "billingDefault": true,
+  "iban": "Iban 2",
+  "name": "Bank account name",
+  "sortCode": "Sort code 3",
+  "swift": "Swift 4",
+  "label": "Company main bank account",
   "descriptors": [
     {
-      "key": "SomeKey",
-      "value": "SomeValue"
+      "key": "SomeBankKey",
+      "value": "SomeBankValue"
     }
   ]
 }
 ###
 
-PATCH {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4
+PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24
 Content-Type: application/json
 {
-  "description": "Description Updated 4",
-  "name": "Name Updated 8",
+  "name": "Description Updated 4",
+  "iban": "LK",
+  "targetVersion": 4
+}
+###
+
+DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24
+###
+
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24/submit
+Content-Type: application/json
+{
   "targetVersion": 1
 }
 ###
 
-DELETE {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4
-###
-
-POST {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4/submit
-Content-Type: application/json
-{
-  "targetVersion": 2
-}
-###
-
-POST {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4/touch
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24/touch
 ###

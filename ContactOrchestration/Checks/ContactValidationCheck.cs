@@ -8,7 +8,7 @@ namespace ContactOrchestration.Checks
     {
         string pattern = @"^[a-zA-Z]+$";
 
-        public override Task RunCheckAsync(RuntimeInfo runtimeInfo)
+        public override Task RunCheckAsync(OrchestrationInfo runtimeInfo)
         {
             var contact = (Contact)runtimeInfo.Submitted;
 

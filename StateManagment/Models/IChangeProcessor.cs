@@ -1,7 +1,9 @@
-﻿namespace StateManagment.Models
+﻿using StateManagment.Entity;
+
+namespace StateManagment.Models
 {
     public interface IChangeProcessor
     {
-        Task<TaskOutcome> ProcessChangeAsync(MessageEnvelop envelop);
+        Task<TaskOutcome> ProcessChangeAsync<T>(MessageEnvelop envelop) where T : IEntity;
     }
 }

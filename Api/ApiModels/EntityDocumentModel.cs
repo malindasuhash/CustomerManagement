@@ -19,10 +19,10 @@ namespace Api.ApiModels
         public int AppliedVersion { get; set; }
 
         public string UpdateUser { get; set; }
-        public DateTime UpdateTimestamp { get; set; }
+        public DateTime? UpdateTimestamp { get; set; }
 
         public string CreatedUser { get; set; }
-        public DateTime CreatedTimestamp { get; set; }
+        public DateTime? CreatedTimestamp { get; set; }
 
         public Feedback[] Feedback { get; set; }
 

@@ -1,0 +1,6 @@
+@Contact.Orchestration.Svc_HostAddress = http://localhost:5230
+
+GET {{Contact.Orchestration.Svc_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

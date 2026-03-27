@@ -3,7 +3,6 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
 using StateManagment.Models;
-using StateManagment.Services;
 
 namespace Api.Controllers
 {
@@ -12,7 +11,7 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class LegalEntityController : EntityManagementController
     {
-        public LegalEntityController(CustomerManagementService customerManager) : base(customerManager)
+        public LegalEntityController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
         {
         }
 
@@ -31,7 +30,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Touch(envelop);
+            return await Process<LegalEntity>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/submit")]
@@ -41,7 +40,17 @@ namespace Api.Controllers
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
-            return await Submit(EntityName.LegalEntity, customerId, entityId, submitModel);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Submit,
+                Name = EntityName.LegalEntity,
+                CustomerId = customerId,
+                EntityId = entityId,
+                IsSubmitted = true,
+                DraftVersion = submitModel.TargetVersion
+            };
+
+            return await Process<LegalEntity>(envelop);
         }
 
         [HttpDelete("{customerId}/legal-entities/{entityId}")]
@@ -51,7 +60,15 @@ namespace Api.Controllers
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
-            return await Remove(EntityName.LegalEntity, customerId, entityId);
+            var envelop = new MessageEnvelop()
+            {
+                Change = ChangeType.Delete,
+                Name = EntityName.LegalEntity,
+                CustomerId = customerId,
+                EntityId = entityId
+            };
+
+            return await Process<LegalEntity>(envelop);
         }
 
         [HttpPost("{customerId}/legal-entities")]
@@ -61,7 +78,15 @@ namespace Api.Controllers
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
-            return await Create(EntityName.LegalEntity, customerId, legalEntity);
+            var envelop = new MessageEnvelop
+            {
+                Change = ChangeType.Create,
+                Name = EntityName.BankAccount,
+                Draft = legalEntity,
+                CustomerId = customerId
+            };
+
+            return await Process<LegalEntity>(envelop);
         }
 
         [HttpGet("{customerId}/legal-entities/{entityId}")]
@@ -70,26 +95,32 @@ namespace Api.Controllers
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
-            return await GetById(EntityName.LegalEntity, customerId, entityId);
+            return await GetById<LegalEntity>(LookupPredicate.Create(entityId, customerId));
         }
 
         [HttpPatch("{customerId}/legal-entities/{entityId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] LegalEntityModel patch)
+        public async Task<ActionResult<EntityDocumentModel>> UpdateLegalEntity([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] LegalEntityModel patch)
         {
             // LEGAL_ENTITY_UPDATE
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
-            var patchModel = ContactToPatch(patch);
+            var patchModel = LegalEntityToPatch(patch);
 
-            await customerManagement.Patch(patchModel, EntityName.LegalEntity, customerId, entityId, patch.TargetVersion, false);
+            var envelop = new MessageEnvelop
+            {
+                EntityId = entityId,
+                Change = ChangeType.Update,
+                Name = EntityName.LegalEntity,
+                Draft = patchModel,
+                CustomerId = customerId,
+                DraftVersion = patch.TargetVersion
+            };
 
-            var contactEntity = await customerManagement.Get(EntityName.LegalEntity, customerId, entityId);
-
-            return Translate(contactEntity);
+            return await Process<LegalEntity>(envelop);
         }
 
-        private LegalEntity ContactToPatch(LegalEntityModel patch)
+        private static LegalEntity LegalEntityToPatch(LegalEntityModel patch)
         {
             var legalEntity = new LegalEntity()
             {
