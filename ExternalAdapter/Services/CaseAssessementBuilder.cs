@@ -15,6 +15,7 @@ namespace ExternalAdapter.Services
 
         public void BuildAmendContactAssessment()
         {
+            // Amend Contact
             var endOfAssessement = new EndOfAssessement();
 
             var tradingLocationContactUpdate = new TradingLocationContactUpdateCaseAssessement(query, endOfAssessement);
@@ -23,5 +24,7 @@ namespace ExternalAdapter.Services
 
             amendContactChangeAssessor = new AmendContactChangeAssessor(billingContactUpdate);
         }
+
+        public AmendContactChangeAssessor GetAmendContactChangeAssessor() { return amendContactChangeAssessor; }
     }
 }
