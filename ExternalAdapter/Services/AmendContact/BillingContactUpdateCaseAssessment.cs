@@ -1,4 +1,5 @@
-﻿using ExternalAdapter.Interfaces;
+﻿using ExternalAdapter.Extensions;
+using ExternalAdapter.Interfaces;
 using StateManagment.Entity;
 using StateManagment.Models;
 
@@ -18,12 +19,39 @@ namespace ExternalAdapter.Services.AmendContact
             this.query = query;
         }
 
-        public override Task Assess(OrchestrationInfo orchestrationInfo)
+        public override Task Assess(OrchestrationInfo runtimeInfo)
         {
             // Query2 /customers/{customer-id}/legal-entities/{legal-entity-id}/trading-locations?contact={contact-id}
-            AmendContactAssessment.AssessByAccountType(query, orchestrationInfo, ContactType.Financial, CaseSummaries);
+            var submittedContact = runtimeInfo.Submitted as Contact;
 
-            return next.Assess(orchestrationInfo);
+            var legalEntities = query.GetLegalEntitiesByContactId(runtimeInfo.CustomerId, runtimeInfo.EntityId);
+            
+            if (legalEntities.Any())
+            {
+                foreach (var entity in legalEntities)
+                {
+                    var legalEntityInQuestion = (LegalEntity)entity.Submitted;
+                    legalEntityInQuestion?.BusinessContacts
+                        .Where(contact => contact.ContactId.Equals(runtimeInfo.EntityId) && contact.ContactType == ContactType.Account)
+                        .ForEach(i => Case.Add(new ManagementCase
+                        {
+                            Origin = runtimeInfo.Origin,
+                            CaseType = CaseType.AmendContact,
+                            Status = CaseStatus.Pending,
+                            Identifiers = new Dictionary<string, string>
+                            {
+                                { "CustomerId", runtimeInfo.CustomerId },
+                                { "ContactId", runtimeInfo.EntityId }
+                            },
+                            EntitiesToReevaluate = [EntityName.Contact],
+                            Before = runtimeInfo.Applied,
+                            After = runtimeInfo.Submitted,
+                            Checksum = CryptographyExtensions.GenerateContactChecksum(submittedContact)
+                        }));
+                }
+            }
+
+            return next.Assess(runtimeInfo);
         }
     }
 }

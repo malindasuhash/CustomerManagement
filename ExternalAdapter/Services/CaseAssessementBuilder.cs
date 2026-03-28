@@ -13,7 +13,7 @@ namespace ExternalAdapter.Services
             this.query = query;
         }
 
-        public void BuildAmendContactAssessment()
+        public void Build()
         {
             // Amend Contact
             var endOfAssessement = new EndOfAssessement();
@@ -25,6 +25,6 @@ namespace ExternalAdapter.Services
             amendContactChangeAssessor = new AmendContactChangeAssessor(billingContactUpdate);
         }
 
-        public AmendContactChangeAssessor GetAmendContactChangeAssessor() { return amendContactChangeAssessor; }
+        public AmendContactChangeAssessor Get() { return amendContactChangeAssessor; }
     }
 }

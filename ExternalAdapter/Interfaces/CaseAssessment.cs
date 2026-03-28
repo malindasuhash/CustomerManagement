@@ -1,4 +1,5 @@
 ﻿using ExternalAdapter.Services;
+using ExternalAdapter.Services.AmendContact;
 using StateManagment.Models;
 
 namespace ExternalAdapter.Interfaces
@@ -6,7 +7,7 @@ namespace ExternalAdapter.Interfaces
     public abstract class CaseAssessment
     {
         protected CaseAssessment next;
-        public List<CaseSummary> CaseSummaries { get; set; } = [];
+        public List<ManagementCase> Case { get; set; } = [];
 
         protected CaseAssessment()
         {

@@ -1,4 +1,5 @@
-﻿using ExternalAdapter.Interfaces;
+﻿using ExternalAdapter.Extensions;
+using ExternalAdapter.Interfaces;
 using StateManagment.Entity;
 using StateManagment.Models;
 
@@ -12,7 +13,7 @@ namespace ExternalAdapter.Services.AmendContact
     {
         private readonly IQuery query;
 
-        public MerchantContactCaseAssessment(IQuery query, CaseAssessment nextAssessment) : base(nextAssessment) 
+        public MerchantContactCaseAssessment(IQuery query, CaseAssessment nextAssessment) : base(nextAssessment)
         {
             this.query = query;
         }
@@ -20,8 +21,25 @@ namespace ExternalAdapter.Services.AmendContact
         public override Task Assess(OrchestrationInfo orchestrationInfo)
         {
             // Query1 /customers/{customer-id}/legal-entities?contact={contact-id}
-            AmendContactAssessment.AssessByAccountType(query, orchestrationInfo, ContactType.Account, CaseSummaries);
-            
+            var submittedContact = orchestrationInfo.Submitted as Contact;
+
+            var legalEntities = query.GetLegalEntitiesByContactId(orchestrationInfo.CustomerId, orchestrationInfo.EntityId);
+
+            if (legalEntities.Any())
+            {
+                foreach (var entity in legalEntities)
+                {
+                    var legalEntityInQuestion = (LegalEntity)entity.Submitted;
+                    legalEntityInQuestion?.BusinessContacts
+                        .Where(contact => contact.ContactId.Equals(orchestrationInfo.EntityId) && contact.ContactType == ContactType.Account)
+                        .ForEach(i => Case.Add(new ManagementCase
+                        {
+                            CaseType = CaseType.AmendContact,
+                            Checksum = $"Maintenance change ==> {submittedContact?.FirstName} // {submittedContact?.LastName}"
+                        }));
+                }
+            }
+
             return next.Assess(orchestrationInfo);
         }
     }

@@ -64,8 +64,8 @@ namespace ExternalAdapter.Tests.Services.AmendContact
             await merchantContactCaseAssessment.Assess(orchestrationInfo);
 
             // Assert
-            merchantContactCaseAssessment.CaseSummaries.Count().Should().Be(1);
-            merchantContactCaseAssessment.CaseSummaries.First().CaseType.Should().Be(CaseType.AmendContact);
+            merchantContactCaseAssessment.Case.Count().Should().Be(1);
+            merchantContactCaseAssessment.Case.First().CaseType.Should().Be(CaseType.AmendContact);
             await asseement.Received(1).Assess(orchestrationInfo);
         }
     }

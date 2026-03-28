@@ -16,12 +16,12 @@ namespace ExternalAdapter.Controllers
             this.caseAssessementBuilder = caseAssessementBuilder;
         }
 
-        [HttpPost("/inspect")]
+        [HttpPost("/inspectAndQueue")]
         public async Task<bool> ActionableChangeDetected(OrchestrationInfo orchestrationInfo)
         {
-            caseAssessementBuilder.BuildAmendContactAssessment();
+            caseAssessementBuilder.Build();
             
-            var assessor = caseAssessementBuilder.GetAmendContactChangeAssessor();
+            var assessor = caseAssessementBuilder.Get();
 
             var result = await assessor.Run(orchestrationInfo);
 

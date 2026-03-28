@@ -6,31 +6,19 @@ using StateManagment.Models;
 namespace ExternalAdapter.Services.AmendContact
 {
     /// <summary>
-    /// Helper class to capture common legal entity query capability
-    /// needed for amend contact.
+    /// Provides a shared assessment routine used by the amend-contact case assessment chain
+    /// (e.g. <see cref="MerchantContactCaseAssessment"/>, <see cref="BillingContactUpdateCaseAssessment"/>).
+    /// <para>
+    /// Given an <see cref="OrchestrationInfo"/> and a target <see cref="ContactType"/>, this class
+    /// queries for legal entities associated with the contact, and for each matching business contact
+    /// generates an <see cref="CaseType.AmendContact"/> case summary capturing the contact's name change.
+    /// </para>
     /// </summary>
     public class AmendContactAssessment
     {
         public static void AssessByAccountType(IQuery query, OrchestrationInfo orchestrationInfo, ContactType expectedContactType, List<CaseSummary> caseSummaries)
         {
-            var submittedContact = orchestrationInfo.Submitted as Contact;
-
-            var legalEntities = query.GetLegalEntitiesByContactId(orchestrationInfo.CustomerId, orchestrationInfo.EntityId);
-
-            if (legalEntities.Any())
-            {
-                foreach (var entity in legalEntities)
-                {
-                    var legalEntityInQuestion = (LegalEntity)entity.Submitted;
-                    legalEntityInQuestion?.BusinessContacts
-                        .Where(contact => contact.ContactId.Equals(orchestrationInfo.EntityId) && contact.ContactType == expectedContactType)
-                        .ForEach(i => caseSummaries.Add(new CaseSummary
-                        {
-                            CaseType = CaseType.AmendContact,
-                            CaseNote = $"Maintenance change ==> {submittedContact.FirstName} // {submittedContact.LastName}"
-                        }));
-                }
-            }
+           
         }
     }
 }

@@ -8,6 +8,7 @@ namespace StateManagment.Models
     /// </summary>
     public class OrchestrationInfo
     {
+        public string Origin { get; set; }
         public string CorellationId { get; set; } = Guid.NewGuid().ToString();
         public string EntityId { get; set; }
         public string CustomerId { get; set; }

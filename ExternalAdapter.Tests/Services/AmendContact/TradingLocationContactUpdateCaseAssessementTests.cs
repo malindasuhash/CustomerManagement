@@ -66,8 +66,8 @@ namespace ExternalAdapter.Tests.Services.AmendContact
             await tradingLocationContactUpdateCaseAssessement.Assess(orchestrationInfo);
 
             // Assert
-            tradingLocationContactUpdateCaseAssessement.CaseSummaries.Count.Should().Be(1);
-            tradingLocationContactUpdateCaseAssessement.CaseSummaries[0].CaseType.Should().Be(CaseType.AmendContact);
+            tradingLocationContactUpdateCaseAssessement.Case.Count.Should().Be(1);
+            tradingLocationContactUpdateCaseAssessement.Case[0].CaseType.Should().Be(CaseType.AmendContact);
             await nextAssessement.Received(1).Assess(orchestrationInfo);
         }
     }
