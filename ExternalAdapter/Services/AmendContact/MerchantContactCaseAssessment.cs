@@ -34,8 +34,18 @@ namespace ExternalAdapter.Services.AmendContact
                         .Where(contact => contact.ContactId.Equals(orchestrationInfo.EntityId) && contact.ContactType == ContactType.Account)
                         .ForEach(i => Case.Add(new ManagementCase
                         {
-                            CaseType = CaseType.AmendContact,
-                            Checksum = $"Maintenance change ==> {submittedContact?.FirstName} // {submittedContact?.LastName}"
+                            Origin = orchestrationInfo.Origin,
+                            CaseType = CaseType.AmendContactMerchant,
+                            Status = CaseStatus.Candidate,
+                            Identifiers = new Dictionary<string, string>
+                            {
+                                { "CustomerId", orchestrationInfo.CustomerId },
+                                { "ContactId", orchestrationInfo.EntityId }
+                            },
+                            EntitiesToReevaluate = [EntityName.Contact],
+                            Before = orchestrationInfo.Applied,
+                            After = orchestrationInfo.Submitted,
+                            Checksum = CryptographyExtensions.GenerateContactChecksum(submittedContact)
                         }));
                 }
             }

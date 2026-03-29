@@ -36,8 +36,8 @@ namespace ExternalAdapter.Services.AmendContact
                     .ForEach(i => Case.Add(new ManagementCase()
                     {
                         Origin = runtimeInfo.Origin,
-                        CaseType = CaseType.AmendContact,
-                        Status = CaseStatus.Pending,
+                        CaseType = CaseType.AmendContactTradingLocation,
+                        Status = CaseStatus.Candidate,
                         Identifiers = new Dictionary<string, string>
                             {
                                 { "CustomerId", runtimeInfo.CustomerId },
@@ -58,6 +58,7 @@ namespace ExternalAdapter.Services.AmendContact
 
     public enum CaseStatus  
     {
+        Candidate,
         Pending,
         Open,
         RequireDocuments,

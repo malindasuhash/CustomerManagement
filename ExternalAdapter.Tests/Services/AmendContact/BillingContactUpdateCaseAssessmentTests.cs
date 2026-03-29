@@ -38,26 +38,26 @@ namespace ExternalAdapter.Tests.Services.AmendContact
                 Submitted = contactSubmitted
             };
             var legalEntities = new List<MessageEnvelop>()
-            {
-                new()
-                { 
-                    CustomerId = CustomerId,
-                    Applied = new LegalEntity()
-                        {
-                           BusinessContacts =
-                           [
-                               new() { ContactType = ContactType.Financial, ContactId = ContactId1 }
-                           ]
-                        },
-                    Submitted = new LegalEntity()
-                        {
-                           BusinessContacts =
-                           [
-                               new() { ContactType = ContactType.Financial, ContactId = ContactId1 }
-                           ]
-                        }
-                }
-            };
+                {
+                    new()
+                    {
+                        CustomerId = CustomerId,
+                        Applied = new LegalEntity()
+                            {
+                               BusinessContacts =
+                               [
+                                   new() { ContactType = ContactType.Account, ContactId = ContactId1 }
+                               ]
+                            },
+                        Submitted = new LegalEntity()
+                            {
+                               BusinessContacts =
+                               [
+                                   new() { ContactType = ContactType.Account, ContactId = ContactId1 }
+                               ]
+                            }
+                    }
+                };
 
             query.GetLegalEntitiesByContactId(CustomerId, ContactId1).Returns(legalEntities);
 
@@ -66,7 +66,152 @@ namespace ExternalAdapter.Tests.Services.AmendContact
 
             // Assert
             billingContactUpdateCaseAssessment.Case.Count().Should().Be(1);
-            billingContactUpdateCaseAssessment.Case.First().CaseType.Should().Be(CaseType.AmendContact);
+            billingContactUpdateCaseAssessment.Case.First().CaseType.Should().Be(CaseType.AmendContactBilling);
+            billingContactUpdateCaseAssessment.Case.First().Status.Should().Be(CaseStatus.Candidate);
+            billingContactUpdateCaseAssessment.Case.First().Identifiers["CustomerId"].Should().Be(CustomerId);
+            billingContactUpdateCaseAssessment.Case.First().Identifiers["ContactId"].Should().Be(ContactId1);
+            await asseement.Received(1).Assess(orchestrationInfo);
+        }
+
+        [Fact]
+        public async Task Assess_WhenNoLegalEntitiesFound_ThenNoCaseAddedAndNextAssessmentInvoked()
+        {
+            // Arrange
+            var contactApplied = new Contact() { FirstName = "A", LastName = "B" };
+            var contactSubmitted = new Contact() { FirstName = "P", LastName = "Q" };
+
+            var orchestrationInfo = new OrchestrationInfo()
+            {
+                CustomerId = CustomerId,
+                EntityId = ContactId1,
+                Applied = contactApplied,
+                Submitted = contactSubmitted
+            };
+
+            query.GetLegalEntitiesByContactId(CustomerId, ContactId1).Returns(new List<MessageEnvelop>());
+
+            // Act
+            await billingContactUpdateCaseAssessment.Assess(orchestrationInfo);
+
+            // Assert
+            billingContactUpdateCaseAssessment.Case.Should().BeEmpty();
+            await asseement.Received(1).Assess(orchestrationInfo);
+        }
+
+        [Fact]
+        public async Task Assess_WhenContactLinkedWithNonAccountType_ThenNoCaseAddedAndNextAssessmentInvoked()
+        {
+            // Arrange
+            var contactApplied = new Contact() { FirstName = "A", LastName = "B" };
+            var contactSubmitted = new Contact() { FirstName = "P", LastName = "Q" };
+
+            var orchestrationInfo = new OrchestrationInfo()
+            {
+                CustomerId = CustomerId,
+                EntityId = ContactId1,
+                Applied = contactApplied,
+                Submitted = contactSubmitted
+            };
+            var legalEntities = new List<MessageEnvelop>()
+                {
+                    new()
+                    {
+                        CustomerId = CustomerId,
+                        Applied = new LegalEntity()
+                        {
+                            BusinessContacts =
+                            [
+                                new() { ContactType = ContactType.Financial, ContactId = ContactId1 }
+                            ]
+                        },
+                        Submitted = new LegalEntity()
+                        {
+                            BusinessContacts =
+                            [
+                                new() { ContactType = ContactType.Financial, ContactId = ContactId1 }
+                            ]
+                        }
+                    }
+                };
+
+            query.GetLegalEntitiesByContactId(CustomerId, ContactId1).Returns(legalEntities);
+
+            // Act
+            await billingContactUpdateCaseAssessment.Assess(orchestrationInfo);
+
+            // Assert
+            billingContactUpdateCaseAssessment.Case.Should().BeEmpty();
+            await asseement.Received(1).Assess(orchestrationInfo);
+        }
+
+        [Fact]
+        public async Task Assess_WhenContactLinkedToMultipleLegalEntitiesWithAccountType_ThenMultipleCasesAdded()
+        {
+            // Arrange
+            var contactApplied = new Contact() { FirstName = "A", LastName = "B" };
+            var contactSubmitted = new Contact() { FirstName = "P", LastName = "Q" };
+
+            var orchestrationInfo = new OrchestrationInfo()
+            {
+                CustomerId = CustomerId,
+                EntityId = ContactId1,
+                Applied = contactApplied,
+                Submitted = contactSubmitted
+            };
+            var legalEntities = new List<MessageEnvelop>()
+                {
+                    new()
+                    {
+                        CustomerId = CustomerId,
+                        Applied = new LegalEntity()
+                        {
+                            BusinessContacts =
+                            [
+                                new() { ContactType = ContactType.Account, ContactId = ContactId1 }
+                            ]
+                        },
+                        Submitted = new LegalEntity()
+                        {
+                            BusinessContacts =
+                            [
+                                new() { ContactType = ContactType.Account, ContactId = ContactId1 }
+                            ]
+                        }
+                    },
+                    new()
+                    {
+                        CustomerId = CustomerId,
+                        Applied = new LegalEntity()
+                        {
+                            BusinessContacts =
+                            [
+                                new() { ContactType = ContactType.Account, ContactId = ContactId1 }
+                            ]
+                        },
+                        Submitted = new LegalEntity()
+                        {
+                            BusinessContacts =
+                            [
+                                new() { ContactType = ContactType.Account, ContactId = ContactId1 }
+                            ]
+                        }
+                    }
+                };
+
+            query.GetLegalEntitiesByContactId(CustomerId, ContactId1).Returns(legalEntities);
+
+            // Act
+            await billingContactUpdateCaseAssessment.Assess(orchestrationInfo);
+
+            // Assert
+            billingContactUpdateCaseAssessment.Case.Count().Should().Be(2);
+            billingContactUpdateCaseAssessment.Case.Should().AllSatisfy(c =>
+            {
+                c.CaseType.Should().Be(CaseType.AmendContactBilling);
+                c.Status.Should().Be(CaseStatus.Candidate);
+                c.Identifiers["CustomerId"].Should().Be(CustomerId);
+                c.Identifiers["ContactId"].Should().Be(ContactId1);
+            });
             await asseement.Received(1).Assess(orchestrationInfo);
         }
     }

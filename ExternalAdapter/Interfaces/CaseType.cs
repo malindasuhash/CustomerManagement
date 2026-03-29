@@ -3,6 +3,9 @@
     public enum CaseType
     {
         NA,
-        AmendContact
+        AmendContact,
+        AmendContactTradingLocation,
+        AmendContactBilling,
+        AmendContactMerchant
     }
 }
