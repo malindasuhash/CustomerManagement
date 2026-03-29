@@ -11,9 +11,9 @@ namespace ExternalAdapter.Services.AmendContact
     /// </summary>
     public class MerchantContactCaseAssessment : CaseAssessment
     {
-        private readonly IQuery query;
+        private readonly IQueryApi query;
 
-        public MerchantContactCaseAssessment(IQuery query, CaseAssessment nextAssessment) : base(nextAssessment)
+        public MerchantContactCaseAssessment(IQueryApi query, CaseAssessment nextAssessment) : base(nextAssessment)
         {
             this.query = query;
         }

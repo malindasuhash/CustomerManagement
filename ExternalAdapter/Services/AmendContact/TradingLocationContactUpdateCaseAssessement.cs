@@ -14,9 +14,9 @@ namespace ExternalAdapter.Services.AmendContact
     /// assessment chain, where each assessment may process or delegate further as needed.</remarks>
     public class TradingLocationContactUpdateCaseAssessement : CaseAssessment
     {
-        private readonly IQuery query;
+        private readonly IQueryApi query;
 
-        public TradingLocationContactUpdateCaseAssessement(IQuery query, CaseAssessment nextAssessement) : base(nextAssessement)
+        public TradingLocationContactUpdateCaseAssessement(IQueryApi query, CaseAssessment nextAssessement) : base(nextAssessement)
         {
             this.query = query;
         }

@@ -12,9 +12,9 @@ namespace ExternalAdapter.Services.AmendContact
     /// </summary>
     public class BillingContactUpdateCaseAssessment : CaseAssessment
     {
-        private readonly IQuery query;
+        private readonly IQueryApi query;
 
-        public BillingContactUpdateCaseAssessment(IQuery query, CaseAssessment nextAssessment) : base(nextAssessment)
+        public BillingContactUpdateCaseAssessment(IQueryApi query, CaseAssessment nextAssessment) : base(nextAssessment)
         {
             this.query = query;
         }
@@ -36,6 +36,7 @@ namespace ExternalAdapter.Services.AmendContact
                         .ForEach(i => Case.Add(new ManagementCase
                         {
                             Origin = runtimeInfo.Origin,
+                            Name = EntityName.Contact,
                             CaseType = CaseType.AmendContactBilling,
                             Status = CaseStatus.Candidate,
                             Identifiers = new Dictionary<string, string>
@@ -46,6 +47,8 @@ namespace ExternalAdapter.Services.AmendContact
                             EntitiesToReevaluate = [EntityName.Contact],
                             Before = runtimeInfo.Applied,
                             After = runtimeInfo.Submitted,
+                            AppliedVersion = runtimeInfo.AppliedVersion,
+                            SubmitedVersion = runtimeInfo.SubmittedVersion,                            
                             Checksum = CryptographyExtensions.GenerateContactChecksum(submittedContact)
                         }));
                 }

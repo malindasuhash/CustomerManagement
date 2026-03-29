@@ -14,13 +14,13 @@ namespace ExternalAdapter.Tests.Services.AmendContact
         const string LegalEntityId = "LegalEntityId1";
         const string TradingLocationId = "TradingLocationId1";
 
-        private readonly IQuery query;
+        private readonly IQueryApi query;
         private readonly CaseAssessment nextAssessement;
         private readonly TradingLocationContactUpdateCaseAssessement tradingLocationContactUpdateCaseAssessement;
 
         public TradingLocationContactUpdateCaseAssessementTests()
         {
-            query = Substitute.For<IQuery>();
+            query = Substitute.For<IQueryApi>();
             nextAssessement = Substitute.For<CaseAssessment>();
             tradingLocationContactUpdateCaseAssessement = new TradingLocationContactUpdateCaseAssessement(query, nextAssessement);
         }

@@ -1,6 +1,64 @@
-@ExternalAdapter_HostAddress = http://localhost:5013
+@ExternalAdapter_HostAddress = http://localhost:5013/
 
-GET {{ExternalAdapter_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{ExternalAdapter_HostAddress}}contact/processChange
+Content-Type: application/json
+{
+  "origin": "CM",
+  "entityId": "12345",
+  "customerId": "67890",
+  "correlationId": "abcde-12345-fghij-67890",
+  "submitted": {
+    "firstName": "Watford",
+    "lastName": "Hays",
+    "email": "a@b.com",
+    "label": "Bla",
+    "telephone": "tel",
+    "altTelephone": "89384",
+    "postalAddress": {
+        "code": "89",
+        "name": "M",
+        "line1": "Line 111",
+        "line2": "Line 222",
+        "line3": "Line 333",
+        "region": "region 1",
+        "country": "country 1",
+        "locality": "GB"
+      },
+    "telephoneCode": "893",
+    "altTelephoneCode": "892",
+    "descriptors": [ 
+      {
+        "key": "K1",
+        "value": "V1"
+      }
+  ]},
+  "submittedVersion": 2,
+  "applied": {
+    "firstName": "Boys",
+    "lastName": "Hays",
+    "email": "a@b.com",
+    "label": "Bla",
+    "telephone": "tel",
+    "altTelephone": "89384",
+    "postalAddress": {
+        "code": "89",
+        "name": "M",
+        "line1": "Line 111",
+        "line2": "Line 222",
+        "line3": "Line 333",
+        "region": "region 1",
+        "country": "country 1",
+        "locality": "GB"
+      },
+    "telephoneCode": "893",
+    "altTelephoneCode": "892",
+    "descriptors": [ 
+      {
+        "key": "K1",
+        "value": "V1"
+      }
+  ]},
+  "appliedVersion": 1
+  }  
 
 ###

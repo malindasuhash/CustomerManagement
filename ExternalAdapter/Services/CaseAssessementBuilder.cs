@@ -1,16 +1,19 @@
-﻿using ExternalAdapter.Interfaces;
+﻿using ExternalAdapter.Infrastructure;
+using ExternalAdapter.Interfaces;
 using ExternalAdapter.Services.AmendContact;
 
 namespace ExternalAdapter.Services
 {
     public class CaseAssessementBuilder
     {
-        private readonly IQuery query;
+        private readonly IQueryApi query;
+        private readonly IAdapterDatabase adapterDatabase;
         private AmendContactChangeAssessor amendContactChangeAssessor;
 
-        public CaseAssessementBuilder(IQuery query)
+        public CaseAssessementBuilder(IQueryApi query, IAdapterDatabase adapterDatabase)
         {
             this.query = query;
+            this.adapterDatabase = adapterDatabase;
         }
 
         public void Build()
@@ -22,7 +25,7 @@ namespace ExternalAdapter.Services
             var mechantContacUpdate = new MerchantContactCaseAssessment(query, tradingLocationContactUpdate);
             var billingContactUpdate = new BillingContactUpdateCaseAssessment(query, mechantContacUpdate);
 
-            amendContactChangeAssessor = new AmendContactChangeAssessor(billingContactUpdate);
+            amendContactChangeAssessor = new AmendContactChangeAssessor(billingContactUpdate, adapterDatabase);
         }
 
         public AmendContactChangeAssessor Get() { return amendContactChangeAssessor; }

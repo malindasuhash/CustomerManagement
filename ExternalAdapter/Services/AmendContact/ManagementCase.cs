@@ -12,11 +12,15 @@ namespace ExternalAdapter.Services.AmendContact
         public string Origin { get; set; }
         public CaseType CaseType { get; set; }
         public CaseStatus Status { get; set; }
+        public EntityName Name { get; set; }
         public List<EntityName> EntitiesToReevaluate { get; set; } = [];
         public dynamic Before { get; set; }
         public dynamic After { get; set; }
+        public int SubmitedVersion { get; set; }    
+        public int AppliedVersion { get; set; }
         public Dictionary<string, string> Identifiers { get; set; } = [];
         public string Checksum { get; set; }
-        public DateTime CreateDateTime { get; set; }
+        public DateTime? CreateDateTime { get; set; }
+        public DateTime? LastUpdated { get; set; }
     }
 }

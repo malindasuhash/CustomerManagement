@@ -12,13 +12,13 @@ namespace ExternalAdapter.Tests.Services.AmendContact
         const string CustomerId = "CustomerId1";
         const string ContactId1 = "1";
 
-        private readonly IQuery query;
+        private readonly IQueryApi query;
         private readonly BillingContactUpdateCaseAssessment billingContactUpdateCaseAssessment;
         private readonly CaseAssessment asseement;
 
         public BillingContactUpdateCaseAssessmentTests()
         {
-            query = Substitute.For<IQuery>();
+            query = Substitute.For<IQueryApi>();
             asseement = Substitute.For<CaseAssessment>();
             billingContactUpdateCaseAssessment = new BillingContactUpdateCaseAssessment(query, asseement);
         }
