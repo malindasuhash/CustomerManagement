@@ -11,6 +11,7 @@ namespace ExternalAdapter.Infrastructure
             var messageEnvelop = new MessageEnvelop()
             {
                 CustomerId = customerId,
+                EntityId = "LegalEntityId",
                 Applied = new LegalEntity()
                 {
                     BusinessContacts =
@@ -40,14 +41,14 @@ namespace ExternalAdapter.Infrastructure
                 {
                     Contacts =
                     [
-                        new() { ContactType = ContactType.Account, ContactId = legalEntityId }
+                        new() { ContactType = ContactType.Account, ContactId = "12345" }
                     ]
                 },
                 Submitted = new TradingLocation()
                 {
                     Contacts =
                     [
-                        new() { ContactType = ContactType.Account, ContactId = legalEntityId }
+                        new() { ContactType = ContactType.Account, ContactId = "12345" }
                     ]
                 }
             };

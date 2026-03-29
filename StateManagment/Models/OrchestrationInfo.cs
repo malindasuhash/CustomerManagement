@@ -13,8 +13,8 @@ namespace StateManagment.Models
         public string EntityId { get; set; }
         public string CustomerId { get; set; }
         public string LegalEntityId { get; set; }
-        public dynamic Submitted { get; set; }
-        public dynamic Applied { get; set; }
+        public IEntity Submitted { get; set; }
+        public IEntity Applied { get; set; }
         public int SubmittedVersion { get; set; }
         public int AppliedVersion { get; set; }
         public OrchestrationData[] OrchestrationData { get; set; } = [];

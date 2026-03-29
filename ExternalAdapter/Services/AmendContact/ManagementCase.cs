@@ -1,4 +1,5 @@
 ﻿using ExternalAdapter.Interfaces;
+using StateManagment.Entity;
 using StateManagment.Models;
 
 namespace ExternalAdapter.Services.AmendContact
@@ -8,14 +9,14 @@ namespace ExternalAdapter.Services.AmendContact
     /// </summary>
     public class ManagementCase
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string Origin { get; set; }
         public CaseType CaseType { get; set; }
         public CaseStatus Status { get; set; }
         public EntityName Name { get; set; }
         public List<EntityName> EntitiesToReevaluate { get; set; } = [];
-        public dynamic Before { get; set; }
-        public dynamic After { get; set; }
+        public IEntity Before { get; set; }
+        public IEntity After { get; set; }
         public int SubmitedVersion { get; set; }    
         public int AppliedVersion { get; set; }
         public Dictionary<string, string> Identifiers { get; set; } = [];

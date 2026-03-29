@@ -11,7 +11,7 @@ namespace ExternalAdapter.Models
         public int AppliedVersion { get; set; }
         public DateTime? InspectedAt { get; set; }
 
-        public static InspectionResult FromCases(ManagementCase[] cases)
+        public static InspectionResult FromCases(IEnumerable<ManagementCase> cases)
         {
             return new InspectionResult()
             {
@@ -24,14 +24,14 @@ namespace ExternalAdapter.Models
                     AppliedVersion = c.AppliedVersion,                    
                     InspectedAt = DateTime.UtcNow 
                 }).ToList(),
-                TotalCases = cases.Length
+                total = cases.Count()
             };
         }
     }
 
     public class InspectionResult
     {
-        public int TotalCases { get; set; }
+        public int total { get; set; }
         public List<InspectionSummary> Cases { get; set; }
     }
 }

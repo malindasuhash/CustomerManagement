@@ -6,5 +6,6 @@ namespace ExternalAdapter.Infrastructure
     {
         void RegisterChanges(List<ManagementCase> managementCases);
         List<ManagementCase> FindCases(string checksum);
+        List<ManagementCase> FindCasesBy(string customerId, string legalEntityId, string entityId);
     }
 }

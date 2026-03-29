@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using StateManagment.Entity;
 using StateManagment.Models;
 
 namespace ExternalAdapter.Infrastructure
@@ -17,6 +18,11 @@ namespace ExternalAdapter.Infrastructure
 
         static AdapterDatabase()
         {
+            BsonClassMap.RegisterClassMap<Contact>(cm =>
+            {
+                cm.AutoMap();
+            });
+
             BsonClassMap.RegisterClassMap<ManagementCase>(cm =>
             {
                 cm.AutoMap();
@@ -24,6 +30,8 @@ namespace ExternalAdapter.Infrastructure
                 cm.MapMember(c => c.CaseType).SetSerializer(new EnumSerializer<CaseType>(BsonType.String));
                 cm.MapMember(c => c.Status).SetSerializer(new EnumSerializer<CaseStatus>(BsonType.String));
                 cm.MapMember(c => c.Name).SetSerializer(new EnumSerializer<EntityName>(BsonType.String));
+                cm.MapMember(c => c.EntitiesToReevaluate)
+  .SetSerializer(new EnumerableInterfaceImplementerSerializer<List<EntityName>>(new EnumSerializer<EntityName>(BsonType.String)));
             });
         }
 
@@ -47,7 +55,7 @@ namespace ExternalAdapter.Infrastructure
                 if (existingCase != null)
                     continue;
 
-                managementCase.Id = Guid.NewGuid();
+                managementCase.Id = Guid.NewGuid().ToString();
                 managementCase.CreateDateTime = DateTime.UtcNow;
                 managementCase.LastUpdated = DateTime.UtcNow;
 
@@ -61,9 +69,26 @@ namespace ExternalAdapter.Infrastructure
                 Builders<ManagementCase>.Filter.Eq(c => c.Checksum, checksum),
                 Builders<ManagementCase>.Filter.In(c => c.Status, new[]
                 {
-                    CaseStatus.Open,
-                    CaseStatus.Candidate,
-                    CaseStatus.Pending
+                        CaseStatus.Open,
+                        CaseStatus.Candidate,
+                        CaseStatus.Pending
+                })
+            );
+
+            return _collection.Find(filter).ToList();
+        }
+
+        public List<ManagementCase> FindCasesBy(string customerId, string legalEntityId, string entityId)
+        {
+            var filter = Builders<ManagementCase>.Filter.And(
+                Builders<ManagementCase>.Filter.Eq("Identifiers.CustomerId", customerId),
+                Builders<ManagementCase>.Filter.Eq("Identifiers.LegalEntityId", legalEntityId),
+                Builders<ManagementCase>.Filter.Eq("Identifiers.EntityId", entityId),
+                Builders<ManagementCase>.Filter.In(c => c.Status, new[]
+                {
+                        CaseStatus.Open,
+                        CaseStatus.Candidate,
+                        CaseStatus.Pending
                 })
             );
 

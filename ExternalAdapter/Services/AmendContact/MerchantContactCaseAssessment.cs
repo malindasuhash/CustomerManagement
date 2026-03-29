@@ -40,7 +40,7 @@ namespace ExternalAdapter.Services.AmendContact
                             Identifiers = new Dictionary<string, string>
                             {
                                 { "CustomerId", orchestrationInfo.CustomerId },
-                                { "ContactId", orchestrationInfo.EntityId }
+                                { "EntityId", orchestrationInfo.EntityId }
                             },
                             EntitiesToReevaluate = [EntityName.Contact],
                             Before = orchestrationInfo.Applied,
