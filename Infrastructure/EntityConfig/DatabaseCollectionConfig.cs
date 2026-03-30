@@ -9,8 +9,17 @@ namespace Infrastructure.EntityConfig
 {
     internal static class DatabaseCollectionConfig
     {
+        private static bool _initialized = false;
+
         static DatabaseCollectionConfig()
         {
+            Run();
+        }
+        public static void Run()
+        {
+            if (_initialized) return;
+            _initialized = true;
+
             BsonClassMap.RegisterClassMap<Contact>(cm =>
             {
                 cm.AutoMap();

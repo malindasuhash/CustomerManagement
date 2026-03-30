@@ -17,5 +17,6 @@ namespace StateManagment.Models
         Task<TaskOutcome> StoreApplied<T>(LookupPredicate predicate, bool confirmRemoval) where T : IEntity;
         Task<TaskOutcome> MergeDraft<T>(MessageEnvelop envelop, int latestDraftVersion) where T : IEntity;
         Task<TaskOutcome> MarkForRemoval<T>(LookupPredicate predicate) where T : IEntity;
+        Task<List<EntityBasics>> GetPendingChanges(string customerId, string? legalEntityId = null);
     }
 }

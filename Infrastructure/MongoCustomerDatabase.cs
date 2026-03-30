@@ -1,9 +1,12 @@
 ﻿using Infrastructure.EntityConfig;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using StateManagment.Entity;
 using StateManagment.Models;
+using System;
+using System.IO.MemoryMappedFiles;
 
 namespace Infrastructure
 {
@@ -21,6 +24,7 @@ namespace Infrastructure
         {
             var objectSerializer = new ObjectSerializer(ObjectSerializer.AllAllowedTypes);
             BsonSerializer.RegisterSerializer(objectSerializer);
+            DatabaseCollectionConfig.Run();
         }
 
         public async Task<EntityBasics> GetBasicInfo<T>(LookupPredicate predicate) where T : IEntity
@@ -102,13 +106,60 @@ namespace Infrastructure
             if (storedEntity == null)
             {
                 // Entity not found
-                return MessageEnvelop.NONE; 
+                return MessageEnvelop.NONE;
             }
 
             storedEntity.Name = EntityCollectionConfig.Config<T>().Name;
             storedEntity.Change = ChangeType.Read;
 
             return storedEntity;
+        }
+
+        public async Task<List<EntityBasics>> GetPendingChanges(string customerId, string? legalEntityId = null)
+        {
+            var pendingChanges = new List<EntityBasics>();
+
+            var collections = new[]
+            {
+                    EntityCollectionConfig.Config<Contact>(),
+                    EntityCollectionConfig.Config<LegalEntity>(),
+                    EntityCollectionConfig.Config<BillingGroup>(),
+                    EntityCollectionConfig.Config<BankAccount>(),
+                    EntityCollectionConfig.Config<ProductAgreement>(),
+                    EntityCollectionConfig.Config<TradingLocation>()
+                };
+
+            var filter = Builders<MessageEnvelop>.Filter;
+
+            foreach (var entityMap in collections)
+            {
+                var collection = database.GetCollection<MessageEnvelop>(entityMap.Collection);
+
+                var filterDef = filter.And(
+                    filter.Eq(o => o.CustomerId, customerId),
+                    filter.Where(o => o.DraftVersion != o.SubmittedVersion)
+                );
+
+                if (legalEntityId != null)
+                {
+                    filterDef = filter.And(filterDef, filter.Eq("Draft.LegalEntityId", legalEntityId));
+                }
+
+                var results = await collection
+                    .Find(filterDef)
+                    .ToListAsync();
+
+                pendingChanges.AddRange(results.Select(p => new EntityBasics
+                {
+                    EntityId = p.EntityId,
+                    Name = entityMap.Name,
+                    DraftVersion = p.DraftVersion,
+                    SubmittedVersion = p.SubmittedVersion,
+                    State = p.State
+                }));
+            }
+
+            return pendingChanges;
         }
     }
 }
