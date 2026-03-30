@@ -15,6 +15,7 @@
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Base implementation of change detection and mapping to management case.
 - Implemented Trading Location API
 - Adding some tests to controller to increase confidence.
 - Refactored to use generics
