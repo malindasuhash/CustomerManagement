@@ -1,4 +1,4 @@
-﻿using StateManagment.Models;
+﻿using Microsoft.AspNetCore.Routing;
 
 namespace Api.ApiModels
 {
@@ -6,6 +6,6 @@ namespace Api.ApiModels
     {
         public int total { get; set; }
 
-        public List<EntityBasics> Changes { get; set; }
+        public List<ChangeLink> Changes { get; set; }
     }
 }

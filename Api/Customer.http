@@ -4,3 +4,4 @@ GET  {{Api_HostAddress}}/customers/Cus123/changes?legalEntityId=LE123456
 Accept: application/json
 
 ###
+,

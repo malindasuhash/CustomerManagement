@@ -11,10 +11,12 @@ namespace Api.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerDatabase customerDatabase;
+        private readonly LinkGenerator linkGenerator; 
 
-        public CustomerController(ICustomerDatabase customerDatabase)
+        public CustomerController(ICustomerDatabase customerDatabase, LinkGenerator linkGenerator)
         {
             this.customerDatabase = customerDatabase;
+            this.linkGenerator = linkGenerator;
         }
 
         [HttpGet("{customerId}/changes")]
@@ -25,7 +27,7 @@ namespace Api.Controllers
             return new ChangeSummary()
             {
                 total = pendingChanges.Count,
-                Changes = pendingChanges
+                Changes = [.. pendingChanges.Select(change => ChangeLink.Create(change, linkGenerator, customerId, legalEntityId))]
             };
         }
     }

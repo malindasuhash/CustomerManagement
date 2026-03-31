@@ -1,12 +1,11 @@
 ## Customer Management
 
 # IDEAS
-- Submit all endpoint
 - Abort or reset endpoint
-- Get all draft changes endpoint (changed but not submitted)
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
+- Submit all endpoint
 - Complete sample implementation of validation for Contact
 
 # PENDING
@@ -15,6 +14,7 @@
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Get all draft changes endpoint (changed but not submitted)
 - Base implementation of change detection and mapping to management case.
 - Implemented Trading Location API
 - Adding some tests to controller to increase confidence.
@@ -39,57 +39,3 @@
 - Integration of pub/sub.
 - Incorporate CustomerId in Contact and Mongo
 - GET, POST, PATCH, DELETE, SUBMIT Contact
-
-
-### GET Contact response 
-```
-{
-  "customerId": "Cus123",
-  "entityId": "5522a8da-0186-47cb-b552-74df7958bd4a",
-  "state": "SYNCHRONISED",
-  "draft": {
-    "firstName": "John",
-    "lastName": "Doe",
-    "telephone": null,
-    "telephoneCode": null,
-    "email": null,
-    "altTelephone": null,
-    "altTelephoneCode": null,
-    "postalAddress": null,
-    "descriptors": [],
-    "label": null
-  },
-  "draftVersion": 1,
-  "submitted": {
-    "firstName": "John",
-    "lastName": "Doe",
-    "telephone": null,
-    "telephoneCode": null,
-    "email": null,
-    "altTelephone": null,
-    "altTelephoneCode": null,
-    "postalAddress": null,
-    "descriptors": [],
-    "label": null
-  },
-  "submittedVersion": 1,
-  "applied": {
-    "firstName": "John",
-    "lastName": "Doe",
-    "telephone": null,
-    "telephoneCode": null,
-    "email": null,
-    "altTelephone": null,
-    "altTelephoneCode": null,
-    "postalAddress": null,
-    "descriptors": [],
-    "label": null
-  },
-  "appliedVersion": 1,
-  "updateUser": null,
-  "updateTimestamp": "0001-01-01T00:00:00",
-  "createdUser": "Tester",
-  "createdTimestamp": "2026-03-05T06:03:45.648Z",
-  "feedback": []
-}
-```
