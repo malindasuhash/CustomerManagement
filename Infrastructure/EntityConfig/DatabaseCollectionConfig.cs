@@ -84,7 +84,7 @@ namespace Infrastructure.EntityConfig
             BsonClassMap.RegisterClassMap<MessageEnvelop>(cm =>
             {
                 cm.AutoMap();
-                cm.MapIdField(a => a.EntityId);
+                cm.MapIdField(a => a.EntityId).SetSerializer(new StringSerializer(BsonType.String));
                 cm.MapMember(a => a.State).SetSerializer(new EnumSerializer<EntityState>(BsonType.String));
                 cm.MapMember(a => a.Name).SetDefaultValue(EntityName.None);
                 cm.MapMember(a => a.Change).SetDefaultValue(ChangeType.Read);

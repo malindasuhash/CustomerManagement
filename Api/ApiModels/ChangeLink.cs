@@ -41,9 +41,9 @@ namespace Api.ApiModels
             if (!SubmitActions.TryGetValue(entityName, out var target))
                 return null;
 
-            var routeValues = legalEntityId is not null
+            var routeValues = legalEntityId is not null   // There is a special case of LegalEntity
                 ? GetRouteValues(entityName, customerId, entityId, legalEntityId)
-                : (object)new { version = ApiVersion, customerId, entityId };
+                : GetRouteValues(entityName, customerId, entityId, entityName == EntityName.LegalEntity ? entityId : legalEntityId);
 
             return linkGenerator.GetPathByAction(
                 action: target.Action,
@@ -52,7 +52,7 @@ namespace Api.ApiModels
             );
         }
 
-        private static object GetRouteValues(EntityName entityName, string customerId, string entityId, string legalEntityId)
+        private static object GetRouteValues(EntityName entityName, string customerId, string entityId, string? legalEntityId)
         {
             switch (entityName)
             {
@@ -61,7 +61,7 @@ namespace Api.ApiModels
                 case EntityName.Contact:
                     return new { version = ApiVersion, customerId, contactId = entityId };
                 case EntityName.LegalEntity:
-                    return new { version = ApiVersion, customerId, legalEntityId = entityId };
+                    return new { version = ApiVersion, customerId, entityId = entityId };
                 case EntityName.ProductAgreement:
                     return new { version = ApiVersion, customerId, legalEntityId, productAgreementId = entityId };
                 case EntityName.TradingLocation:

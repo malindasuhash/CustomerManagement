@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Routing;
+﻿using Api.Services;
+using Microsoft.AspNetCore.Routing;
 
 namespace Api.ApiModels
 {
@@ -6,6 +7,13 @@ namespace Api.ApiModels
     {
         public int total { get; set; }
 
-        public List<ChangeLink> Changes { get; set; }
+        public ChangeLink[] Changes { get; set; }
+    }
+
+    public class ChangeSummarySubmitResult
+    {
+        public int total { get; set; }
+
+        public List<ChangeSubmitResult> Changes { get; set; }
     }
 }

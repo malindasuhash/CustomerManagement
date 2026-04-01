@@ -1,6 +1,6 @@
 @Api_HostAddress = https://localhost:7296/api/v1
 
-GET  {{Api_HostAddress}}/customers/cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4
+GET  {{Api_HostAddress}}/customers/Cus123/billing-groups/f657d315-b2b7-4f03-966b-194524afcd50
 Accept: application/json
 
 ###

@@ -5,7 +5,6 @@
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Submit all endpoint
 - Complete sample implementation of validation for Contact
 
 # PENDING
@@ -14,6 +13,7 @@
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Submit all endpoint
 - Get all draft changes endpoint (changed but not submitted)
 - Base implementation of change detection and mapping to management case.
 - Implemented Trading Location API
