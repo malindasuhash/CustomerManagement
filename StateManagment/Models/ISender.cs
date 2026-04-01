@@ -8,7 +8,7 @@ namespace StateManagment.Models
 {
     public interface ISender
     {
-        Task<TaskOutcome> SendAsync(Object message, string correlationId);
+        Task<TaskOutcome> SendAsync(OrchestrationEnvelop message, string correlationId);
 
         Task<TaskOutcome> DataChangedAsync(MessageEnvelop message, string correlationId);
     }

@@ -1,6 +1,42 @@
-@Contact.Orchestration.Svc_HostAddress = http://localhost:5230
+@Contact.Orchestration.Svc_HostAddress = http://localhost:5230/api/v1/contact-orchestration
 
-GET {{Contact.Orchestration.Svc_HostAddress}}/weatherforecast/
-Accept: application/json
-
+POST {{Contact.Orchestration.Svc_HostAddress}}/evaluate
+Content-Type: application/json
+{
+  "origin": "CustomerManagement",
+  "corellationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "entityId": "d9b15755-934b-4a57-a750-1359568e6a31",
+  "customerId": "Cus123",
+  "legalEntityId": "LE123456",
+  "submitted": {
+    "title": "Mr",
+    "firstName": "John",
+    "lastName": "Smith",
+    "name": "John Smith",
+    "telephone": "555-1234",
+    "telephoneCode": "+44",
+    "email": "john.smith@example.com",
+    "altTelephone": "555-5678",
+    "altTelephoneCode": "+44",
+    "descriptors": [],
+    "label": "Primary Contact"
+  },
+  "applied": null,
+  "submittedVersion": 1,
+  "appliedVersion": 0,
+  "orchestrationData": [
+    {
+      "key": "source",
+      "value": "api"
+    }
+  ],
+  "systemData": [
+    {
+      "key": "ApplicationId",
+      "value": "APP-001",
+      "origin": "ExternalSystem",
+      "comment": "Created during onboarding"
+    }
+  ]
+}
 ###
