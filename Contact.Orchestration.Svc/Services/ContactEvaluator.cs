@@ -34,7 +34,12 @@ namespace Contact.Orchestration.Svc.Services
 
             if (feedbacks.Count == 0)
             {
-                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED), requestData.CorellationId);
+                var orchestrationData = new OrchestrationData[]
+                {
+                    new() { Key = "LastEvaluatedSubmittedVersion", Value = $"{contactRequest.SubmittedVersion}" }
+                };
+
+                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, null, orchestrationData), requestData.CorellationId);
             }
             else
             {
