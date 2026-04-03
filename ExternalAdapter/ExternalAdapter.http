@@ -13,7 +13,7 @@ Content-Type: application/json
   "customerId": "67890",
   "correlationId": "abcde-12345-fghij-67890",
   "submitted": {
-    "firstName": "Watford",
+    "firstName": "A",
     "lastName": "Hays",
     "email": "a@b.com",
     "label": "Bla",
@@ -39,7 +39,7 @@ Content-Type: application/json
   ]},
   "submittedVersion": 2,
   "applied": {
-    "firstName": "Boys",
+    "firstName": "C",
     "lastName": "Hays",
     "email": "a@b.com",
     "label": "Bla",

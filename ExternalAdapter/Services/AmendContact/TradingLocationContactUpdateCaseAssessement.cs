@@ -64,6 +64,7 @@ namespace ExternalAdapter.Services.AmendContact
         RequireDocuments,
         Closed,
         Rejected,
-        Declined
+        Declined,
+        WaitForRun
     }
 }

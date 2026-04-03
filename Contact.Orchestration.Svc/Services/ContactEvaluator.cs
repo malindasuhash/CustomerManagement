@@ -32,6 +32,8 @@ namespace Contact.Orchestration.Svc.Services
                 feedbacks.Add(new Feedback() { Type = FeedbackType.Error, Key = "PostalAddress", Value = "PostalAddressMissing" });
             }
 
+            // Get Bank details etc etc
+
             if (feedbacks.Count == 0)
             {
                 var orchestrationData = new OrchestrationData[]
