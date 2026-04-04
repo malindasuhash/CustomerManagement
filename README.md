@@ -13,6 +13,8 @@
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Removed stub implementation of data changed publisher and replaced with pub/sub.
+- Removed in-memory locking and replaced with MongoDB based locking.
 - Submit all endpoint
 - Get all draft changes endpoint (changed but not submitted)
 - Base implementation of change detection and mapping to management case.

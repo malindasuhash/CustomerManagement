@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://api.xeinn.uk/svc-customer-configuration",
+      "url": "https://tempurl.com/v1",
       "description": "production service"
     }
   ],
