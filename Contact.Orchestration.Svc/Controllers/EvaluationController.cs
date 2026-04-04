@@ -18,11 +18,29 @@ namespace Contact.Orchestration.Svc.Controllers
         }
 
         [HttpPost("evaluate")]
-        public EvaluationResponse Begin(ContactRequestData request)
+        public TaskOutcome Begin(ContactRequestData request)
         {
             taskQueue.Enqueue(WorkItemType.Evaluation, request);
 
-            return new EvaluationResponse() { Result = "Accepted" };
+            return TaskOutcome.OK;
         }
+
+
+        [HttpPost("apply")]
+        public TaskOutcome Process(ContactRequestData request)
+        {
+            taskQueue.Enqueue(WorkItemType.Apply, request);
+
+            return TaskOutcome.OK;
+        }
+
+        [HttpPost("post-apply")]
+        public TaskOutcome Finalise(ContactRequestData request)
+        {
+            taskQueue.Enqueue(WorkItemType.PostApply, request);
+
+            return TaskOutcome.OK;
+        }
+
     }
 }

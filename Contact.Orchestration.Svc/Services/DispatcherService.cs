@@ -7,22 +7,31 @@ namespace Contact.Orchestration.Svc.Services
     {
         private readonly IApplier contactApplier;
         private readonly IEvaluator contactEvaluator;
+        private readonly IPostApplier contactPostApplier;
 
-        public DispatcherService(IApplier contactApplier, IEvaluator contactEvaluator)
+        public DispatcherService(IApplier contactApplier, IEvaluator contactEvaluator, IPostApplier contactPostApplier)
         {
             this.contactApplier = contactApplier;
             this.contactEvaluator = contactEvaluator;
+            this.contactPostApplier = contactPostApplier;
         }
         public Task Dispatch(WorkItem workItem, CancellationToken cancellationToken)
         {
-            if (workItem.For == WorkItemType.Evaluation)
+            switch (workItem.For)
             {
-                contactEvaluator.Evaluate(workItem.OrchestrationInfo, cancellationToken);
+                case WorkItemType.Evaluation:
+                    contactEvaluator.Evaluate(workItem.RequestData, cancellationToken);
+                    break;
+                case WorkItemType.Apply:
+                    contactApplier.Apply(workItem.RequestData, cancellationToken);
+                    break;
+                case WorkItemType.PostApply:
+                    contactPostApplier.PostApply(workItem.RequestData, cancellationToken);
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unknown work item type: {workItem.For}");
             }
-            else if (workItem.For == WorkItemType.Apply)
-            {
-                contactApplier.Apply(workItem.OrchestrationInfo, cancellationToken);
-            }
+            
             return Task.CompletedTask;
         }
     }

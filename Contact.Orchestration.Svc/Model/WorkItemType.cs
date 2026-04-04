@@ -3,6 +3,7 @@
     public enum WorkItemType
     {
         Evaluation,
-        Apply
+        Apply,
+        PostApply
     }
 }

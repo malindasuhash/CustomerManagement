@@ -206,7 +206,7 @@ namespace ExternalAdapter.Tests.Services.AmendContact
                 c.CaseType.Should().Be(CaseType.AmendContactMerchant);
                 c.Status.Should().Be(CaseStatus.Candidate);
                 c.Identifiers["CustomerId"].Should().Be(CustomerId);
-                c.Identifiers["ContactId"].Should().Be(ContactId1);
+                c.Identifiers["EntityId"].Should().Be(ContactId1);
             });
             await asseement.Received(1).Assess(orchestrationInfo);
         }

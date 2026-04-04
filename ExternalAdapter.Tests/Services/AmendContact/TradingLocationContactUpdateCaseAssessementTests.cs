@@ -58,7 +58,7 @@ namespace ExternalAdapter.Tests.Services.AmendContact
             tradingLocationContactUpdateCaseAssessement.Case[0].CaseType.Should().Be(CaseType.AmendContactTradingLocation);
             tradingLocationContactUpdateCaseAssessement.Case[0].Status.Should().Be(CaseStatus.Candidate);
             tradingLocationContactUpdateCaseAssessement.Case[0].Identifiers["CustomerId"].Should().Be(CustomerId);
-            tradingLocationContactUpdateCaseAssessement.Case[0].Identifiers["ContactId"].Should().Be(ContactId);
+            tradingLocationContactUpdateCaseAssessement.Case[0].Identifiers["EntityId"].Should().Be(ContactId);
             await nextAssessement.Received(1).Assess(orchestrationInfo);
         }
 
@@ -166,7 +166,7 @@ namespace ExternalAdapter.Tests.Services.AmendContact
                 c.CaseType.Should().Be(CaseType.AmendContactTradingLocation);
                 c.Status.Should().Be(CaseStatus.Candidate);
                 c.Identifiers["CustomerId"].Should().Be(CustomerId);
-                c.Identifiers["ContactId"].Should().Be(ContactId);
+                c.Identifiers["EntityId"].Should().Be(ContactId);
             });
             await nextAssessement.Received(1).Assess(orchestrationInfo);
         }

@@ -18,7 +18,7 @@ namespace Contact.Orchestration.Svc.Services
 
         public async Task Enqueue(WorkItemType work, RequestData orchestrationInfo)
         {
-            var workitem = new WorkItem() { For = work, OrchestrationInfo = orchestrationInfo };
+            var workitem = new WorkItem() { For = work, RequestData = orchestrationInfo };
             await channel.Writer.WriteAsync(workitem);
         }
 

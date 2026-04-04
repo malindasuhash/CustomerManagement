@@ -69,7 +69,7 @@ namespace ExternalAdapter.Tests.Services.AmendContact
             billingContactUpdateCaseAssessment.Case.First().CaseType.Should().Be(CaseType.AmendContactBilling);
             billingContactUpdateCaseAssessment.Case.First().Status.Should().Be(CaseStatus.Candidate);
             billingContactUpdateCaseAssessment.Case.First().Identifiers["CustomerId"].Should().Be(CustomerId);
-            billingContactUpdateCaseAssessment.Case.First().Identifiers["ContactId"].Should().Be(ContactId1);
+            billingContactUpdateCaseAssessment.Case.First().Identifiers["EntityId"].Should().Be(ContactId1);
             await asseement.Received(1).Assess(orchestrationInfo);
         }
 
@@ -210,7 +210,7 @@ namespace ExternalAdapter.Tests.Services.AmendContact
                 c.CaseType.Should().Be(CaseType.AmendContactBilling);
                 c.Status.Should().Be(CaseStatus.Candidate);
                 c.Identifiers["CustomerId"].Should().Be(CustomerId);
-                c.Identifiers["ContactId"].Should().Be(ContactId1);
+                c.Identifiers["EntityId"].Should().Be(ContactId1);
             });
             await asseement.Received(1).Assess(orchestrationInfo);
         }
