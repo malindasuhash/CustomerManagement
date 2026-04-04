@@ -8,11 +8,11 @@ namespace Contact.Orchestration.Svc.Controllers
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/contact-orchestration")]
-    public class EvaluationController : Controller
+    public class ContractOrchestrationController : Controller
     {
         private readonly ITaskQueue taskQueue;
 
-        public EvaluationController(ITaskQueue taskQueue)
+        public ContractOrchestrationController(ITaskQueue taskQueue)
         {
             this.taskQueue = taskQueue;
         }
