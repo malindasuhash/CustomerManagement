@@ -20,7 +20,7 @@ builder.Services.AddHostedService<OrchestrationResultProcessor>();
 builder.Services.AddSingleton<MongoCustomerDatabase>();
 builder.Services.AddSingleton<ICustomerDatabase>(sp => sp.GetRequiredService<MongoCustomerDatabase>());
 builder.Services.AddSingleton<IDistributedLock>(sp => sp.GetRequiredService<MongoCustomerDatabase>());
-builder.Services.AddSingleton<IEventPublisher, SimpleEventPublisher>();
+builder.Services.AddSingleton<IEventPublisher, DataChangedEventPublisher>();
 builder.Services.AddSingleton<IAuditManager, AuditManager>();
 builder.Services.AddSingleton<IChangeHandler, ChangeHandler>();
 builder.Services.AddSingleton<IOrchestrator, BasicOrchestrator>();

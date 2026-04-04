@@ -11,7 +11,7 @@ namespace Integration.Tests
         public async Task Run()
         {
             var database = new MongoCustomerDatabase();
-            var eventPublisher = new SimpleEventPublisher();
+            var eventPublisher = new DataChangedEventPublisher();
             var auditManager = new AuditManager();
 
             var changeHandler = new ChangeHandler(database, database, eventPublisher, auditManager);
