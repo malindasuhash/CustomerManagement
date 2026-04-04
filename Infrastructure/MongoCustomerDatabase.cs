@@ -5,19 +5,20 @@ using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using StateManagment.Entity;
 using StateManagment.Models;
-using System;
-using System.IO.MemoryMappedFiles;
 
 namespace Infrastructure
 {
-    public class MongoCustomerDatabase : ICustomerDatabase
+    public class MongoCustomerDatabase : ICustomerDatabase, IDistributedLock
     {
         private readonly IMongoDatabase database;
+        private readonly IMongoCollection<BsonDocument> configCollection;
 
         public MongoCustomerDatabase()
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MongoConnectionString"));
             database = client.GetDatabase("customers");
+            configCollection = database.GetCollection<BsonDocument>("lock-config");
+            EnsureTtlIndex();
         }
 
         static MongoCustomerDatabase()
@@ -25,6 +26,73 @@ namespace Infrastructure
             var objectSerializer = new ObjectSerializer(ObjectSerializer.AllAllowedTypes);
             BsonSerializer.RegisterSerializer(objectSerializer);
             DatabaseCollectionConfig.Run();
+        }
+
+        private void EnsureTtlIndex()
+        {
+            var indexKeys = Builders<BsonDocument>.IndexKeys.Ascending("ExpiresAt");
+            var indexOptions = new CreateIndexOptions { ExpireAfter = TimeSpan.Zero };
+            configCollection.Indexes.CreateOne(new CreateIndexModel<BsonDocument>(indexKeys, indexOptions));
+        }
+
+        public async Task<TaskOutcome> TakeLock(string lockOnKey, int timeInSeconds = 10)
+        {
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", lockOnKey);
+            var expiresAt = DateTime.UtcNow.AddSeconds(timeInSeconds);
+
+            var update = Builders<BsonDocument>.Update
+                .SetOnInsert("_id", lockOnKey)
+                .SetOnInsert("ExpiresAt", expiresAt);
+
+            try
+            {
+                await configCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+                return TaskOutcome.OK;
+            }
+            catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+            {
+                // Attempt to remove the lock if it has already expired
+                var expiredFilter = Builders<BsonDocument>.Filter.And(
+                    Builders<BsonDocument>.Filter.Eq("_id", lockOnKey),
+                    Builders<BsonDocument>.Filter.Lt("ExpiresAt", DateTime.UtcNow)
+                );
+
+                var deleteResult = await configCollection.DeleteOneAsync(expiredFilter);
+
+                if (deleteResult.DeletedCount > 0)
+                {
+                    // Expired lock was removed, try to acquire a new one
+                    try
+                    {
+                        await configCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+                        return TaskOutcome.OK;
+                    }
+                    catch (MongoWriteException retryEx) when (retryEx.WriteError.Category == ServerErrorCategory.DuplicateKey)
+                    {
+                        // Another process acquired the lock between delete and insert
+                        return TaskOutcome.LOCK_UNAVAILABLE;
+                    }
+                }
+
+                return TaskOutcome.LOCK_UNAVAILABLE;
+            }
+        }
+
+        public async Task<TaskOutcome> ReleaseLock(string lockOnKey)
+        {
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", lockOnKey);
+            await configCollection.DeleteOneAsync(filter);
+            return TaskOutcome.OK;
+        }
+
+        async Task<TaskOutcome> IDistributedLock.Lock(string key)
+        {
+            return await TakeLock(key);
+        }
+
+        async Task<TaskOutcome> IDistributedLock.Unlock(string key)
+        {
+            return await ReleaseLock(key);
         }
 
         public async Task<EntityBasics> GetBasicInfo<T>(LookupPredicate predicate) where T : IEntity
@@ -121,13 +189,13 @@ namespace Infrastructure
 
             var collections = new[]
             {
-                    EntityCollectionConfig.Config<Contact>(),
-                    EntityCollectionConfig.Config<LegalEntity>(),
-                    EntityCollectionConfig.Config<BillingGroup>(),
-                    EntityCollectionConfig.Config<BankAccount>(),
-                    EntityCollectionConfig.Config<ProductAgreement>(),
-                    EntityCollectionConfig.Config<TradingLocation>()
-                };
+                        EntityCollectionConfig.Config<Contact>(),
+                        EntityCollectionConfig.Config<LegalEntity>(),
+                        EntityCollectionConfig.Config<BillingGroup>(),
+                        EntityCollectionConfig.Config<BankAccount>(),
+                        EntityCollectionConfig.Config<ProductAgreement>(),
+                        EntityCollectionConfig.Config<TradingLocation>()
+                    };
 
             var filter = Builders<MessageEnvelop>.Filter;
 

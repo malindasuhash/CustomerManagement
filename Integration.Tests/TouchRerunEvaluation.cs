@@ -11,11 +11,10 @@ namespace Integration.Tests
         public async Task Run()
         {
             var database = new MongoCustomerDatabase();
-            var distributedLock = new DictionaryLock();
             var eventPublisher = new SimpleEventPublisher();
             var auditManager = new AuditManager();
 
-            var changeHandler = new ChangeHandler(database, distributedLock, eventPublisher, auditManager);
+            var changeHandler = new ChangeHandler(database, database, eventPublisher, auditManager);
 
             var orchestrator = new BasicOrchestrator();
             var stateManager = new StateManager(changeHandler, orchestrator, database);

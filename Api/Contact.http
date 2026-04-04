@@ -47,7 +47,7 @@ Content-Type: application/json
 DELETE {{Api_HostAddress}}/customers/Cus123/contacts/a9e8b9e8-1fff-4591-ad8b-f27537d50956
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/contacts/70a76606-bf9b-4738-8953-313a019ec64e/submit
+POST {{Api_HostAddress}}/customers/Cus123/contacts/dcc06ef9-b8b3-4889-ac08-cfc028e9314b/submit
 Content-Type: application/json
 {
   "targetVersion": 1
