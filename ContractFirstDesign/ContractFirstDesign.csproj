@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSwag.ApiDescription.Client" Version="14.2.0" PrivateAssets="all" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <OpenApiReference Include="cm-contract.json"
+                      Namespace="ContractFirstDesign"
+                      ClassName="GeneratedClient"
+                      CodeGenerator="NSwagCSharp"
+                      Options="/GenerateClientClasses:false /GenerateClientInterfaces:false /GenerateDtoTypes:true /OperationGenerationMode:SingleClientFromOperationId" />
+  </ItemGroup>
+
+</Project>

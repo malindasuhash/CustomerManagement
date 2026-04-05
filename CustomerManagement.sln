@@ -19,7 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F6AFDE4F-8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
-		cm-contract.json = cm-contract.json
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -42,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{59B390A2-8
 		docs\ARCHITECTURE.md = docs\ARCHITECTURE.md
 		docs\BUSINESS-OVERVIEW.md = docs\BUSINESS-OVERVIEW.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractFirstDesign", "ContractFirstDesign\ContractFirstDesign.csproj", "{0383EE82-375D-4C20-9FF7-6FC5B2E476C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +90,10 @@ Global
 		{E17F92E0-2720-4321-BA09-A984CAA71E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E17F92E0-2720-4321-BA09-A984CAA71E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E17F92E0-2720-4321-BA09-A984CAA71E1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0383EE82-375D-4C20-9FF7-6FC5B2E476C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0383EE82-375D-4C20-9FF7-6FC5B2E476C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0383EE82-375D-4C20-9FF7-6FC5B2E476C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0383EE82-375D-4C20-9FF7-6FC5B2E476C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +106,7 @@ Global
 		{47E1C8AA-6E06-4F9F-862F-8EB966B264CF} = {F6AFDE4F-8026-4B5B-90DE-F6A6F3C459A9}
 		{CE8278EC-45E6-4E23-9B13-2768BE208072} = {49B46BFD-05A9-4E12-A1FB-2F108B5AC5B9}
 		{E17F92E0-2720-4321-BA09-A984CAA71E1C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{0383EE82-375D-4C20-9FF7-6FC5B2E476C0} = {59B390A2-8C88-4022-8551-0116C9BB111A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DA7F5F7B-5AC3-446E-84C4-EC61877ED552}
