@@ -3704,42 +3704,7 @@
             "description": "Customer this item was created within"
           },
           "applied": {
-            "type": "object",
-            "properties": {
-              "alt_telephone": {
-                "type": [ "string", "null" ],
-                "description": "Alternative number"
-              },
-              "alt_telephone_code": {
-                "type": [ "string", "null" ],
-                "description": "Alternative number dialling code"
-              },
-              "email": {
-                "type": [ "string", "null" ],
-                "description": "Email address"
-              },
-              "name": {
-                "type": [ "string", "null" ],
-                "description": "Name for the contact"
-              },
-              "postal_address": {
-                "oneOf": [
-                  { "type": "null" },
-                  {
-                    "$ref": "#/components/schemas/Address",
-                    "description": "Postal address"
-                  }
-                ]
-              },
-              "telephone": {
-                "type": [ "string", "null" ],
-                "description": "Primay telephone number"
-              },
-              "telephone_code": {
-                "type": [ "string", "null" ],
-                "description": "Primary telephone numbers dialling code"
-              }
-            }
+            "$ref": "#/components/schemas/Contact"
           },
           "applied_version": {
             "type": "integer",
@@ -3754,43 +3719,8 @@
             "type": "string",
             "description": "Unique user identitifier for the creator of this item"
           },
-          "draft": {
-            "type": "object",
-            "properties": {
-              "alt_telephone": {
-                "type": [ "string", "null" ],
-                "description": "Alternative number"
-              },
-              "alt_telephone_code": {
-                "type": [ "string", "null" ],
-                "description": "Alternative number dialling code"
-              },
-              "email": {
-                "type": [ "string", "null" ],
-                "description": "Email address"
-              },
-              "name": {
-                "type": [ "string", "null" ],
-                "description": "Name for the contact"
-              },
-              "postal_address": {
-                "oneOf": [
-                  { "type": "null" },
-                  {
-                    "$ref": "#/components/schemas/Address",
-                    "description": "Postal address"
-                  }
-                ]
-              },
-              "telephone": {
-                "type": [ "string", "null" ],
-                "description": "Primay telephone number"
-              },
-              "telephone_code": {
-                "type": [ "string", "null" ],
-                "description": "Primary telephone numbers dialling code"
-              }
-            }
+          "draft":  {
+            "$ref": "#/components/schemas/Contact"
           },
           "draft_version": {
             "type": "integer",
@@ -3809,43 +3739,8 @@
             "$ref": "#/components/schemas/EntityState",
             "description": "The current state for the entity"
           },
-          "submitted": {
-            "type": "object",
-            "properties": {
-              "alt_telephone": {
-                "type": [ "string", "null" ],
-                "description": "Alternative number"
-              },
-              "alt_telephone_code": {
-                "type": [ "string", "null" ],
-                "description": "Alternative number dialling code"
-              },
-              "email": {
-                "type": [ "string", "null" ],
-                "description": "Email address"
-              },
-              "name": {
-                "type": [ "string", "null" ],
-                "description": "Name for the contact"
-              },
-              "postal_address": {
-                "oneOf": [
-                  { "type": "null" },
-                  {
-                    "$ref": "#/components/schemas/Address",
-                    "description": "Postal address"
-                  }
-                ]
-              },
-              "telephone": {
-                "type": [ "string", "null" ],
-                "description": "Primay telephone number"
-              },
-              "telephone_code": {
-                "type": [ "string", "null" ],
-                "description": "Primary telephone numbers dialling code"
-              }
-            }
+          "submitted":  {
+            "$ref": "#/components/schemas/Contact"
           },
           "submitted_version": {
             "type": "integer",
