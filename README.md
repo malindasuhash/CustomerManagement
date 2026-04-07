@@ -6,6 +6,7 @@
 
 # UNDER DEV
 - Complete sample implementation of validation for Contact
+- Model generation via NSawg 
 
 # PENDING
 - Concept of operation data store as an event stream storage.
