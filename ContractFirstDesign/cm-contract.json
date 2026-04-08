@@ -1387,7 +1387,7 @@
             "name": "submit",
             "in": "query",
             "description": "flag to indicate if the bank account should be immediately submitted",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "boolean"
             }
@@ -2686,6 +2686,10 @@
             "type": [ "string", "null" ],
             "description": "The locality for the address"
           },
+          "city": {
+            "type": ["string", "null"],
+            "description": "City related to address"
+          },
           "name": {
             "type": [ "string", "null" ],
             "description": "Name of the property",
@@ -2694,7 +2698,7 @@
           "region": {
             "type": [ "string", "null" ],
             "description": "Region or county",
-            "default": "Suffolk"
+            "default": "London"
           }
         }
       },
@@ -2814,6 +2818,23 @@
           "name": {
             "type": [ "string", "null" ],
             "description": "Name used to identify the billing group"
+          },
+          "statement_narrative": {
+            "type": ["string", "null"],
+            "description": "Name appears on the bank transaction"
+          },
+          "direct_debit_reference": {
+            "type": ["string", "null"],
+            "description": "Direct debit reference"
+          },
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },
@@ -2908,6 +2929,15 @@
           "telephone_code": {
             "type": [ "string", "null" ],
             "description": "Primary telephone numbers dialling code"
+          },
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },
@@ -2995,6 +3025,15 @@
           "swift": {
             "type": [ "string", "null" ],
             "description": "Swift code identifies the bank holding the account"
+          },
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },
@@ -3377,67 +3416,19 @@
       },
       "EntityResponse_BankAccount": {
         "type": "object",
-        "required": [ "id", "customer", "draft", "draft_version", "created", "created_by", "updated", "updated_by", "submitted_version", "applied_version", "state" ],
+        "required": [ "id", "customer", "draft", "draft_version", "created", "created_by", "submitted_version", "applied_version", "state" ],
         "properties": {
           "customer": {
             "type": "string",
             "description": "Customer this item was created within"
           },
           "applied": {
-            "type": "object",
-            "required": [ "legal_entity_id", "name", "billing_default" ],
-            "properties": {
-              "account_holder_names": {
-                "type": [ "array", "null" ],
-                "items": { "type": "string" },
-                "description": "The names of the account holders"
-              },
-              "account_number": {
-                "type": [ "string", "null" ],
-                "description": "The account number of the bank account"
-              },
-              "bank_city": {
-                "type": [ "string", "null" ],
-                "description": "City of the branh of the bank at which the account is held"
-              },
-              "bank_country": {
-                "type": [ "string", "null" ],
-                "description": "Country of the bank at which the account is held"
-              },
-              "bank_name": {
-                "type": [ "string", "null" ],
-                "description": "Name of the bank at which the account is held"
-              },
-              "billing_default": {
-                "type": "boolean",
-                "description": "flag indicating this is the default bank account for billing purposes"
-              },
-              "iban": {
-                "type": [ "string", "null" ],
-                "description": "International Bank Account Number (IBAN)"
-              },
-              "legal_entity_id": {
-                "type": "string",
-                "description": "Legal entity that this bank account is associated with"
-              },
-              "name": {
-                "type": "string",
-                "description": "A unique name used to identify the bank account within this system"
-              },
-              "sort_code": {
-                "type": [ "string", "null" ],
-                "description": "Sort code of the account"
-              },
-              "swift": {
-                "type": [ "string", "null" ],
-                "description": "Swift code identifies the bank holding the account"
-              }
-            }
+            "$ref": "#/components/schemas/BankAccount"
           },
           "applied_version": {
             "type": "integer",
             "format": "int64",
-            "description": "the latest version of the resource that was approved & successfully applied"
+            "description": "Latest latest version of the resource that was approved & successfully applied"
           },
           "created": {
             "type": "string",
@@ -3447,56 +3438,8 @@
             "type": "string",
             "description": "Unique user identitifier for the creator of this item"
           },
-          "draft": {
-            "type": "object",
-            "required": [ "legal_entity_id", "name", "billing_default" ],
-            "properties": {
-              "account_holder_names": {
-                "type": [ "array", "null" ],
-                "items": { "type": "string" },
-                "description": "The names of the account holders"
-              },
-              "account_number": {
-                "type": [ "string", "null" ],
-                "description": "The account number of the bank account"
-              },
-              "bank_city": {
-                "type": [ "string", "null" ],
-                "description": "City of the branh of the bank at which the account is held"
-              },
-              "bank_country": {
-                "type": [ "string", "null" ],
-                "description": "Country of the bank at which the account is held"
-              },
-              "bank_name": {
-                "type": [ "string", "null" ],
-                "description": "Name of the bank at which the account is held"
-              },
-              "billing_default": {
-                "type": "boolean",
-                "description": "flag indicating this is the default bank account for billing purposes"
-              },
-              "iban": {
-                "type": [ "string", "null" ],
-                "description": "International Bank Account Number (IBAN)"
-              },
-              "legal_entity_id": {
-                "type": "string",
-                "description": "Legal entity that this bank account is associated with"
-              },
-              "name": {
-                "type": "string",
-                "description": "A unique name used to identify the bank account within this system"
-              },
-              "sort_code": {
-                "type": [ "string", "null" ],
-                "description": "Sort code of the account"
-              },
-              "swift": {
-                "type": [ "string", "null" ],
-                "description": "Swift code identifies the bank holding the account"
-              }
-            }
+           "draft": {
+            "$ref": "#/components/schemas/BankAccount"
           },
           "draft_version": {
             "type": "integer",
@@ -3516,56 +3459,8 @@
             "$ref": "#/components/schemas/EntityState",
             "description": "The current state for the entity"
           },
-          "submitted": {
-            "type": "object",
-            "required": [ "legal_entity_id", "name", "billing_default" ],
-            "properties": {
-              "account_holder_names": {
-                "type": [ "array", "null" ],
-                "items": { "type": "string" },
-                "description": "The names of the account holders"
-              },
-              "account_number": {
-                "type": [ "string", "null" ],
-                "description": "The account number of the bank account"
-              },
-              "bank_city": {
-                "type": [ "string", "null" ],
-                "description": "City of the branh of the bank at which the account is held"
-              },
-              "bank_country": {
-                "type": [ "string", "null" ],
-                "description": "Country of the bank at which the account is held"
-              },
-              "bank_name": {
-                "type": [ "string", "null" ],
-                "description": "Name of the bank at which the account is held"
-              },
-              "billing_default": {
-                "type": "boolean",
-                "description": "flag indicating this is the default bank account for billing purposes"
-              },
-              "iban": {
-                "type": [ "string", "null" ],
-                "description": "International Bank Account Number (IBAN)"
-              },
-              "legal_entity_id": {
-                "type": "string",
-                "description": "Legal entity that this bank account is associated with"
-              },
-              "name": {
-                "type": "string",
-                "description": "A unique name used to identify the bank account within this system"
-              },
-              "sort_code": {
-                "type": [ "string", "null" ],
-                "description": "Sort code of the account"
-              },
-              "swift": {
-                "type": [ "string", "null" ],
-                "description": "Swift code identifies the bank holding the account"
-              }
-            }
+           "submitted": {
+            "$ref": "#/components/schemas/BankAccount"
           },
           "submitted_version": {
             "type": "integer",
@@ -4838,6 +4733,10 @@
           "key": {"type": ["string", "null"]},
           "value": {"type": ["string", "null"]}
         }
+      },
+      "SystemData": {
+        "type": ["array", "null"],
+        "items": { "$ref": "#/components/schemas/KeyValuePair" }
       }
     },
     "securitySchemes": {
