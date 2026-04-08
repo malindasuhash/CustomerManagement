@@ -2725,7 +2725,7 @@
           },
           "billing_default": {
             "type": "boolean",
-            "description": "flag indicating this is the default bank account for billing purposes"
+            "description": "Flag indicating this is the default bank account for billing purposes"
           },
           "iban": {
             "type": [ "string", "null" ],
@@ -2746,6 +2746,15 @@
           "swift": {
             "type": [ "string", "null" ],
             "description": "Swift code identifies the bank holding the account"
+          },
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },
@@ -4819,6 +4828,16 @@
       "VatRegistrationStatus": {
         "type": "string",
         "enum": [ "Registered", "NotRegistered", "RegistrationPending" ]
+      },
+      "Descriptor": {
+        "type": ["array", "null"],
+        "items": { "$ref": "#/components/schemas/KeyValuePair" }
+      },
+      "KeyValuePair": {
+        "properties": {
+          "key": {"type": ["string", "null"]},
+          "value": {"type": ["string", "null"]}
+        }
       }
     },
     "securitySchemes": {
