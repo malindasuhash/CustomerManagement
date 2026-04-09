@@ -3134,7 +3134,8 @@
           },
           "business_type": {
             "$ref": "#/components/schemas/BusinessType"            
-          },         
+          },  
+          "goods_ownership": { "$ref": "#/components/schemas/GoodsOwnership" },       
           "card_turnover_per_annum": {
             "type": [ "integer", "null" ],
             "format": "int32",
@@ -3211,6 +3212,11 @@
           "standard_industry_classification": {
             "type": [ "string", "null" ],
             "description": "The Standard Industry Classification (SIC) for the business",
+            "default": "1234"
+          },
+          "trading_industry_classification": {
+            "type": [ "string", "null" ],
+            "description": "The Standard Industry Classification (SIC) for the business - trading",
             "default": "1234"
           },
           "trading_name": {
@@ -4029,6 +4035,7 @@
             "format": "int32",
             "minimum": 0
           },
+          "goods_ownership": { "$ref": "#/components/schemas/GoodsOwnership" },
           "company_registration_no": { "type": [ "string", "null" ] },
           "charity_registration_no": { "type": [ "string", "null" ] },
           "date_business_created": { "type": [ "string", "null" ] },
@@ -4063,6 +4070,7 @@
             "items": { "$ref": "#/components/schemas/PartnerWithInterest" }
           },
           "standard_industry_classification": { "type": [ "string", "null" ] },
+          "trading_industry_classification": { "type": [ "string", "null" ] },
           "trading_name": { "type": [ "string", "null" ] },
           "turnover_per_annum": {
             "type": [ "integer", "null" ],
@@ -4598,6 +4606,11 @@
         "type": "string",
         "enum": [ "SoleTrader", "Partnership", "Company", "Standalone_FCA_Regulated" ]
       },
+      "GoodsOwnership": {
+        "type": "string",
+        "enum": [ "Owned", "ThirdParty", "Leased", "Other" ],
+        "description": "Ownership of goods or services offered"
+      },
       "SystemData": {
         "type": ["array", "null"],
         "items": { "$ref": "#/components/schemas/KeyValuePair" }
@@ -4608,7 +4621,7 @@
         "type": "oauth2",
         "flows": {
           "clientCredentials": {
-            "tokenUrl": "https://auth.xeinn.uk/svc-authorization-server/oauth/token",
+            "tokenUrl": "https://auth.id-auth.uk/svc-authorization-server/oauth/token",
             "scopes": {}
           }
         }
