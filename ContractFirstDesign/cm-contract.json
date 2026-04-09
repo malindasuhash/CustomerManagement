@@ -3133,10 +3133,8 @@
             "default": "business-email@example.com"
           },
           "business_type": {
-            "type": [ "string", "null" ],
-            "description": "A description of the business provided by the merchant",
-            "default": "This is an example business created from API documentation testing"
-          },
+            "$ref": "#/components/schemas/BusinessType"            
+          },         
           "card_turnover_per_annum": {
             "type": [ "integer", "null" ],
             "format": "int32",
@@ -3148,6 +3146,11 @@
             "type": [ "string", "null" ],
             "description": "The company registration numnber as recorded with UK companies house (not required if sole trader)",
             "default": "12345678"
+          },
+          "charity_registration_no": {
+            "type": [ "string", "null" ],
+            "description": "The charity registration number as recorded with the relevant authority (not required if not a charity)",
+            "default": "987654321"
           },
           "date_business_created": {
             "type": [ "string", "null" ],
@@ -3200,6 +3203,10 @@
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/RegisteredAddress" },
             "description": "Details of the registered addresses this business has operated under.  Only one address can be marked as current."
+          },
+          "partners_with_interest": {
+            "type": [ "array", "null" ],
+            "items": { "$ref": "#/components/schemas/PartnerWithInterest" }
           },
           "standard_industry_classification": {
             "type": [ "string", "null" ],
@@ -3669,131 +3676,14 @@
             "type": "string",
             "description": "Customer this item was created within"
           },
-          "applied": {
-            "type": "object",
-            "properties": {
-              "business_contacts": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/BusinessContact" }
-              },
-              "business_email": {
-                "type": [ "string", "null" ],
-                "description": "Business email address"
-              },
-              "business_type": { "type": [ "string", "null" ] },
-              "card_turnover_per_annum": {
-                "type": [ "integer", "null" ],
-                "format": "int32",
-                "minimum": 0
-              },
-              "company_registration_no": { "type": [ "string", "null" ] },
-              "date_business_created": { "type": [ "string", "null" ] },
-              "date_trading_started": { "type": [ "string", "null" ] },
-              "legal_entity_status": {
-                "oneOf": [
-                  { "type": "null" },
-                  { "$ref": "#/components/schemas/LegalEntityStatus" }
-                ]
-              },
-              "legal_entity_with_control": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/LegalEntityWithControl" }
-              },
-              "maximum_transaction_value": {
-                "type": [ "integer", "null" ],
-                "format": "int32",
-                "minimum": 0
-              },
-              "merchant_category_code": { "type": [ "string", "null" ] },
-              "name": { "type": [ "string", "null" ] },
-              "persons_with_control": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/PersonWithControl" }
-              },
-              "registered_addresses": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/RegisteredAddress" }
-              },
-              "standard_industry_classification": { "type": [ "string", "null" ] },
-              "trading_name": { "type": [ "string", "null" ] },
-              "turnover_per_annum": {
-                "type": [ "integer", "null" ],
-                "format": "int32",
-                "minimum": 0
-              },
-              "vat_registration_no": { "type": [ "string", "null" ] },
-              "vat_registration_status": {
-                "oneOf": [
-                  { "type": "null" },
-                  { "$ref": "#/components/schemas/VatRegistrationStatus" }
-                ]
-              }
-            }
-          },
+          "applied": { "$ref": "#/components/schemas/LegalEntity" },
           "applied_version": {
             "type": "integer",
             "format": "int64"
           },
           "created": { "type": "string" },
           "created_by": { "type": "string" },
-          "draft": {
-            "type": "object",
-            "properties": {
-              "business_contacts": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/BusinessContact" }
-              },
-              "business_email": { "type": [ "string", "null" ] },
-              "business_type": { "type": [ "string", "null" ] },
-              "card_turnover_per_annum": {
-                "type": [ "integer", "null" ],
-                "format": "int32",
-                "minimum": 0
-              },
-              "company_registration_no": { "type": [ "string", "null" ] },
-              "date_business_created": { "type": [ "string", "null" ] },
-              "date_trading_started": { "type": [ "string", "null" ] },
-              "legal_entity_status": {
-                "oneOf": [
-                  { "type": "null" },
-                  { "$ref": "#/components/schemas/LegalEntityStatus" }
-                ]
-              },
-              "legal_entity_with_control": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/LegalEntityWithControl" }
-              },
-              "maximum_transaction_value": {
-                "type": [ "integer", "null" ],
-                "format": "int32",
-                "minimum": 0
-              },
-              "merchant_category_code": { "type": [ "string", "null" ] },
-              "name": { "type": [ "string", "null" ] },
-              "persons_with_control": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/PersonWithControl" }
-              },
-              "registered_addresses": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/RegisteredAddress" }
-              },
-              "standard_industry_classification": { "type": [ "string", "null" ] },
-              "trading_name": { "type": [ "string", "null" ] },
-              "turnover_per_annum": {
-                "type": [ "integer", "null" ],
-                "format": "int32",
-                "minimum": 0
-              },
-              "vat_registration_no": { "type": [ "string", "null" ] },
-              "vat_registration_status": {
-                "oneOf": [
-                  { "type": "null" },
-                  { "$ref": "#/components/schemas/VatRegistrationStatus" }
-                ]
-              }
-            }
-          },
+          "draft": { "$ref": "#/components/schemas/LegalEntity" },
           "draft_version": {
             "type": "integer",
             "format": "int64"
@@ -3804,64 +3694,7 @@
             "items": { "$ref": "#/components/schemas/EntityStateResult" }
           },
           "state": { "$ref": "#/components/schemas/EntityState" },
-          "submitted": {
-            "type": "object",
-            "properties": {
-              "business_contacts": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/BusinessContact" }
-              },
-              "business_email": { "type": [ "string", "null" ] },
-              "business_type": { "type": [ "string", "null" ] },
-              "card_turnover_per_annum": {
-                "type": [ "integer", "null" ],
-                "format": "int32",
-                "minimum": 0
-              },
-              "company_registration_no": { "type": [ "string", "null" ] },
-              "date_business_created": { "type": [ "string", "null" ] },
-              "date_trading_started": { "type": [ "string", "null" ] },
-              "legal_entity_status": {
-                "oneOf": [
-                  { "type": "null" },
-                  { "$ref": "#/components/schemas/LegalEntityStatus" }
-                ]
-              },
-              "legal_entity_with_control": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/LegalEntityWithControl" }
-              },
-              "maximum_transaction_value": {
-                "type": [ "integer", "null" ],
-                "format": "int32",
-                "minimum": 0
-              },
-              "merchant_category_code": { "type": [ "string", "null" ] },
-              "name": { "type": [ "string", "null" ] },
-              "persons_with_control": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/PersonWithControl" }
-              },
-              "registered_addresses": {
-                "type": [ "array", "null" ],
-                "items": { "$ref": "#/components/schemas/RegisteredAddress" }
-              },
-              "standard_industry_classification": { "type": [ "string", "null" ] },
-              "trading_name": { "type": [ "string", "null" ] },
-              "turnover_per_annum": {
-                "type": [ "integer", "null" ],
-                "format": "int32",
-                "minimum": 0
-              },
-              "vat_registration_no": { "type": [ "string", "null" ] },
-              "vat_registration_status": {
-                "oneOf": [
-                  { "type": "null" },
-                  { "$ref": "#/components/schemas/VatRegistrationStatus" }
-                ]
-              }
-            }
-          },
+          "submitted": { "$ref": "#/components/schemas/LegalEntity" },
           "submitted_version": {
             "type": "integer",
             "format": "int64"
@@ -4190,13 +4023,14 @@
             "items": { "$ref": "#/components/schemas/BusinessContact" }
           },
           "business_email": { "type": [ "string", "null" ] },
-          "business_type": { "type": [ "string", "null" ] },
+          "business_type": { "$ref": "#/components/schemas/BusinessType" },
           "card_turnover_per_annum": {
             "type": [ "integer", "null" ],
             "format": "int32",
             "minimum": 0
           },
           "company_registration_no": { "type": [ "string", "null" ] },
+          "charity_registration_no": { "type": [ "string", "null" ] },
           "date_business_created": { "type": [ "string", "null" ] },
           "date_trading_started": { "type": [ "string", "null" ] },
           "legal_entity_status": {
@@ -4224,6 +4058,10 @@
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/RegisteredAddress" }
           },
+          "partners_with_interest": {
+            "type": [ "array", "null" ],
+            "items": { "$ref": "#/components/schemas/PartnerWithInterest" }
+          },
           "standard_industry_classification": { "type": [ "string", "null" ] },
           "trading_name": { "type": [ "string", "null" ] },
           "turnover_per_annum": {
@@ -4246,7 +4084,7 @@
       },
       "LegalEntityStatus": {
         "type": "string",
-        "enum": [ "Inactive", "Cancelled", "Declined", "Active" ]
+        "enum": [ "New", "Inactive", "Cancelled", "Declined", "Active", "Suspended/Hold", "Terminated", "Closed" ]
       },
       "LegalEntitySubmitRequest": {
         "type": "object",
@@ -4353,11 +4191,9 @@
         "type": "object",
         "required": [ "first_name", "last_name" ],
         "properties": {
-          "address": {
-            "oneOf": [
-              { "type": "null" },
-              { "$ref": "#/components/schemas/Address" }
-            ]
+          "addresses": {
+            "type": [ "array", "null" ],
+            "items": { "$ref": "#/components/schemas/RegisteredAddress" }
           },
           "date_of_birth": {
             "type": [ "string", "null" ],
@@ -4387,7 +4223,7 @@
       },
       "PersonControlType": {
         "type": "string",
-        "enum": [ "Shareholder", "Director" ]
+        "enum": [ "Shareholder", "Director", "SignatoryContracts", "SignatoryBankInstructions" ]
       },
       "PersonWithControl": {
         "type": "object",
@@ -4733,6 +4569,34 @@
           "key": {"type": ["string", "null"]},
           "value": {"type": ["string", "null"]}
         }
+      },
+      "PartnerWithInterest": {
+        "type": "object",
+        "required": [ "legal_entity_id", "attribution_type" ],
+        "properties": {
+          "attribution_type": {
+            "type": ["array", "null"],
+            "items": { "$ref": "#/components/schemas/AttributionType" },
+            "description": "Description of the interest the partner has in the legal entity"
+          },
+          "legal_entity_id": {
+            "type": "string",
+            "description": "ID of the legal entity the partner has interest in"
+          },
+           "descriptors": {
+            "type": ["array", "null"],
+            "items": { "$ref": "#/components/schemas/Descriptor" },
+            "description": "Additional description of the partner's interest in the legal entity represented as key value pairs"
+          }
+        }
+      },
+      "AttributionType": {
+        "type": "string",
+        "enum": [ "Introducer", "Affiliate", "Reseller", "Other" ]
+      },
+      "BusinessType": {
+        "type": "string",
+        "enum": [ "SoleTrader", "Partnership", "Company", "Standalone_FCA_Regulated" ]
       },
       "SystemData": {
         "type": ["array", "null"],
