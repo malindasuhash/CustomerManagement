@@ -3205,6 +3205,11 @@
             "items": { "$ref": "#/components/schemas/RegisteredAddress" },
             "description": "Details of the registered addresses this business has operated under.  Only one address can be marked as current."
           },
+          "country_of_authority": 
+          { 
+            "type": [ "string", "null" ],
+            "description": "Country authority if different from registered address"
+          },
           "partners_with_interest": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/PartnerWithInterest" }
@@ -4064,6 +4069,11 @@
           "registered_addresses": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/RegisteredAddress" }
+          },
+          "country_of_authority": 
+          { 
+            "type": [ "string", "null" ],
+            "description": "Country authority if different from registered address"
           },
           "partners_with_interest": {
             "type": [ "array", "null" ],
