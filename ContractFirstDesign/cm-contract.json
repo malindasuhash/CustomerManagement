@@ -3143,15 +3143,24 @@
             "default": 45000,
             "minimum": 0
           },
-          "company_registration_no": {
+          "company_registration": {
             "type": [ "string", "null" ],
             "description": "The company registration numnber as recorded with UK companies house (not required if sole trader)",
             "default": "12345678"
           },
-          "charity_registration_no": {
+          "operating_as": {
+            "type": [ "string", "null" ],
+            "description": "The name the business is operating as (if different from the legal name)",
+            "default": "Example trading name"
+          },
+          "charity_registration": {
             "type": [ "string", "null" ],
             "description": "The charity registration number as recorded with the relevant authority (not required if not a charity)",
             "default": "987654321"
+          },
+          "business_identification": {
+            "type": [ "string", "null" ],
+            "description": "The business number associated within the Group (BIN)."
           },
           "date_business_created": {
             "type": [ "string", "null" ],
@@ -4041,8 +4050,17 @@
             "minimum": 0
           },
           "goods_ownership": { "$ref": "#/components/schemas/GoodsOwnership" },
-          "company_registration_no": { "type": [ "string", "null" ] },
-          "charity_registration_no": { "type": [ "string", "null" ] },
+          "company_registration": { "type": [ "string", "null" ] },
+          "operating_as": {
+            "type": [ "string", "null" ],
+            "description": "The name the business is operating as (if different from the legal name)",
+            "default": "Example trading name"
+          },
+          "charity_registration": { "type": [ "string", "null" ] },
+          "business_identification": { 
+            "type": [ "string", "null" ],
+            "description": "The business number associated within the Group (BIN)."
+          },
           "date_business_created": { "type": [ "string", "null" ] },
           "date_trading_started": { "type": [ "string", "null" ] },
           "legal_entity_status": {
@@ -4228,6 +4246,10 @@
           "middle_name": {
             "type": [ "string", "null" ],
             "default": "Jane"
+          },
+          "person_identification": {
+            "type": [ "string", "null" ],
+            "description": "The unique identifier for this person within the Groups' systems (CIN)."
           },
           "nationality": {
             "type": [ "string", "null" ],
