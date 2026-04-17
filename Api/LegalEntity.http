@@ -14,7 +14,7 @@ Content-Type: application/json
   "businessEmail": "e@m.com",
   "businessContacts": [
     {
-      "contactId": "1234",
+      "contactId": "447c14ec-f184-44bf-84b2-61c1a61ee3da",
       "contactType": "Account"
     }
   ],
@@ -98,4 +98,7 @@ Content-Type: application/json
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17/touch
+###
+
+GET {{Api_HostAddress}}/customers/legal-entities/find-by-contact?customerId=Cus123&ContactId=447c14ec-f184-44bf-84b2-61c1a61ee3da
 ###

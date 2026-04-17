@@ -14,5 +14,6 @@ namespace StateManagment.Models
         Task<TaskOutcome> MarkForRemoval<T>(LookupPredicate predicate) where T : IEntity;
         Task<List<EntityBasics>> GetPendingChanges(string customerId, string? legalEntityId = null);
         Task<List<MessageEnvelop>> GetLegalEntitiesBy(string customerId, string contactId);
+        Task<List<MessageEnvelop>> GetTradingLocationsBy(string customerId, string contactId);
     }
 }

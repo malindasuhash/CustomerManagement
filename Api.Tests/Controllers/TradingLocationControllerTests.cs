@@ -1,5 +1,6 @@
 ﻿using Api.ApiModels;
 using Api.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -99,6 +100,46 @@ namespace Api.Tests.Controllers
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<TradingLocation>(Arg.Is<MessageEnvelop>(m => SameAfterMapped(patchModel, m)));
+        }
+
+        [Fact]
+        public async Task FindTradingLocationsByContact_WhenMissingQueryParams_ReturnsBadRequest()
+        {
+            // Act
+            var result = await tradingLocationController.FindTradingLocationsByContact("", null);
+
+            // Assert
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("customerId and contactId are required query parameters.", badRequest.Value);
+        }
+
+        [Fact]
+        public async Task FindTradingLocationsByContact_WhenTradingLocationsFound_ReturnsTranslatedList()
+        {
+            // Arrange
+            var contactId = "Contact-1";
+            var envelop = new MessageEnvelop()
+            {
+                CustomerId = CustomerId,
+                EntityId = TradingLocationId,
+                Submitted = new TradingLocation() { LegalEntityId = LegalEntityId, Name = "TradingLocationName" },
+                DraftVersion = 5
+            };
+
+            customerDatabase.GetTradingLocationsBy(CustomerId, contactId).Returns(Task.FromResult(new List<MessageEnvelop> { envelop }));
+
+            // Act
+            var result = await tradingLocationController.FindTradingLocationsByContact(CustomerId, contactId);
+
+            // Assert
+            var ok = Assert.IsType<OkObjectResult>(result.Result);
+            var models = Assert.IsType<List<EntityDocumentModel>>(ok.Value);
+            Assert.Single(models);
+            Assert.Equal(CustomerId, models[0].CustomerId);
+            Assert.Equal(TradingLocationId, models[0].EntityId);
+            Assert.Equal(5, models[0].DraftVersion);
+            var submitted = Assert.IsType<TradingLocation>(models[0].Submitted);
+            Assert.Equal("TradingLocationName", submitted.Name);
         }
 
         private static bool SameAfterMapped(TradingLocationModel tradingLocationModel, MessageEnvelop messageEnvelop)

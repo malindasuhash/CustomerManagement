@@ -15,6 +15,21 @@ namespace Api.Controllers
         {
         }
 
+        [HttpGet("trading-locations/find-by-contact")]
+        public async Task<ActionResult<List<EntityDocumentModel>>> FindTradingLocationsByContact([FromQuery] string customerId, [FromQuery] string contactId)
+        {
+            if (string.IsNullOrWhiteSpace(customerId) || string.IsNullOrWhiteSpace(contactId))
+            {
+                return BadRequest("customerId and contactId are required query parameters.");
+            }
+
+            var envelopes = await customerDatabase.GetTradingLocationsBy(customerId, contactId);
+
+            var results = envelopes?.Select(e => Translate(e)).ToList() ?? new List<EntityDocumentModel>();
+
+            return Ok(results);
+        }
+
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/trading-locations")]
         public async Task<ActionResult<EntityDocumentModel>> CreateTradingLocation(string customerId, string legalEntityId, TradingLocation tradingLocation)
         {

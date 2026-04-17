@@ -189,13 +189,13 @@ namespace Infrastructure
 
             var collections = new[]
             {
-                        EntityCollectionConfig.Config<Contact>(),
-                        EntityCollectionConfig.Config<LegalEntity>(),
-                        EntityCollectionConfig.Config<BillingGroup>(),
-                        EntityCollectionConfig.Config<BankAccount>(),
-                        EntityCollectionConfig.Config<ProductAgreement>(),
-                        EntityCollectionConfig.Config<TradingLocation>()
-                    };
+                            EntityCollectionConfig.Config<Contact>(),
+                            EntityCollectionConfig.Config<LegalEntity>(),
+                            EntityCollectionConfig.Config<BillingGroup>(),
+                            EntityCollectionConfig.Config<BankAccount>(),
+                            EntityCollectionConfig.Config<ProductAgreement>(),
+                            EntityCollectionConfig.Config<TradingLocation>()
+                        };
 
             var filter = Builders<MessageEnvelop>.Filter;
 
@@ -230,7 +230,6 @@ namespace Infrastructure
             return pendingChanges;
         }
 
-        // Added method: GetLegalEntitiesBy
         public async Task<List<MessageEnvelop>> GetLegalEntitiesBy(string customerId, string contactId)
         {
             var entityMap = EntityCollectionConfig.Config<LegalEntity>();
@@ -239,10 +238,39 @@ namespace Infrastructure
             // Build element match for business contacts in Draft / Submitted / Applied
             var contactMatch = Builders<BsonDocument>.Filter.Eq("ContactId", contactId);
             var submittedMatch = Builders<BsonDocument>.Filter.ElemMatch("Submitted.BusinessContacts", contactMatch);
+            var draftMatch = Builders<BsonDocument>.Filter.ElemMatch("Draft.BusinessContacts", contactMatch);
 
             var filter = Builders<BsonDocument>.Filter.And(
                 Builders<BsonDocument>.Filter.Eq("CustomerId", customerId),
-                Builders<BsonDocument>.Filter.And(submittedMatch)
+                Builders<BsonDocument>.Filter.Or(draftMatch, submittedMatch)
+            );
+
+            var docs = await collection.Find(filter).ToListAsync();
+
+            var results = docs.Select(d =>
+            {
+                var env = BsonSerializer.Deserialize<MessageEnvelop>(d);
+                env.Name = entityMap.Name;
+                env.Change = ChangeType.Read;
+                return env;
+            }).ToList();
+
+            return results;
+        }
+
+        public async Task<List<MessageEnvelop>> GetTradingLocationsBy(string customerId, string contactId)
+        {
+            var entityMap = EntityCollectionConfig.Config<TradingLocation>();
+            var collection = database.GetCollection<BsonDocument>(entityMap.Collection);
+
+            // Match contactId inside Draft.Contacts or Submitted.Contacts
+            var contactMatch = Builders<BsonDocument>.Filter.Eq("ContactId", contactId);
+            var submittedMatch = Builders<BsonDocument>.Filter.ElemMatch("Submitted.Contacts", contactMatch);
+            var draftMatch = Builders<BsonDocument>.Filter.ElemMatch("Draft.Contacts", contactMatch);
+
+            var filter = Builders<BsonDocument>.Filter.And(
+                Builders<BsonDocument>.Filter.Eq("CustomerId", customerId),
+                Builders<BsonDocument>.Filter.Or(draftMatch, submittedMatch)
             );
 
             var docs = await collection.Find(filter).ToListAsync();
