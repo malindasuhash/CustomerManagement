@@ -6,7 +6,8 @@
 
 # UNDER DEV
 - Complete sample implementation of validation for Contact
-- Model generation via NSawg 
+- Adding supporting APIs needed by Contact orchestration.
+
 
 # PENDING
 - Concept of operation data store as an event stream storage.
@@ -14,6 +15,7 @@
 - Authorisation and scopes for making certain changes.
 
 # DONE
+- Model generation via NSawg and initial project scaffolding.
 - Removed stub implementation of data changed publisher and replaced with pub/sub.
 - Removed in-memory locking and replaced with MongoDB based locking.
 - Submit all endpoint

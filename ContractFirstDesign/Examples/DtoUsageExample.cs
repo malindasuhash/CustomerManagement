@@ -10,8 +10,8 @@ public class DtoUsageExample
         {
             Name = "Acme Ltd",
             Business_email = "info@acme.com",
-            Business_type = "Retail",
-            Company_registration_no = "12345678",
+            Business_type = BusinessType.Standalone_FCA_Regulated,
+            Company_registration = "12345678",
             Trading_name = "Acme Trading",
             Merchant_category_code = "5411",
             Standard_industry_classification = "4711",
@@ -33,14 +33,37 @@ public class DtoUsageExample
                         Last_name = "Smith",
                         Date_of_birth = "1985-03-20",
                         Nationality = "GB",
-                        Address = new Address
+                        Addresses = new List<RegisteredAddress>
                         {
-                            Line1 = "10 High Street",
-                            Locality = "London",
-                            Region = "Greater London",
-                            Code = "EC1A 1BB",
-                            Country = "GB"
-                        }
+                            new RegisteredAddress
+                {
+                    Current = true,
+                    Date_from = "2020-06-15",
+                    Address = new Address
+                    {
+                        Name = "Acme House",
+                        Line1 = "1 Business Park",
+                        Locality = "Manchester",
+                        Region = "Greater Manchester",
+                        Code = "M1 1AA",
+                        Country = "GB"
+                    }
+                },
+                             new RegisteredAddress
+                {
+                    Current = true,
+                    Date_from = "2020-06-15",
+                    Address = new Address
+                    {
+                        Name = "Acme House",
+                        Line1 = "1 Business Park",
+                        Locality = "Manchester",
+                        Region = "Greater Manchester",
+                        Code = "M1 1AA",
+                        Country = "GB"
+                    }
+                }
+                        }.ToArray()
                     },
                     Control_types = [PersonControlType.Director, PersonControlType.Shareholder]
                 }

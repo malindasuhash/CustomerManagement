@@ -229,5 +229,33 @@ namespace Infrastructure
 
             return pendingChanges;
         }
+
+        // Added method: GetLegalEntitiesBy
+        public async Task<List<MessageEnvelop>> GetLegalEntitiesBy(string customerId, string contactId)
+        {
+            var entityMap = EntityCollectionConfig.Config<LegalEntity>();
+            var collection = database.GetCollection<BsonDocument>(entityMap.Collection);
+
+            // Build element match for business contacts in Draft / Submitted / Applied
+            var contactMatch = Builders<BsonDocument>.Filter.Eq("ContactId", contactId);
+            var submittedMatch = Builders<BsonDocument>.Filter.ElemMatch("Submitted.BusinessContacts", contactMatch);
+
+            var filter = Builders<BsonDocument>.Filter.And(
+                Builders<BsonDocument>.Filter.Eq("CustomerId", customerId),
+                Builders<BsonDocument>.Filter.And(submittedMatch)
+            );
+
+            var docs = await collection.Find(filter).ToListAsync();
+
+            var results = docs.Select(d =>
+            {
+                var env = BsonSerializer.Deserialize<MessageEnvelop>(d);
+                env.Name = entityMap.Name;
+                env.Change = ChangeType.Read;
+                return env;
+            }).ToList();
+
+            return results;
+        }
     }
 }

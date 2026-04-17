@@ -15,6 +15,21 @@ namespace Api.Controllers
         {
         }
 
+        [HttpGet("legal-entities/find-by-contact")]
+        public async Task<ActionResult<List<EntityDocumentModel>>> FindLegalEntitiesByContact([FromQuery] string customerId, [FromQuery] string contactId)
+        {
+            if (string.IsNullOrWhiteSpace(customerId) || string.IsNullOrWhiteSpace(contactId))
+            {
+                return BadRequest("customerId and contactId are required query parameters.");
+            }
+
+            var envelopes = await customerDatabase.GetLegalEntitiesBy(customerId, contactId);
+
+            var results = envelopes?.Select(e => Translate(e)).ToList() ?? new List<EntityDocumentModel>();
+
+            return Ok(results);
+        }
+
         [HttpPost("{customerId}/legal-entities/{entityId}/touch")]
         public async Task<ActionResult<EntityDocumentModel>> TouchLegalEntity([FromRoute] string customerId, [FromRoute] string entityId)
         {
