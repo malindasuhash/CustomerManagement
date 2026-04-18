@@ -1,0 +1,95 @@
+[
+  {
+    "product_id": "PAY001",
+    "name": "Hosted Checkout",
+    "product_type": "Payments",
+    "description": "PCI-compliant hosted checkout page for one-time and recurring card and wallet payments.",
+    "version": "1.2.0",
+    "status": "active",
+    "features": [
+      {
+        "feature_id": "F_PAY_3DS",
+        "name": "3DS Authentication",
+        "description": "Supports 3D Secure flows for card authentication",
+        "enabled_by_default": true,
+        "required": false,
+        "category": "security"
+      },
+      {
+        "feature_id": "F_PAY_SAVEDPM",
+        "name": "Saved Payment Methods",
+        "description": "Tokenize and store customer payment methods for reuse",
+        "enabled_by_default": false,
+        "required": false,
+        "category": "convenience"
+      }
+    ],
+    "compliance_and_documents": {
+      "risk_level": "1",
+      "cdd_required": true,
+      "documents": [
+        "master_service_agreement",
+        "interchange_fees",
+        "bank_statement"
+      ]
+    },
+    "product_configuration": {
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Hosted Checkout product Configuration Template",
+        "type": "object",
+        "properties": {
+          "enable_recurring": {
+            "type": "boolean",
+            "description": "Whether to enable recurring billing features"
+          },
+          "default_currency": {
+            "type": "string",
+            "description": "Default currency for transactions (ISO 4217 code)",
+            "const": "GBP",
+            "readOnly": true
+          },
+          "default_payment_methods": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "visa",
+                "mastercard"
+              ]
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "uniqueItems": true,
+            "readOnly": true,
+            "description": "Fixed default payment methods for this product."
+          },
+          "per_transaction_min_pence": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Minimum allowed transaction amount in cents.",
+            "readOnly": true
+          },
+          "per_transaction_max_pence": {
+            "type": "integer",
+            "minimum": 1000000,
+            "description": "Maximum allowed transaction amount in cents.",
+            "readOnly": true
+          },
+          "payment_methods": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "amex",
+                "open_banking",
+                "paypal"
+              ]
+            },
+            "description": "List of allowed payment method types."
+          }
+        }
+      }
+    }
+  }
+]
