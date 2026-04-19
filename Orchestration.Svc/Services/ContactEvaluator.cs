@@ -12,6 +12,9 @@ namespace Contact.Orchestration.Svc.Services
         {
             this.sender = sender;
         }
+
+        public EntityName Name => EntityName.Contact;
+
         public async Task Evaluate(RequestData requestData, CancellationToken stoppingToken)
         {
             EvaluationStarted(requestData);
@@ -39,18 +42,18 @@ namespace Contact.Orchestration.Svc.Services
                     new() { Key = "LastEvaluatedSubmittedVersion", Value = $"{contactRequest.SubmittedVersion}" }
                 };
 
-                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, null, orchestrationData), requestData.CorellationId);
+                await sender.SendMessageAsync(OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, null, orchestrationData), requestData.CorellationId);
             }
             else
             {
-                await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.EVALUATION_INCOMPLETE, feedbacks: feedbacks.ToArray()), requestData.CorellationId);
+                await sender.SendMessageAsync(OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.EVALUATION_INCOMPLETE, feedbacks: feedbacks.ToArray()), requestData.CorellationId);
             }
         }
 
         private void EvaluationStarted(RequestData requestData)
         {
             var envelope = OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED);
-            sender.SendAsync(envelope, requestData.CorellationId);
+            sender.SendMessageAsync(envelope, requestData.CorellationId);
         }
     }
 }

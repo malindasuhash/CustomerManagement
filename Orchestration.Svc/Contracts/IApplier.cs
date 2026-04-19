@@ -5,6 +5,7 @@ namespace Contact.Orchestration.Svc.Contracts
 {
     public interface IApplier
     {
+        public EntityName Name { get; }
         Task Apply(RequestData orchestrationInfo, CancellationToken stoppingToken);
     }
 }

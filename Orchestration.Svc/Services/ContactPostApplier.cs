@@ -1,5 +1,6 @@
 ﻿using Contact.Orchestration.Svc.Contracts;
 using Contact.Orchestration.Svc.Model;
+using StateManagment.Models;
 
 namespace Contact.Orchestration.Svc.Services
 {
@@ -11,6 +12,8 @@ namespace Contact.Orchestration.Svc.Services
         {
             this.apiQuery = apiQuery;
         }
+
+        public EntityName Name => EntityName.Contact;
 
         public async Task PostApply(RequestData requestData, CancellationToken stoppingToken)
         {

@@ -2,6 +2,7 @@ using Contact.Orchestration.Svc.Contracts;
 using Contact.Orchestration.Svc.Services;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Orchestration.Svc.Contracts;
 using StateManagment.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,13 +24,26 @@ builder.Services.AddApiVersioning(options =>
 builder.Services.AddSingleton<ITaskQueue, InMemoryChannelQueue>();
 builder.Services.AddSingleton<IDispatcherService, DispatcherService>();
 builder.Services.AddHostedService<ExecutorService>();
+
+builder.Services.AddSingleton<IExternalAdapter, ExternalAdapterStub>();
+builder.Services.AddSingleton<IApiQuery, ApiQueryStub>();
+
+// Entity specific processors
 builder.Services.AddSingleton<IEvaluator, ContactEvaluator>();
 builder.Services.AddSingleton<IApplier, ContactApplier>();
+builder.Services.AddSingleton<IPostApplier, ContactPostApplier>();
+
+builder.Services.AddSingleton<IGetExecutor, GetExecutor>();
+// ----------
+
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
-builder.Services.AddSingleton<ISender, AzureServiceBusMessageSender>();
+
+builder.Services.AddSingleton<ISender, AzureServiceBusMessageSender>(sp => new AzureServiceBusMessageSender("azureServiceBus.results.queue.listen", "cm.orchestration.results"));
+
+
 var app = builder.Build();
 
 

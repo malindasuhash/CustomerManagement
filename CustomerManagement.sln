@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Tests", "Api.Tests\Api.Tests.csproj", "{D9BC694B-70B6-4399-AD3D-7DC6F6D2BFE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contact.Orchestration.Svc", "Contact.Orchestration.Svc\Contact.Orchestration.Svc.csproj", "{47E1C8AA-6E06-4F9F-862F-8EB966B264CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orchestration.Svc", "Orchestration.Svc\Orchestration.Svc.csproj", "{47E1C8AA-6E06-4F9F-862F-8EB966B264CF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Satellite", "Satellite", "{49B46BFD-05A9-4E12-A1FB-2F108B5AC5B9}"
 EndProject

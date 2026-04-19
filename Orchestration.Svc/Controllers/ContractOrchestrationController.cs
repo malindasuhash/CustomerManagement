@@ -20,7 +20,7 @@ namespace Contact.Orchestration.Svc.Controllers
         [HttpPost("evaluate")]
         public TaskOutcome Begin(ContactRequestData request)
         {
-            taskQueue.Enqueue(WorkItemType.Evaluation, request);
+            taskQueue.Enqueue(EntityName.Contact, WorkItemType.Evaluation, request);
 
             return TaskOutcome.OK;
         }
@@ -29,7 +29,7 @@ namespace Contact.Orchestration.Svc.Controllers
         [HttpPost("apply")]
         public TaskOutcome Process(ContactRequestData request)
         {
-            taskQueue.Enqueue(WorkItemType.Apply, request);
+            taskQueue.Enqueue(EntityName.Contact, WorkItemType.Apply, request);
 
             return TaskOutcome.OK;
         }
@@ -37,7 +37,7 @@ namespace Contact.Orchestration.Svc.Controllers
         [HttpPost("post-apply")]
         public TaskOutcome Finalise(ContactRequestData request)
         {
-            taskQueue.Enqueue(WorkItemType.PostApply, request);
+            taskQueue.Enqueue(EntityName.Contact, WorkItemType.PostApply, request);
 
             return TaskOutcome.OK;
         }

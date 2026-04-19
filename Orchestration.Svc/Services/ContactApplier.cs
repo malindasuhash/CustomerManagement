@@ -15,6 +15,9 @@ namespace Contact.Orchestration.Svc.Services
             this.sender = sender;
             this.externalAdapter = externalAdapter;
         }
+
+        public EntityName Name => EntityName.Contact;
+
         public async Task Apply(RequestData requestData, CancellationToken stoppingToken)
         {
             if (requestData is not ContactRequestData contactRequest) { await Task.CompletedTask; return; }
@@ -23,7 +26,7 @@ namespace Contact.Orchestration.Svc.Services
             {
                 // Already applied, probably a touch operation.
                 var envelope = OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED);
-                await sender.SendAsync(envelope, requestData.CorellationId);
+                await sender.SendMessageAsync(envelope, requestData.CorellationId);
                 return;
             }
 
@@ -46,13 +49,13 @@ namespace Contact.Orchestration.Svc.Services
                 return;
             }
 
-            await sender.SendAsync(OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED), requestData.CorellationId);
+            await sender.SendMessageAsync(OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.CHANGE_APPLIED), requestData.CorellationId);
         }
 
         private void ApplyChangesExternally(RequestData requestData)
         {
             var envelope = OrchestrationEnvelop.Create(EntityName.Contact, requestData.EntityId, requestData.CustomerId, requestData.SubmittedVersion, RuntimeStatus.EXTERNAL_CHANGES_DETECTED);
-            sender.SendAsync(envelope, requestData.CorellationId);
+            sender.SendMessageAsync(envelope, requestData.CorellationId);
         }
     }
 }

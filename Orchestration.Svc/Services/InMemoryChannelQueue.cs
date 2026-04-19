@@ -1,6 +1,7 @@
 ﻿
 using Contact.Orchestration.Svc.Contracts;
 using Contact.Orchestration.Svc.Model;
+using StateManagment.Models;
 using System.Threading.Channels;
 
 namespace Contact.Orchestration.Svc.Services
@@ -16,9 +17,9 @@ namespace Contact.Orchestration.Svc.Services
             this.dispatcherService = dispatcherService;
         }
 
-        public async Task Enqueue(WorkItemType work, RequestData orchestrationInfo)
+        public async Task Enqueue(EntityName name, WorkItemType work, RequestData orchestrationInfo)
         {
-            var workitem = new WorkItem() { For = work, RequestData = orchestrationInfo };
+            var workitem = new WorkItem() { Name = name, For = work, RequestData = orchestrationInfo };
             await channel.Writer.WriteAsync(workitem);
         }
 

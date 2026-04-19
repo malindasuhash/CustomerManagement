@@ -38,7 +38,7 @@ namespace Infrastructure
             };
         }
 
-        public async Task<TaskOutcome> SendAsync(OrchestrationEnvelop message, string correlationId)
+        public async Task<TaskOutcome> SendMessageAsync(OrchestrationEnvelop message, string correlationId)
         {
             var serviceBusMessage = new ServiceBusMessage()
             {

@@ -6,7 +6,7 @@ namespace Contact.Orchestration.Svc.Contracts
 {
     public interface ITaskQueue
     {
-        Task Enqueue(WorkItemType work, RequestData requestData);
+        Task Enqueue(EntityName name, WorkItemType work, RequestData requestData);
 
         Task Dequeue(CancellationToken cancellationToken);
     }
