@@ -3059,6 +3059,11 @@
             "type": [ "string", "null" ],
             "description": "Name used to identify the billing group",
             "default": "Example billing group"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },

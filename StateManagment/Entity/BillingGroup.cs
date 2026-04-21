@@ -13,6 +13,6 @@ namespace StateManagment.Entity
         public string LegalEntityId { get; set; }
         public string Name { get; set; }
         public Descriptor[] Descriptors { get; set; } = [];
-        public string Label { get; set; }
+        public string[] Labels { get; set; }
     }
 }

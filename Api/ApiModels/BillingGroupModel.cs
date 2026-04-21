@@ -9,7 +9,7 @@ namespace Api.ApiModels
         public string LegalEntityId { get; set; }
         public string Name { get; set; }
         public DescriptorModel[] Descriptors { get; set; } = [];
-        public string Label { get; set; }
+        public string[] Labels { get; set; }
         public int TargetVersion { get; set; }
     }
 }

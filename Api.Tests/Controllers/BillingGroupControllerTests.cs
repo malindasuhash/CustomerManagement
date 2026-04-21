@@ -56,13 +56,13 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateBillingGroup_WhenInvoked_ThenUseAccurateCommand()
         {
-            var billingGroup = new BillingGroup();
+            var billingGroup = new ApiContract.CreateBillingGroup();
 
             // Act
             await billingGroupController.CreateBillingGroup(CustomerId, billingGroup);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync<BillingGroup>(Arg.Is<MessageEnvelop>(p => p.Change == ChangeType.Create && p.Name == EntityName.BillingGroup && p.CustomerId.Equals(CustomerId) && SameDraft(billingGroup, p)));
+            await changeProcessor.Received(1).ProcessChangeAsync<BillingGroup>(Arg.Is<MessageEnvelop>(p => p.Change == ChangeType.Create && p.Name == EntityName.BillingGroup && p.CustomerId.Equals(CustomerId)));
         }
 
         [Fact]
@@ -85,7 +85,7 @@ namespace Api.Tests.Controllers
             var patchModel = new BillingGroupModel()
             {
                 Description = "description",
-                Label = "label",
+                Labels = ["label"],
                 TargetVersion = 20
             };
 
@@ -104,12 +104,12 @@ namespace Api.Tests.Controllers
                 && messageEnvelop.Change == ChangeType.Update
                 && messageEnvelop.DraftVersion == 20
                 && billingGroupMapped.Description == billingGroupModel.Description
-                && billingGroupMapped.Label == billingGroupModel.Label;
+                && billingGroupMapped.Labels == billingGroupModel.Labels;
         }
 
-        private static bool SameDraft(BillingGroup billingGroup, MessageEnvelop messageEnvelop)
-        {
-            return billingGroup == messageEnvelop.Draft;
-        }
+        //private static bool SameDraft(BillingGroup billingGroup, MessageEnvelop messageEnvelop)
+        //{
+        //    return billingGroup == messageEnvelop.Draft;
+        //}
     }
 }

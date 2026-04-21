@@ -60,13 +60,13 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/billing-groups")]
-        public async Task<ActionResult<EntityDocumentModel>> CreateBillingGroup([FromRoute] string customerId, [FromBody] BillingGroup billingGroup)
+        public async Task<ActionResult<EntityDocumentModel>> CreateBillingGroup([FromRoute] string customerId, [FromBody] ApiContract.CreateBillingGroup billingGroup)
         {
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
                 Name = EntityName.BillingGroup,
-                Draft = billingGroup,
+                Draft = NewBillingGroup(billingGroup),
                 CustomerId = customerId
             };
 
@@ -83,7 +83,7 @@ namespace Api.Controllers
         public async Task<ActionResult<EntityDocumentModel>> UpateBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] BillingGroupModel patch)
         {
             var patchModel = BillingGroupToPatch(patch);
-            
+
             var envelop = new MessageEnvelop
             {
                 EntityId = billingGroupId,
@@ -102,7 +102,7 @@ namespace Api.Controllers
             var billingGroup = new BillingGroup
             {
                 BillingBankAccountId = patchModel.BillingBankAccountId,
-                Label = patchModel.Label,
+               // Label = patchModel.Label,
                 Name = patchModel.Name,
                 LegalEntityId = patchModel.LegalEntityId,
                 Description = patchModel.Description
@@ -114,6 +114,18 @@ namespace Api.Controllers
             }
 
             return billingGroup;
+        }
+
+        private BillingGroup NewBillingGroup(ApiContract.CreateBillingGroup billingGroup)
+        {
+            return new BillingGroup
+            {
+                BillingBankAccountId = billingGroup.Billing_bank_account_id,
+                Labels = billingGroup.Labels.ToArray(),
+                Name = billingGroup.Name,
+                LegalEntityId = billingGroup.Legal_entity_id,
+                Description = billingGroup.Description
+            };
         }
     }
 }
