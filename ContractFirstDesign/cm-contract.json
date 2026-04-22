@@ -69,259 +69,7 @@
             "description": "Internal error"
           }
         }
-      }
-    },
-    "/customers/{customer_id}/billing-groups/{entity_id}": {
-      "get": {
-        "tags": [
-          "Billing Groups"
-        ],
-        "summary": "GET",
-        "description": "Retrieves a specific **Billing Group** by ID.\n\n## Purpose\nDisplay the current draft/submitted/approved state for a single billing\ngroup prior to updates or submission.\n\n## Behaviour\n- Requires `READ_BILLING_GROUP`.\n- Returns 404 when the billing group is not found or not visible to caller.\n- Includes version/status context in `EntityResponse<BillingGroup>`.\n\n",
-        "operationId": "get_one_billing_group",
-        "parameters": [
-          {
-            "name": "customer_id",
-            "in": "path",
-            "description": "Id of the customer for the operation",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "entity_id",
-            "in": "path",
-            "description": "Id of the Billing Group",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully returned item",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EntityResponse_BillingGroup"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ID was not found"
-          },
-          "500": {
-            "description": "Internal error"
-          }
-        }
       },
-      "put": {
-        "tags": [
-          "Billing Groups"
-        ],
-        "summary": "UPDATE",
-        "description": "Updates an existing **Billing Group** draft.\n\n## Purpose\nRefine billing configuration before submission or after evaluation feedback\n(e.g., invoice grouping, charging rules, entity participation).\n\n## Behaviour\n- Requires `UPDATE_BLLING_GROUP`.\n- Uses optimistic concurrency via `EntityUpdateRequest.version`.\n- Optional `submit` flag copies changes to the submitted slot and triggers\n  evaluation.\n- Authorisation scoped to the customer.\n\n",
-        "operationId": "update_billing_group",
-        "parameters": [
-          {
-            "name": "customer_id",
-            "in": "path",
-            "description": "Id of the customer for the operation",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "entity_id",
-            "in": "path",
-            "description": "Id of the item to be updated",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "submit",
-            "in": "query",
-            "description": "flag to indicate if the billing group should be immediately submitted",
-            "required": true,
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateBillingGroup"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successfully updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EntityUpdateResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ID was not found"
-          },
-          "500": {
-            "description": "Internal error"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Billing Groups"
-        ],
-        "summary": "DELETE",
-        "description": "Deletes an existing **Billing Group** within the specified customer.\n\n## Purpose\nRemove erroneous or obsolete billing arrangements prior to activation or\nusage.\n\n## Behaviour\n- Requires `DELETE_BILLING_GROUP`.\n- Returns 200 on successful deletion; 404 if the record does not exist.\n- Authorisation is scoped to the customer.\n\n",
-        "operationId": "delete_billing_group",
-        "parameters": [
-          {
-            "name": "customer_id",
-            "in": "path",
-            "description": "Id of the customer for the operation",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "entity_id",
-            "in": "path",
-            "description": "Id of the Billing Group",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully deleted item"
-          },
-          "404": {
-            "description": "ID was not found"
-          },
-          "500": {
-            "description": "Internal error"
-          }
-        }
-      }
-    },
-    "/customers/{customer_id}/billing-groups/{entity_id}/submit": {
-      "post": {
-        "tags": [
-          "Billing Groups"
-        ],
-        "summary": "SUBMIT",
-        "description": "Submits the current draft of a **Billing Group** for evaluation.\n\n## Purpose\nValidate billing configuration (associations, charge rules, invoicing logic)\nbefore it is applied for live billing.\n\n## Behaviour\n- Requires `SUBMIT_BILLING_GROUP`.\n- Copies the draft data to the submitted slot; approved data is unchanged\n  until evaluation/apply completes.\n- Returns 202 Accepted with submission metadata.\n- Authorisation scoped to the customer.",
-        "operationId": "submit_billing_group",
-        "parameters": [
-          {
-            "name": "customer_id",
-            "in": "path",
-            "description": "Id of the customer for the operation",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "entity_id",
-            "in": "path",
-            "description": "Id of the billing group for the operation",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Details about the draft that should be submitted for approval.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BillingGroupSubmitRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "202": {
-            "description": "Successfully accepted submission request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BillingGroupSubmitResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ID was not found"
-          },
-          "500": {
-            "description": "Internal error"
-          }
-        }
-      }
-    },
-    "/customers/{customer_id}/billing-groups/{entity_id}/touch": {
-      "post": {
-        "tags": [
-          "Billing Groups"
-        ],
-        "summary": "TOUCH",
-        "description": "Triggers re-evaluation for the specified **Billing Group**.\n\n## Purpose\nManually start the evaluation workflow (e.g., after external changes) even\nwithout new draft submissions.\n\n## Behaviour\n- Requires `EVALUATE_BILLING_GROUP`.\n- Invokes service-level evaluation for the customer context.\n- Returns 200 once the evaluation request is queued/processed.\n\n",
-        "operationId": "touch_billing_group",
-        "parameters": [
-          {
-            "name": "customer_id",
-            "in": "path",
-            "description": "Id of the customer for the operation",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "entity_id",
-            "in": "path",
-            "description": "Id of the entity for the operation",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully triggered change evaluation"
-          },
-          "500": {
-            "description": "Internal error"
-          }
-        }
-      }
-    },
-    "/customers/{customer_id}/billing-groupss": {
       "get": {
         "tags": [
           "Billing Groups"
@@ -418,6 +166,256 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/billing-groups/{entity_id}": {
+      "get": {
+        "tags": [
+          "Billing Groups"
+        ],
+        "summary": "GET",
+        "description": "Retrieves a specific **Billing Group** by ID.\n\n## Purpose\nDisplay the current draft/submitted/approved state for a single billing\ngroup prior to updates or submission.\n\n## Behaviour\n- Requires `READ_BILLING_GROUP`.\n- Returns 404 when the billing group is not found or not visible to caller.\n- Includes version/status context in `EntityResponse<BillingGroup>`.\n\n",
+        "operationId": "get_one_billing_group",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "description": "Id of the Billing Group",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityResponse_BillingGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ID was not found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Billing Groups"
+        ],
+        "summary": "UPDATE",
+        "description": "Updates an existing **Billing Group** draft.\n\n## Purpose\nRefine billing configuration before submission or after evaluation feedback\n(e.g., invoice grouping, charging rules, entity participation).\n\n## Behaviour\n- Requires `UPDATE_BLLING_GROUP`.\n- Uses optimistic concurrency via `EntityUpdateRequest.version`.\n- Optional `submit` flag copies changes to the submitted slot and triggers\n  evaluation.\n- Authorisation scoped to the customer.\n\n",
+        "operationId": "update_billing_group",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "description": "Id of the item to be updated",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "submit",
+            "in": "query",
+            "description": "flag to indicate if the billing group should be immediately submitted",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingGroup"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityResponse_BillingGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ID was not found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Billing Groups"
+        ],
+        "summary": "DELETE",
+        "description": "Deletes an existing **Billing Group** within the specified customer.\n\n## Purpose\nRemove erroneous or obsolete billing arrangements prior to activation or\nusage.\n\n## Behaviour\n- Requires `DELETE_BILLING_GROUP`.\n- Returns 200 on successful deletion; 404 if the record does not exist.\n- Authorisation is scoped to the customer.\n\n",
+        "operationId": "delete_billing_group",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "description": "Id of the Billing Group",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted item"
+          },
+          "404": {
+            "description": "ID was not found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/billing-groups/{entity_id}/submit": {
+      "post": {
+        "tags": [
+          "Billing Groups"
+        ],
+        "summary": "SUBMIT",
+        "description": "Submits the current draft of a **Billing Group** for evaluation.\n\n## Purpose\nValidate billing configuration (associations, charge rules, invoicing logic)\nbefore it is applied for live billing.\n\n## Behaviour\n- Requires `SUBMIT_BILLING_GROUP`.\n- Copies the draft data to the submitted slot; approved data is unchanged\n  until evaluation/apply completes.\n- Returns 202 Accepted with submission metadata.\n- Authorisation scoped to the customer.",
+        "operationId": "submit_billing_group",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "description": "Id of the billing group for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Details about the draft that should be submitted for approval.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitActionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successfully accepted submission request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitActionResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ID was not found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/billing-groups/{entity_id}/touch": {
+      "post": {
+        "tags": [
+          "Billing Groups"
+        ],
+        "summary": "TOUCH",
+        "description": "Triggers re-evaluation for the specified **Billing Group**.\n\n## Purpose\nManually start the evaluation workflow (e.g., after external changes) even\nwithout new draft submissions.\n\n## Behaviour\n- Requires `EVALUATE_BILLING_GROUP`.\n- Invokes service-level evaluation for the customer context.\n- Returns 200 once the evaluation request is queued/processed.\n\n",
+        "operationId": "touch_billing_group",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "description": "Id of the entity for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully triggered change evaluation"
           },
           "500": {
             "description": "Internal error"
@@ -2838,9 +2836,9 @@
           }
         }
       },
-      "BillingGroupSubmitRequest": {
+      "SubmitActionRequest": {
         "type": "object",
-        "description": "Submit request payload for a billing group.",
+        "description": "Submit request payload for an entity.",
         "required": [ "draft_version" ],
         "properties": {
           "draft_version": {
@@ -2854,7 +2852,7 @@
           }
         }
       },
-      "BillingGroupSubmitResponse": {
+      "SubmitActionResponse": {
         "type": "object",
         "description": "Response returned after a billing group submission is accepted.",
         "required": [ "entity_id", "submitted_version" ],
@@ -3048,17 +3046,27 @@
           },
           "description": {
             "type": [ "string", "null" ],
-            "description": "Description for the billing group",
-            "default": "Used to group together billing for services"
+            "description": "Description for the billing group"
           },
           "legal_entity_id": {
             "type": "string",
-            "description": "Legal entity to be used for billing"
+            "description": "Legal entity to which billing is directed"
           },
           "name": {
             "type": [ "string", "null" ],
-            "description": "Name used to identify the billing group",
-            "default": "Example billing group"
+            "description": "Name used to identify the billing group"
+          },
+          "statement_narrative": {
+            "type": ["string", "null"],
+            "description": "Name appears on the bank transaction"
+          },
+          "direct_debit_reference": {
+            "type": ["string", "null"],
+            "description": "Direct debit reference"
+          },
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
           },
           "labels": {
             "type": ["array", "null"],
@@ -3103,6 +3111,15 @@
           "telephone_code": {
             "type": [ "string", "null" ],
             "description": "Primary telephone numbers dialling code"
+          },
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },
@@ -3518,27 +3535,7 @@
             "description": "Customer this item was created within"
           },
           "applied": {
-            "type": "object",
-            "description": "Represents a billing group.",
-            "required": [ "legal_entity_id", "billing_bank_account_id" ],
-            "properties": {
-              "billing_bank_account_id": {
-                "type": "string",
-                "description": "Bank account to be used for billing"
-              },
-              "description": {
-                "type": [ "string", "null" ],
-                "description": "Description for the billing group"
-              },
-              "legal_entity_id": {
-                "type": "string",
-                "description": "Legal entity to which billing is directed"
-              },
-              "name": {
-                "type": [ "string", "null" ],
-                "description": "Name used to identify the billing group"
-              }
-            }
+            "$ref": "#/components/schemas/BillingGroup"
           },
           "applied_version": {
             "type": "integer",
@@ -3554,27 +3551,7 @@
             "description": "Unique user identitifier for the creator of this item"
           },
           "draft": {
-            "type": "object",
-            "description": "Represents a billing group.",
-            "required": [ "legal_entity_id", "billing_bank_account_id" ],
-            "properties": {
-              "billing_bank_account_id": {
-                "type": "string",
-                "description": "Bank account to be used for billing"
-              },
-              "description": {
-                "type": [ "string", "null" ],
-                "description": "Description for the billing group"
-              },
-              "legal_entity_id": {
-                "type": "string",
-                "description": "Legal entity to which billing is directed"
-              },
-              "name": {
-                "type": [ "string", "null" ],
-                "description": "Name used to identify the billing group"
-              }
-            }
+            "$ref": "#/components/schemas/BillingGroup"
           },
           "draft_version": {
             "type": "integer",
@@ -3594,27 +3571,7 @@
             "description": "The current state for the entity"
           },
           "submitted": {
-            "type": "object",
-            "description": "Represents a billing group.",
-            "required": [ "legal_entity_id", "billing_bank_account_id" ],
-            "properties": {
-              "billing_bank_account_id": {
-                "type": "string",
-                "description": "Bank account to be used for billing"
-              },
-              "description": {
-                "type": [ "string", "null" ],
-                "description": "Description for the billing group"
-              },
-              "legal_entity_id": {
-                "type": "string",
-                "description": "Legal entity to which billing is directed"
-              },
-              "name": {
-                "type": [ "string", "null" ],
-                "description": "Name used to identify the billing group"
-              }
-            }
+            "$ref": "#/components/schemas/BillingGroup"
           },
           "submitted_version": {
             "type": "integer",

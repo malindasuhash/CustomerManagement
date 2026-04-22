@@ -102,7 +102,7 @@ namespace Api.Controllers
             var billingGroup = new BillingGroup
             {
                 BillingBankAccountId = patchModel.BillingBankAccountId,
-               // Label = patchModel.Label,
+                // Label = patchModel.Label,
                 Name = patchModel.Name,
                 LegalEntityId = patchModel.LegalEntityId,
                 Description = patchModel.Description
@@ -125,6 +125,18 @@ namespace Api.Controllers
                 Name = billingGroup.Name,
                 LegalEntityId = billingGroup.Legal_entity_id,
                 Description = billingGroup.Description
+            };
+        }
+
+        private ApiContract.BillingGroup BillingGroupModelToContract(BillingGroupModel billingGroupModel)
+        {
+            return new ApiContract.BillingGroup
+            {
+                Billing_bank_account_id = billingGroupModel.BillingBankAccountId,
+                Labels = billingGroupModel.Labels,
+                Name = billingGroupModel.Name,
+                Legal_entity_id = billingGroupModel.LegalEntityId,
+                Description = billingGroupModel.Description
             };
         }
     }
