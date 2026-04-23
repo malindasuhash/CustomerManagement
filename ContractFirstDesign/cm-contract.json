@@ -669,7 +669,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EntityUpdateRequest_UpdateContact"
+                "$ref": "#/components/schemas/Contact"
               }
             }
           },
@@ -681,7 +681,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EntityUpdateResponse"
+                  "$ref": "#/components/schemas/EntityResponse_Contact"
                 }
               }
             }
@@ -767,7 +767,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ContactSubmitRequest"
+                "$ref": "#/components/schemas/SubmitActionRequest"
               }
             }
           },
@@ -779,7 +779,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ContactSubmitResponse"
+                  "$ref": "#/components/schemas/SubmitActionResponse"
                 }
               }
             }
@@ -822,7 +822,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully triggered change evaluation"
           },
           "500": {
@@ -3267,7 +3267,7 @@
             "default": 75000,
             "minimum": 0
           },
-          "vat_registration_no": {
+          "vat_registration": {
             "type": [ "string", "null" ],
             "description": "Vat registration number (if VAT registered)",
             "default": "GB123456789"
@@ -4067,12 +4067,21 @@
             "format": "int32",
             "minimum": 0
           },
-          "vat_registration_no": { "type": [ "string", "null" ] },
+          "vat_registration": { "type": [ "string", "null" ] },
           "vat_registration_status": {
             "oneOf": [
               { "type": "null" },
               { "$ref": "#/components/schemas/VatRegistrationStatus" }
             ]
+          },
+           "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },
@@ -4128,6 +4137,19 @@
           "legal_entity_id": {
             "type": "string",
             "description": "the ID of the legal entity which benefits from control"
+          },
+          "ownership_percentage": {
+            "type": [ "number", "null" ],
+            "format": "float",
+            "description": "The percentage of ownership the person has in the legal entity (if applicable)"
+          },
+          "date_from": {
+            "type": [ "string", "null" ],
+            "description": "The date from which the person has been in control"
+          },
+          "date_to": {
+            "type": [ "string", "null" ],
+            "description": "The date until which the person has been in control"
           }
         }
       },
@@ -4235,7 +4257,24 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/PersonControlType" }
           },
-          "person": { "$ref": "#/components/schemas/Person" }
+          "person": { "$ref": "#/components/schemas/Person" },
+          "ownership_percentage": {
+            "type": [ "number", "null" ],
+            "format": "float",
+            "description": "The percentage of ownership the person has in the legal entity (if applicable)"
+          },
+          "designation": {
+            "type": [ "string", "null" ],
+            "description": "The designation of the person with control (e.g. 'Director', 'Shareholder' etc.)"
+          },
+          "date_from": {
+            "type": [ "string", "null" ],
+            "description": "The date from which the person has been in control"
+          },
+          "date_to": {
+            "type": [ "string", "null" ],
+            "description": "The date until which the person has been in control"
+          }
         }
       },
       "ProductAgreement": {
