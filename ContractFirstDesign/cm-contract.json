@@ -558,7 +558,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateContact"
+                "$ref": "#/components/schemas/CreateUpdateContact"
               }
             }
           },
@@ -966,7 +966,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateLegalEntity"
+                "$ref": "#/components/schemas/CreateUpdateLegalEntityModel"
               }
             }
           },
@@ -1077,7 +1077,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateLegalEntity"
+                "$ref": "#/components/schemas/CreateUpdateLegalEntityModel"
               }
             }
           },
@@ -1089,7 +1089,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EntityUpdateResponse"
+                  "$ref": "#/components/schemas/EntityResponse_LegalEntity"
                 }
               }
             }
@@ -1130,7 +1130,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully deleted item"
           },
           "404": {
@@ -1175,7 +1175,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LegalEntitySubmitRequest"
+                "$ref": "#/components/schemas/SubmitActionRequest"
               }
             }
           },
@@ -1187,7 +1187,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LegalEntitySubmitResponse"
+                  "$ref": "#/components/schemas/SubmitActionResponse"
                 }
               }
             }
@@ -1230,7 +1230,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully triggered change evaluation"
           },
           "500": {
@@ -1396,7 +1396,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateBankAccount"
+                "$ref": "#/components/schemas/CreateUpdateBankAccount"
               }
             }
           },
@@ -1525,7 +1525,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateBankAccount"
+                "$ref": "#/components/schemas/CreateUpdateBankAccount"
               }
             }
           },
@@ -1537,7 +1537,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EntityUpdateResponse"
+                  "$ref": "#/components/schemas/EntityResponse_BankAccount"
                 }
               }
             }
@@ -1587,7 +1587,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully deleted item"
           },
           "404": {
@@ -1641,7 +1641,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BankAccountSubmitRequest"
+                "$ref": "#/components/schemas/SubmitActionRequest"
               }
             }
           },
@@ -1653,7 +1653,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BankAccountSubmitResponse"
+                  "$ref": "#/components/schemas/SubmitActionResponse"
                 }
               }
             }
@@ -1705,7 +1705,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully triggered change evaluation"
           },
           "500": {
@@ -1864,7 +1864,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateProductAgreement"
+                "$ref": "#/components/schemas/CreateUpdateProductAgreement"
               }
             }
           },
@@ -1993,7 +1993,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProductAgreement"
+                "$ref": "#/components/schemas/CreateUpdateProductAgreement"
               }
             }
           },
@@ -2005,7 +2005,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EntityUpdateResponse"
+                  "$ref": "#/components/schemas/EntityResponse_ProductAgreement"
                 }
               }
             }
@@ -2055,7 +2055,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully deleted item"
           },
           "404": {
@@ -2109,7 +2109,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProductAgreementSubmitRequest"
+                "$ref": "#/components/schemas/SubmitActionRequest"
               }
             }
           },
@@ -2121,7 +2121,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProductAgreementSubmitResponse"
+                  "$ref": "#/components/schemas/SubmitActionResponse"
                 }
               }
             }
@@ -2173,7 +2173,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully triggered change evaluation"
           },
           "500": {
@@ -2332,7 +2332,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateTradingLocation"
+                "$ref": "#/components/schemas/CreateUpdateTradingLocation"
               }
             }
           },
@@ -2461,7 +2461,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateTradingLocation"
+                "$ref": "#/components/schemas/CreateUpdateTradingLocation"
               }
             }
           },
@@ -2473,7 +2473,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EntityUpdateResponse"
+                  "$ref": "#/components/schemas/EntityResponse_TradingLocation"
                 }
               }
             }
@@ -2523,7 +2523,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully deleted item"
           },
           "404": {
@@ -2577,7 +2577,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TradingLocationSubmitRequest"
+                "$ref": "#/components/schemas/SubmitActionRequest"
               }
             }
           },
@@ -2589,7 +2589,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TradingLocationSubmitResponse"
+                  "$ref": "#/components/schemas/SubmitActionResponse"
                 }
               }
             }
@@ -2641,7 +2641,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully triggered change evaluation"
           },
           "500": {
@@ -2760,42 +2760,6 @@
           }
         }
       },
-      "BankAccountSubmitRequest": {
-        "type": "object",
-        "description": "Submit request payload for a bank account.",
-        "required": [ "draft_version" ],
-        "properties": {
-          "draft_version": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Draft version that the caller expects to submit."
-          },
-          "reason": {
-            "type": [ "string", "null" ],
-            "description": "Optional reason describing why the submission is being made."
-          }
-        }
-      },
-      "BankAccountSubmitResponse": {
-        "type": "object",
-        "description": "Response returned after a bank account submission is accepted.",
-        "required": [ "entity_id", "submitted_version", "state" ],
-        "properties": {
-          "entity_id": {
-            "type": "string",
-            "description": "Identifier of the submitted bank account."
-          },
-          "state": {
-            "$ref": "#/components/schemas/EntityState",
-            "description": "Current state assigned after submission is queued."
-          },
-          "submitted_version": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Version captured as the submitted version."
-          }
-        }
-      },
       "BillingGroup": {
         "type": "object",
         "description": "Represents a billing group.  All products associated with a billing group utilise the settings for the group and are invoiced together.",
@@ -2823,7 +2787,7 @@
           },
           "direct_debit_reference": {
             "type": ["string", "null"],
-            "description": "Direct debit reference"
+            "description": "Direct debit reference"            
           },
           "descriptors": {
             "$ref": "#/components/schemas/Descriptor",
@@ -2874,8 +2838,7 @@
         "properties": {
           "contact_id": {
             "type": "string",
-            "description": "Contact information for the business contact",
-            "default": "12345678"
+            "description": "Contact information for the business contact"            
           },
           "contact_type": {
             "oneOf": [
@@ -2971,7 +2934,7 @@
           }
         }
       },
-      "CreateBankAccount": {
+      "CreateUpdateBankAccount": {
         "type": "object",
         "required": [ "name" ],
         "properties": {
@@ -3075,7 +3038,7 @@
           }
         }
       },
-      "CreateContact": {
+      "CreateUpdateContact": {
         "type": "object",
         "description": "Provides the details to be used to create a new contact.",
         "properties": {
@@ -3139,7 +3102,7 @@
           }
         }
       },
-      "CreateLegalEntity": {
+      "CreateUpdateLegalEntityModel": {
         "type": "object",
         "description": "Provides the details to be used to create a new legal entity in a customer.",
         "required": [ "business_email" ],
@@ -3284,7 +3247,7 @@
           }
         }
       },
-      "CreateProductAgreement": {
+      "CreateUpdateProductAgreement": {
         "type": "object",
         "description": "Provides the details required to create a new product agreement.",
         "required": [ "product_type", "features", "rate_card_id", "product_configuration" ],
@@ -3298,7 +3261,10 @@
             "items": { "type": "string" },
             "description": "list of additional features enabled for the product"
           },
-          "product_configuration": { "description": "Product Configuration - object containing product specific configuration" },
+          "product_configuration": 
+          { 
+            "description": "Product Configuration - object containing product specific configuration" 
+          },
           "product_type": {
             "type": "string",
             "description": "Product type - as defined in the product catalogue"
@@ -3306,10 +3272,23 @@
           "rate_card_id": {
             "type": "string",
             "description": "Rate card identifier"
+          },
+          "billing_group_id": {
+            "type": [ "string", "null" ],
+            "description": "Billing group identifier for the product agreement"
+          },
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },
-      "CreateTradingLocation": {
+      "CreateUpdateTradingLocation": {
         "type": "object",
         "description": "Provides the details to create a new trading entity",
         "required": [ "name", "contacts" ],
@@ -3336,23 +3315,15 @@
             "type": [ "string", "null" ],
             "description": "The website url (eg https://my.domain.con) of the trading location (either postal address or website must be specified)",
             "default": "https://example.com"
-          }
-        }
-      },
-      "CrudUpdateResponse": {
-        "type": "object",
-        "required": [ "version", "count" ],
-        "properties": {
-          "count": {
-            "type": "integer",
-            "format": "int64",
-            "description": "The number of items successfully updated",
-            "minimum": 0
           },
-          "version": {
-            "type": "integer",
-            "format": "int64",
-            "description": "The new version of the item after update"
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },
@@ -3471,6 +3442,10 @@
             "type": "string",
             "description": "Customer this item was created within"
           },
+          "id": {
+            "type": "string",
+            "description": "Unique ID for this item"
+          },
           "applied": {
             "$ref": "#/components/schemas/BankAccount"
           },
@@ -3479,15 +3454,7 @@
             "format": "int64",
             "description": "Latest latest version of the resource that was approved & successfully applied"
           },
-          "created": {
-            "type": "string",
-            "description": "Date this item was created"
-          },
-          "created_by": {
-            "type": "string",
-            "description": "Unique user identitifier for the creator of this item"
-          },
-           "draft": {
+          "draft": {
             "$ref": "#/components/schemas/BankAccount"
           },
           "draft_version": {
@@ -3495,10 +3462,7 @@
             "format": "int64",
             "description": "Version of this item.  The draft version is incremented each time any change is made.  The correct version, matching the current draft version, must be provided in a request to update to prevent multi-user updates."
           },
-          "id": {
-            "type": "string",
-            "description": "Unique ID for this item"
-          },
+         
           "issues": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" },
@@ -3523,6 +3487,14 @@
           "updated_by": {
             "type": "string",
             "description": "Unique user identifier for the user who last updated this item"
+          },
+          "created": {
+            "type": "string",
+            "description": "Date this item was created"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Unique user identitifier for the creator of this item"
           }
         }
       },
@@ -3534,6 +3506,10 @@
             "type": "string",
             "description": "Customer this item was created within"
           },
+          "id": {
+            "type": "string",
+            "description": "Unique ID for this item"
+          },
           "applied": {
             "$ref": "#/components/schemas/BillingGroup"
           },
@@ -3542,14 +3518,6 @@
             "format": "int64",
             "description": "the latest version of the resource that was approved & successfully applied"
           },
-          "created": {
-            "type": "string",
-            "description": "Date this item was created"
-          },
-          "created_by": {
-            "type": "string",
-            "description": "Unique user identitifier for the creator of this item"
-          },
           "draft": {
             "$ref": "#/components/schemas/BillingGroup"
           },
@@ -3557,10 +3525,6 @@
             "type": "integer",
             "format": "int64",
             "description": "Version of this item."
-          },
-          "id": {
-            "type": "string",
-            "description": "Unique ID for this item"
           },
           "issues": {
             "type": [ "array", "null" ],
@@ -3585,6 +3549,14 @@
           "updated_by": {
             "type": "string",
             "description": "Unique user identifier for the user who last updated this item"
+          },
+            "created": {
+            "type": "string",
+            "description": "Date this item was created"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Unique user identitifier for the creator of this item"
           }
         }
       },
@@ -3596,6 +3568,10 @@
             "type": "string",
             "description": "Customer this item was created within"
           },
+          "id": {
+            "type": "string",
+            "description": "Unique ID for this item"
+          },
           "applied": {
             "$ref": "#/components/schemas/Contact"
           },
@@ -3604,14 +3580,7 @@
             "format": "int64",
             "description": "the latest version of the resource that was approved & successfully applied"
           },
-          "created": {
-            "type": "string",
-            "description": "Date this item was created"
-          },
-          "created_by": {
-            "type": "string",
-            "description": "Unique user identitifier for the creator of this item"
-          },
+          
           "draft":  {
             "$ref": "#/components/schemas/Contact"
           },
@@ -3619,10 +3588,6 @@
             "type": "integer",
             "format": "int64",
             "description": "Version of this item."
-          },
-          "id": {
-            "type": "string",
-            "description": "Unique ID for this item"
           },
           "issues": {
             "type": [ "array", "null" ],
@@ -3647,6 +3612,14 @@
           "updated_by": {
             "type": "string",
             "description": "Unique user identifier for the user who last updated this item"
+          },
+          "created": {
+            "type": "string",
+            "description": "Date this item was created"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Unique user identitifier for the creator of this item"
           }
         }
       },
@@ -3658,19 +3631,20 @@
             "type": "string",
             "description": "Customer this item was created within"
           },
+          "id": { 
+            "type": "string",
+            "description": "Unique ID for this item"
+          },
           "applied": { "$ref": "#/components/schemas/LegalEntity" },
           "applied_version": {
             "type": "integer",
             "format": "int64"
-          },
-          "created": { "type": "string" },
-          "created_by": { "type": "string" },
+          },          
           "draft": { "$ref": "#/components/schemas/LegalEntity" },
           "draft_version": {
             "type": "integer",
             "format": "int64"
-          },
-          "id": { "type": "string" },
+          },         
           "issues": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" }
@@ -3681,8 +3655,16 @@
             "type": "integer",
             "format": "int64"
           },
-          "updated": { "type": "string" },
-          "updated_by": { "type": "string" }
+          "updated": { 
+            "type": "string",
+            "description": "Date this item was last updated"
+          },
+          "updated_by": { 
+            "type": "string",
+            "description": "Unique user identifier for the user who last updated this item" 
+          },
+          "created": { "type": "string", "description": "Date this item was created" },
+          "created_by": { "type": "string", "description": "Unique user identifier for the user who created this item" }
         }
       },
       "EntityResponse_ProductAgreement": {
@@ -3693,73 +3675,37 @@
             "type": "string",
             "description": "Customer this item was created within"
           },
+          "id": { "type": "string" },
           "applied": {
-            "type": "object",
-            "required": [ "product_type", "features", "rate_card_id", "legal_entity_id", "product_configuration" ],
-            "properties": {
-              "display_name": { "type": [ "string", "null" ] },
-              "features": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "legal_entity_id": { "type": "string" },
-              "product_configuration": {},
-              "product_type": { "type": "string" },
-              "rate_card_id": { "type": "string" }
-            }
+            "$ref": "#/components/schemas/ProductAgreement"
           },
           "applied_version": {
             "type": "integer",
             "format": "int64"
-          },
-          "created": { "type": "string" },
-          "created_by": { "type": "string" },
+          },          
           "draft": {
-            "type": "object",
-            "required": [ "product_type", "features", "rate_card_id", "legal_entity_id", "product_configuration" ],
-            "properties": {
-              "display_name": { "type": [ "string", "null" ] },
-              "features": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "legal_entity_id": { "type": "string" },
-              "product_configuration": {},
-              "product_type": { "type": "string" },
-              "rate_card_id": { "type": "string" }
-            }
+            "$ref": "#/components/schemas/ProductAgreement"
           },
           "draft_version": {
             "type": "integer",
             "format": "int64"
           },
-          "id": { "type": "string" },
           "issues": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" }
           },
           "state": { "$ref": "#/components/schemas/EntityState" },
           "submitted": {
-            "type": "object",
-            "required": [ "product_type", "features", "rate_card_id", "legal_entity_id", "product_configuration" ],
-            "properties": {
-              "display_name": { "type": [ "string", "null" ] },
-              "features": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "legal_entity_id": { "type": "string" },
-              "product_configuration": {},
-              "product_type": { "type": "string" },
-              "rate_card_id": { "type": "string" }
-            }
+            "$ref": "#/components/schemas/ProductAgreement"
           },
           "submitted_version": {
             "type": "integer",
             "format": "int64"
           },
-          "updated": { "type": "string" },
-          "updated_by": { "type": "string" }
+          "updated": { "type": "string", "description": "Date this item was last updated" },
+          "updated_by": { "type": "string", "description": "Unique user identifier for the user who last updated this item" },
+          "created": { "type": "string", "description": "Date this item was created" },
+          "created_by": { "type": "string", "description": "Unique user identifier for the user who created this item" }
         }
       },
       "EntityResponse_TradingLocation": {
@@ -3770,85 +3716,37 @@
             "type": "string",
             "description": "Customer this item was created within"
           },
+          "id": { "type": "string" },
           "applied": {
-            "type": "object",
-            "required": [ "name", "legal_entity_id", "contacts" ],
-            "properties": {
-              "address": {
-                "oneOf": [
-                  { "type": "null" },
-                  { "$ref": "#/components/schemas/Address" }
-                ]
-              },
-              "contacts": {
-                "type": "array",
-                "items": { "$ref": "#/components/schemas/TradingLocationContact" }
-              },
-              "legal_entity_id": { "type": "string" },
-              "name": { "type": "string" },
-              "website": { "type": [ "string", "null" ] }
-            }
+            "$ref": "#/components/schemas/TradingLocation"
           },
           "applied_version": {
             "type": "integer",
             "format": "int64"
-          },
-          "created": { "type": "string" },
-          "created_by": { "type": "string" },
+          },          
           "draft": {
-            "type": "object",
-            "required": [ "name", "legal_entity_id", "contacts" ],
-            "properties": {
-              "address": {
-                "oneOf": [
-                  { "type": "null" },
-                  { "$ref": "#/components/schemas/Address" }
-                ]
-              },
-              "contacts": {
-                "type": "array",
-                "items": { "$ref": "#/components/schemas/TradingLocationContact" }
-              },
-              "legal_entity_id": { "type": "string" },
-              "name": { "type": "string" },
-              "website": { "type": [ "string", "null" ] }
-            }
+            "$ref": "#/components/schemas/TradingLocation"
           },
           "draft_version": {
             "type": "integer",
             "format": "int64"
-          },
-          "id": { "type": "string" },
+          },         
           "issues": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" }
           },
           "state": { "$ref": "#/components/schemas/EntityState" },
           "submitted": {
-            "type": "object",
-            "required": [ "name", "legal_entity_id", "contacts" ],
-            "properties": {
-              "address": {
-                "oneOf": [
-                  { "type": "null" },
-                  { "$ref": "#/components/schemas/Address" }
-                ]
-              },
-              "contacts": {
-                "type": "array",
-                "items": { "$ref": "#/components/schemas/TradingLocationContact" }
-              },
-              "legal_entity_id": { "type": "string" },
-              "name": { "type": "string" },
-              "website": { "type": [ "string", "null" ] }
-            }
+            "$ref": "#/components/schemas/TradingLocation"
           },
           "submitted_version": {
             "type": "integer",
             "format": "int64"
           },
-          "updated": { "type": "string" },
-          "updated_by": { "type": "string" }
+          "updated": { "type": "string", "description": "Date this item was last updated" },
+          "updated_by": { "type": "string", "description": "Unique user identifier for the user who last updated this item" },
+          "created": { "type": "string", "description": "Date this item was created" },
+          "created_by": { "type": "string", "description": "Unique user identifier for the user who created this item" }
         }
       },
       "EntityState": {
@@ -3923,77 +3821,6 @@
           "status": {
             "$ref": "#/components/schemas/EntityState",
             "description": "Current status of the item"
-          }
-        }
-      },
-      "EntityUpdateRequest_UpdateContact": {
-        "type": "object",
-        "required": [ "version", "document" ],
-        "properties": {
-          "document": {
-            "type": "object",
-            "description": "Provides the details used to update an existing contact.",
-            "properties": {
-              "alt_telephone": {
-                "type": [ "string", "null" ],
-                "description": "Alternative number"
-              },
-              "alt_telephone_code": {
-                "type": [ "string", "null" ],
-                "description": "Alternative number dialling code"
-              },
-              "email": {
-                "type": [ "string", "null" ],
-                "description": "Email address",
-                "default": "contact-email@example.com"
-              },
-              "name": {
-                "type": [ "string", "null" ],
-                "description": "Name associated with the contact",
-                "default": "Example name"
-              },
-              "postal_address": {
-                "oneOf": [
-                  { "type": "null" },
-                  {
-                    "$ref": "#/components/schemas/Address",
-                    "description": "Postal address"
-                  }
-                ]
-              },
-              "telephone": {
-                "type": [ "string", "null" ],
-                "description": "Primay telephone number",
-                "default": "55512345678"
-              },
-              "telephone_code": {
-                "type": [ "string", "null" ],
-                "description": "Primary telephone numbers dialling code",
-                "default": "+44"
-              }
-            }
-          },
-          "version": {
-            "type": "integer",
-            "format": "int64",
-            "description": "The version of the item to be updated.  If this does not match the current version on record then an error will be returned."
-          }
-        }
-      },
-      "EntityUpdateResponse": {
-        "type": "object",
-        "required": [ "version", "count" ],
-        "properties": {
-          "count": {
-            "type": "integer",
-            "format": "int64",
-            "description": "The number of items successfully updated",
-            "minimum": 0
-          },
-          "version": {
-            "type": "integer",
-            "format": "int64",
-            "description": "The new version of the item after update"
           }
         }
       },
@@ -4092,38 +3919,6 @@
       "LegalEntityStatus": {
         "type": "string",
         "enum": [ "New", "Inactive", "Cancelled", "Declined", "Active", "Suspended/Hold", "Terminated", "Closed" ]
-      },
-      "LegalEntitySubmitRequest": {
-        "type": "object",
-        "description": "Submit request payload for a legal entity.",
-        "required": [ "draft_version" ],
-        "properties": {
-          "draft_version": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Draft version that the caller expects to submit. Must be the current draft version. Used to prevent submission of stale data."
-          },
-          "reason": {
-            "type": [ "string", "null" ],
-            "description": "Optional reason describing why the submission is being made."
-          }
-        }
-      },
-      "LegalEntitySubmitResponse": {
-        "type": "object",
-        "description": "Response returned after a legal entity submission is accepted.",
-        "required": [ "entity_id", "submitted_version" ],
-        "properties": {
-          "entity_id": {
-            "type": "string",
-            "description": "Identifier of the submitted legal entity."
-          },
-          "submitted_version": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Version that has been captured as the submitted version."
-          }
-        }
       },
       "LegalEntityWithControl": {
         "type": "object",
@@ -4292,29 +4087,6 @@
           "rate_card_id": { "type": "string" }
         }
       },
-      "ProductAgreementSubmitRequest": {
-        "type": "object",
-        "description": "Submit request payload for a product agreement.",
-        "required": [ "draft_version" ],
-        "properties": {
-          "draft_version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "reason": { "type": [ "string", "null" ] }
-        }
-      },
-      "ProductAgreementSubmitResponse": {
-        "type": "object",
-        "required": [ "entity_id", "submitted_version" ],
-        "properties": {
-          "entity_id": { "type": "string" },
-          "submitted_version": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
       "RegisteredAddress": {
         "type": "object",
         "required": [ "current", "date_from", "address" ],
@@ -4378,7 +4150,16 @@
           },
           "legal_entity_id": { "type": "string" },
           "name": { "type": "string" },
-          "website": { "type": [ "string", "null" ] }
+          "website": { "type": [ "string", "null" ] },
+            "descriptors": {
+              "$ref": "#/components/schemas/Descriptor",
+              "description": "Meta-data that describes entity"
+            },
+            "labels": {
+              "type": ["array", "null"],
+              "items": { "type": ["string", "null"] },
+              "description": "Label that can be used query customer data"
+            }
         }
       },
       "TradingLocationContact": {
@@ -4392,210 +4173,6 @@
       "TradingLocationContactType": {
         "type": "string",
         "enum": [ "Manager", "Support", "Technical" ]
-      },
-      "TradingLocationSubmitRequest": {
-        "type": "object",
-        "required": [ "draft_version" ],
-        "properties": {
-          "draft_version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "reason": { "type": [ "string", "null" ] }
-        }
-      },
-      "TradingLocationSubmitResponse": {
-        "type": "object",
-        "required": [ "entity_id", "submitted_version" ],
-        "properties": {
-          "entity_id": { "type": "string" },
-          "submitted_version": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "UpdateBankAccount": {
-        "type": "object",
-        "properties": {
-          "billing_default": { "type": [ "boolean", "null" ] },
-          "name": {
-            "type": [ "string", "null" ],
-            "default": "Example bank account"
-          }
-        }
-      },
-      "UpdateBillingGroup": {
-        "type": "object",
-        "properties": {
-          "billing_bank_account_id": { "type": [ "string", "null" ] },
-          "description": {
-            "type": [ "string", "null" ],
-            "default": "Used to group together billing for services"
-          },
-          "legal_entity_id": { "type": [ "string", "null" ] },
-          "name": {
-            "type": [ "string", "null" ],
-            "default": "Example billing group"
-          }
-        }
-      },
-      "UpdateContact": {
-        "type": "object",
-        "properties": {
-          "alt_telephone": { "type": [ "string", "null" ] },
-          "alt_telephone_code": { "type": [ "string", "null" ] },
-          "email": {
-            "type": [ "string", "null" ],
-            "default": "contact-email@example.com"
-          },
-          "name": {
-            "type": [ "string", "null" ],
-            "default": "Example name"
-          },
-          "postal_address": {
-            "oneOf": [
-              { "type": "null" },
-              { "$ref": "#/components/schemas/Address" }
-            ]
-          },
-          "telephone": {
-            "type": [ "string", "null" ],
-            "default": "55512345678"
-          },
-          "telephone_code": {
-            "type": [ "string", "null" ],
-            "default": "+44"
-          }
-        }
-      },
-      "UpdateLegalEntity": {
-        "type": "object",
-        "description": "Provides the details to be used to update an existing legal entity",
-        "properties": {
-          "business_contacts": {
-            "type": [ "array", "null" ],
-            "items": { "$ref": "#/components/schemas/BusinessContact" }
-          },
-          "business_email": {
-            "type": [ "string", "null" ],
-            "default": "business-email@example.com"
-          },
-          "business_type": {
-            "type": [ "string", "null" ],
-            "default": "This is an example business created from API documentation testing"
-          },
-          "card_turnover_per_annum": {
-            "type": [ "integer", "null" ],
-            "format": "int32",
-            "default": 45000,
-            "minimum": 0
-          },
-          "company_registration_no": {
-            "type": [ "string", "null" ],
-            "default": "12345678"
-          },
-          "date_business_created": {
-            "type": [ "string", "null" ],
-            "default": "2025-01-01"
-          },
-          "date_trading_started": {
-            "type": [ "string", "null" ],
-            "default": "2025-01-01"
-          },
-          "legal_entity_status": {
-            "oneOf": [
-              { "type": "null" },
-              { "$ref": "#/components/schemas/LegalEntityStatus" }
-            ],
-            "default": "Active"
-          },
-          "legal_entity_with_control": {
-            "type": [ "array", "null" ],
-            "items": { "$ref": "#/components/schemas/LegalEntityWithControl" }
-          },
-          "maximum_transaction_value": {
-            "type": [ "integer", "null" ],
-            "format": "int32",
-            "default": 2000,
-            "minimum": 0
-          },
-          "merchant_category_code": {
-            "type": [ "string", "null" ],
-            "default": "1234"
-          },
-          "name": {
-            "type": [ "string", "null" ],
-            "default": "Example business"
-          },
-          "persons_with_control": {
-            "type": [ "array", "null" ],
-            "items": { "$ref": "#/components/schemas/PersonWithControl" }
-          },
-          "registered_addresses": {
-            "type": [ "array", "null" ],
-            "items": { "$ref": "#/components/schemas/RegisteredAddress" }
-          },
-          "standard_industry_classification": {
-            "type": [ "string", "null" ],
-            "default": "1234"
-          },
-          "trading_name": {
-            "type": [ "string", "null" ],
-            "default": "Trading as..."
-          },
-          "turnover_per_annum": {
-            "type": [ "integer", "null" ],
-            "format": "int32",
-            "default": 75000,
-            "minimum": 0
-          },
-          "vat_registration_no": {
-            "type": [ "string", "null" ],
-            "default": "GB123456789"
-          },
-          "vat_registration_status": {
-            "oneOf": [
-              { "type": "null" },
-              { "$ref": "#/components/schemas/VatRegistrationStatus" }
-            ],
-            "default": "Registered"
-          }
-        }
-      },
-      "UpdateProductAgreement": {
-        "type": "object",
-        "required": [ "features", "product_configuration" ],
-        "properties": {
-          "display_name": { "type": [ "string", "null" ] },
-          "features": {
-            "type": "array",
-            "items": { "type": "string" }
-          },
-          "product_configuration": {},
-          "rate_card_id": { "type": [ "string", "null" ] }
-        }
-      },
-      "UpdateTradingLocation": {
-        "type": "object",
-        "required": [ "name" ],
-        "properties": {
-          "address": {
-            "oneOf": [
-              { "type": "null" },
-              { "$ref": "#/components/schemas/Address" }
-            ]
-          },
-          "contacts": {
-            "type": [ "array", "null" ],
-            "items": { "$ref": "#/components/schemas/TradingLocationContact" }
-          },
-          "name": { "type": "string" },
-          "website": {
-            "type": [ "string", "null" ],
-            "default": "https://example.com"
-          }
-        }
       },
       "VatRegistrationStatus": {
         "type": "string",
