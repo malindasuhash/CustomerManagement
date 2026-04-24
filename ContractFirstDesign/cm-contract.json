@@ -6,7 +6,7 @@
     "license": {
       "name": ""
     },
-    "version": "0.0.1"
+    "version": "0.0.2"
   },
   "servers": [
     {
@@ -61,6 +61,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EntityResponse_BillingGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -167,6 +207,36 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal error"
           }
@@ -212,8 +282,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -278,8 +385,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -317,8 +461,45 @@
           "204": {
             "description": "Successfully deleted item"
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -376,8 +557,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -416,6 +634,46 @@
         "responses": {
           "204": {
             "description": "Successfully triggered change evaluation"
+          },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -575,6 +833,36 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal error"
           }
@@ -620,8 +908,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -686,8 +1011,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -725,8 +1087,45 @@
           "200": {
             "description": "Successfully deleted item"
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -784,8 +1183,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -824,6 +1260,46 @@
         "responses": {
           "204": {
             "description": "Successfully triggered change evaluation"
+          },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -966,7 +1442,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUpdateLegalEntityModel"
+                "$ref": "#/components/schemas/CreateLegalEntityModel"
               }
             }
           },
@@ -1077,7 +1553,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUpdateLegalEntityModel"
+                "$ref": "#/components/schemas/UpdateLegalEntityModel"
               }
             }
           },
@@ -3102,7 +3578,151 @@
           }
         }
       },
-      "CreateUpdateLegalEntityModel": {
+      "CreateLegalEntityModel": {
+        "type": "object",
+        "description": "Provides the details to be used to create a new legal entity in a customer.",
+        "required": [ "business_email" ],
+        "properties": {
+          "business_contacts": {
+            "type": [ "array", "null" ],
+            "items": { "$ref": "#/components/schemas/BusinessContact" },
+            "description": "Contacts within the business (used if it is necessary to contact the business in order to provide support)"
+          },
+          "business_email": {
+            "type": "string",
+            "description": "Business email address",
+            "default": "business-email@example.com"
+          },
+          "business_type": {
+            "$ref": "#/components/schemas/BusinessType"            
+          },  
+          "goods_ownership": { "$ref": "#/components/schemas/GoodsOwnership" },       
+          "card_turnover_per_annum": {
+            "type": [ "integer", "null" ],
+            "format": "int32",
+            "description": "The total amount of card transaction processed by the business annually",
+            "default": 45000,
+            "minimum": 0
+          },
+          "company_registration": {
+            "type": [ "string", "null" ],
+            "description": "The company registration numnber as recorded with UK companies house (not required if sole trader)",
+            "default": "12345678"
+          },
+          "operating_as": {
+            "type": [ "string", "null" ],
+            "description": "The name the business is operating as (if different from the legal name)",
+            "default": "Example trading name"
+          },
+          "charity_registration": {
+            "type": [ "string", "null" ],
+            "description": "The charity registration number as recorded with the relevant authority (not required if not a charity)",
+            "default": "987654321"
+          },
+          "business_identification": {
+            "type": [ "string", "null" ],
+            "description": "The business number associated within the Group (BIN)."
+          },
+          "date_business_created": {
+            "type": [ "string", "null" ],
+            "description": "The date the business was created (i.e. when registered with companies house or when formed if a sole trader)",
+            "default": "2025-01-01"
+          },
+          "date_trading_started": {
+            "type": [ "string", "null" ],
+            "description": "The date the business started trading (if different to the date the business was formed)",
+            "default": "2025-01-01"
+          },
+          "legal_entity_with_control": {
+            "type": [ "array", "null" ],
+            "items": { "$ref": "#/components/schemas/LegalEntityWithControl" },
+            "description": "Details of any parent companies that have control of this business."
+          },
+          "maximum_transaction_value": {
+            "type": [ "integer", "null" ],
+            "format": "int32",
+            "description": "Expected maximum transaction value (this will not determine a limit and is used only for monitoring of transaction activity to protect against fraud)",
+            "default": 10000,
+            "minimum": 0
+          },
+          "merchant_category_code": {
+            "type": [ "string", "null" ],
+            "description": "The nerchant category code (MCC) for the business",
+            "default": "1234"
+          },
+          "name": {
+            "type": [ "string", "null" ],
+            "description": "The name of the legal entity",
+            "default": "Example business"
+          },
+          "persons_with_control": {
+            "type": [ "array", "null" ],
+            "items": { "$ref": "#/components/schemas/PersonWithControl" },
+            "description": "Details of the people who have control within the business.  This could be a share holder or a director for example."
+          },
+          "registered_addresses": {
+            "type": [ "array", "null" ],
+            "items": { "$ref": "#/components/schemas/RegisteredAddress" },
+            "description": "Details of the registered addresses this business has operated under.  Only one address can be marked as current."
+          },
+          "country_of_authority": 
+          { 
+            "type": [ "string", "null" ],
+            "description": "Country authority if different from registered address"
+          },
+          "partners_with_interest": {
+            "type": [ "array", "null" ],
+            "items": { "$ref": "#/components/schemas/PartnerWithInterest" }
+          },
+          "standard_industry_classification": {
+            "type": [ "string", "null" ],
+            "description": "The Standard Industry Classification (SIC) for the business",
+            "default": "1234"
+          },
+          "trading_industry_classification": {
+            "type": [ "string", "null" ],
+            "description": "The Standard Industry Classification (SIC) for the business - trading",
+            "default": "1234"
+          },
+          "trading_name": {
+            "type": [ "string", "null" ],
+            "description": "The trading name of the legal entity (if different from the legal name)",
+            "default": "Trading as..."
+          },
+          "turnover_per_annum": {
+            "type": [ "integer", "null" ],
+            "format": "int32",
+            "description": "The total annual turnover in GBP of the business",
+            "default": 75000,
+            "minimum": 0
+          },
+          "vat_registration": {
+            "type": [ "string", "null" ],
+            "description": "Vat registration number (if VAT registered)",
+            "default": "GB123456789"
+          },
+          "vat_registration_status": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "$ref": "#/components/schemas/VatRegistrationStatus",
+                "description": "Status of this business's VAT registration"
+              }
+            ],
+            "default": "Registered"
+          },
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used to query customer data"
+          }
+        }
+      },
+      "UpdateLegalEntityModel": {
         "type": "object",
         "description": "Provides the details to be used to create a new legal entity in a customer.",
         "required": [ "business_email" ],
@@ -3244,6 +3864,18 @@
               }
             ],
             "default": "Registered"
+          },
+          "end_of_business_relationship": {
+            "$ref": "#/components/schemas/BusinessRelationship"
+          },
+          "descriptors": {
+            "$ref": "#/components/schemas/Descriptor",
+            "description": "Meta-data that describes entity"
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
           }
         }
       },
@@ -3901,7 +4533,11 @@
               { "$ref": "#/components/schemas/VatRegistrationStatus" }
             ]
           },
-           "descriptors": {
+          "end_of_business_relationship": 
+          { 
+            "$ref": "#/components/schemas/BusinessRelationship" 
+          },
+          "descriptors": {
             "$ref": "#/components/schemas/Descriptor",
             "description": "Meta-data that describes entity"
           },
@@ -4224,6 +4860,63 @@
       "SystemData": {
         "type": ["array", "null"],
         "items": { "$ref": "#/components/schemas/KeyValuePair" }
+      },
+      "BusinessRelationship": {
+        "type": [ "object", "null" ],
+        "description": "Details of the end of the business relationship with the customer, if applicable",
+        "properties": {
+          "end_date": {
+            "type": [ "string", "null" ],
+            "description": "The date the business relationship ended or is expected to end",
+            "default": "2025-01-01"
+          },
+          "reason": {
+            "type": [ "string", "null" ],
+            "description": "The reason for the end of the business relationship (e.g. Customer initiated, Bank Initiated, etc.)"
+          },
+          "additional_details": {
+            "$ref": "#/components/schemas/KeyValuePair",
+            "description": "Additional details about the end of the business relationship"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error response",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Error code for programmatic handling"
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable error message"
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "type": "string",
+                      "description": "Field that caused the error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Validation error message"
+                    }
+                  }
+                },
+                "description": "Detailed validation errors (for 400 responses)"
+              }
+            },
+            "required": ["code", "message"]
+          }
+        },
+        "required": ["error"]
       }
     },
     "securitySchemes": {
