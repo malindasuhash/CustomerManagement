@@ -1,0 +1,133 @@
+{
+  "requestId": "req-2026-0429-001",
+  "assessments": [
+    {
+      "assessmentName": "card_3ds_authentication",
+      "payload": {
+        "transactionId": "txn-987654321",
+        "card": {
+          "cardNumber": "4111111111111111",
+          "cardType": "VISA",
+          "issuerCountry": "US"
+        },
+        "authentication": {
+          "version": "2.2.0",
+          "challengeRequired": true,
+          "exemptionReason": "low_value",
+          "liabilityShift": "issuer"
+        },
+        "customer": {
+          "customerId": "cust-12345",
+          "ipAddress": "203.0.113.45",
+          "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+          "deviceChannel": "mobile_app"
+        },
+        "merchant": {
+          "merchantId": "merch-567890",
+          "categoryCode": "5732"
+        }
+      },
+      "options": {
+        "failFast": false,
+        "asyncCompletion": false,
+        "webhookUrl": "https://payments.example.com/webhooks/3ds-auth",
+        "customFields": {
+          "sessionId": "sess-abc123"
+        }
+      }
+    },
+    {
+      "assessmentName": "aml_sanctions_screening",
+      "payload": {
+        "screeningType": "transaction",
+        "subject": {
+          "type": "individual",
+          "name": "John Doe",
+          "dateOfBirth": "1985-03-15",
+          "nationality": "US",
+          "address": {
+            "street": "456 Main Street",
+            "city": "San Francisco",
+            "state": "CA",
+            "postalCode": "94102",
+            "country": "US"
+          },
+          "identifiers": [
+            {
+              "type": "passport",
+              "country": "US",
+              "number": "P12345678"
+            }
+          ]
+        },
+        "transaction": {
+          "transactionId": "txn-987654321",
+          "amount": 4500.00,
+          "currency": "USD",
+          "direction": "incoming"
+        },
+        "screeningLists": [
+          "ofac",
+          "eu_sanctions",
+          "un_sanctions",
+          "finCEN",
+          "hm_treasury"
+        ],
+        "screeningScope": {
+          "exactMatch": true,
+          "fuzzyMatch": true,
+          "aliasCheck": true,
+          "addressCheck": true
+        }
+      },
+      "options": {
+        "failFast": true,
+        "asyncCompletion": true,
+        "webhookUrl": "https://payments.example.com/webhooks/aml-screening",
+        "customFields": {
+          "complianceOfficer": "jsmith@company.com",
+          "regulatoryRegion": "US"
+        }
+      }
+    },
+    {
+      "assessmentName": "chargeback_risk_analysis",
+      "payload": {
+        "merchantId": "merch-567890",
+        "customer": {
+          "customerId": "cust-12345",
+          "accountAge": 365,
+          "totalLifetimeValue": 12500,
+          "orderHistoryCount": 48
+        },
+        "transaction": {
+          "transactionId": "txn-987654321",
+          "amount": 4500.00,
+          "category": "electronics",
+          "isRecurring": false,
+          "deliveryAddress": {
+            "street": "456 Main Street",
+            "city": "San Francisco",
+            "state": "CA",
+            "postalCode": "94102",
+            "country": "US"
+          }
+        },
+        "historicalData": {
+          "previousChargebacks": 0,
+          "refundsIssued": 2,
+          "declinedTransactions": 3,
+          "avgDaysBetweenOrders": 7
+        }
+      },
+      "options": {
+        "failFast": false,
+        "asyncCompletion": true,
+        "webhookUrl": "https://payments.example.com/webhooks/chargeback-risk",
+        "customFields": {
+          "riskModelVersion": "v2.1"
+        }
+      }
+    }
+  ]
+}
