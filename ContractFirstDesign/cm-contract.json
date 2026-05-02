@@ -70,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -80,7 +80,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -90,7 +90,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -100,7 +100,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -212,7 +212,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -222,7 +222,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -232,7 +232,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -287,7 +287,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -297,7 +297,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -307,7 +307,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -317,7 +317,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -390,7 +390,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -400,7 +400,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -410,7 +410,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -420,7 +420,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -466,7 +466,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -476,7 +476,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -486,7 +486,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -496,7 +496,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -513,7 +513,7 @@
           "Billing Groups"
         ],
         "summary": "SUBMIT",
-        "description": "Submits the current draft of a **Billing Group** for evaluation.\n\n## Purpose\nValidate billing configuration (associations, charge rules, invoicing logic)\nbefore it is applied for live billing.\n\n## Behaviour\n- Requires `SUBMIT_BILLING_GROUP`.\n- Copies the draft data to the submitted slot; approved data is unchanged\n  until evaluation/apply completes.\n- Returns 202 Accepted with submission metadata.\n- Authorisation scoped to the customer.",
+        "description": "Submits the current draft of a **Billing Group** for evaluation.\n\n## Purpose\nValidate billing configuration (associations, charge rules, invoicing logic)\nbefore it is applied for live billing.\n\n## Behaviour\n- Requires `SUBMIT_BILLING_GROUP`.\n- Copies the draft data to the submitted slot; approved data is unchanged\n  until evaluation/apply completes.\n- Returns 202 Accepted with submission meta_data.\n- Authorisation scoped to the customer.",
         "operationId": "submit_billing_group",
         "parameters": [
           {
@@ -562,7 +562,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -572,7 +572,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -582,7 +582,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -592,7 +592,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -640,7 +640,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -650,7 +650,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -660,7 +660,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -670,7 +670,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -838,7 +838,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -848,7 +848,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -858,7 +858,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -913,7 +913,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -923,7 +923,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -933,7 +933,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -943,7 +943,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1016,7 +1016,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1026,7 +1026,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1036,7 +1036,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1046,7 +1046,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1092,7 +1092,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1102,7 +1102,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1112,7 +1112,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1122,7 +1122,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1139,7 +1139,7 @@
           "Contacts"
         ],
         "summary": "SUBMIT",
-        "description": "Submits the current draft of a **Contact** for evaluation.\n\n## Purpose\nValidate contact information and associated compliance checks before making\nthe contact available to downstream processes.\n\n## Behaviour\n- Requires `SUBMIT_CONTACT`.\n- Copies the draft data to the submitted slot; approved data is unchanged\n  until evaluation/apply completes.\n- Returns 202 Accepted with submission metadata.\n- Authorisation scoped to the customer.",
+        "description": "Submits the current draft of a **Contact** for evaluation.\n\n## Purpose\nValidate contact information and associated compliance checks before making\nthe contact available to downstream processes.\n\n## Behaviour\n- Requires `SUBMIT_CONTACT`.\n- Copies the draft data to the submitted slot; approved data is unchanged\n  until evaluation/apply completes.\n- Returns 202 Accepted with submission meta_data.\n- Authorisation scoped to the customer.",
         "operationId": "submit_contact",
         "parameters": [
           {
@@ -1188,7 +1188,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1198,7 +1198,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1208,7 +1208,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1218,7 +1218,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1266,7 +1266,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1276,7 +1276,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1286,7 +1286,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1296,7 +1296,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/Rfc7807"
                 }
               }
             }
@@ -1624,7 +1624,7 @@
           "Legal Entities"
         ],
         "summary": "SUBMIT",
-        "description": "Submits the current draft of a **Legal Entity** for evaluation.\n\n## Purpose\nTrigger the compliance/risk evaluation workflow that validates completeness,\nrequired documents, and business rules.\n\n## Behaviour\n- Requires `SUBMIT_LEGAL_ENTITY`.\n- On acceptance, copies draft to submitted slot and starts evaluation.\n- Returns 202 Accepted with submission metadata.",
+        "description": "Submits the current draft of a **Legal Entity** for evaluation.\n\n## Purpose\nTrigger the compliance/risk evaluation workflow that validates completeness,\nrequired documents, and business rules.\n\n## Behaviour\n- Requires `SUBMIT_LEGAL_ENTITY`.\n- On acceptance, copies draft to submitted slot and starts evaluation.\n- Returns 202 Accepted with submission meta_data.",
         "operationId": "submit_legal_entity",
         "parameters": [
           {
@@ -2081,7 +2081,7 @@
           "Bank Accounts"
         ],
         "summary": "SUBMIT",
-        "description": "Submits the current draft of a **Bank Account** for evaluation.\n\n## Purpose\nTrigger validation of payout/settlement details and compliance checks prior\nto activation.\n\n## Behaviour\n- Requires `SUBMIT_BANK_ACCOUNT`.\n- Copies the draft data to the submitted slot; approved data is unchanged\n  until evaluation and apply complete.\n- Returns 202 Accepted with submission metadata.\n- Authorisation is scoped to the customer and legal entity provided.",
+        "description": "Submits the current draft of a **Bank Account** for evaluation.\n\n## Purpose\nTrigger validation of payout/settlement details and compliance checks prior\nto activation.\n\n## Behaviour\n- Requires `SUBMIT_BANK_ACCOUNT`.\n- Copies the draft data to the submitted slot; approved data is unchanged\n  until evaluation and apply complete.\n- Returns 202 Accepted with submission meta_data.\n- Authorisation is scoped to the customer and legal entity provided.",
         "operationId": "submit_bank_account",
         "parameters": [
           {
@@ -2184,6 +2184,46 @@
           "204": {
             "description": "Successfully triggered change evaluation"
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal error"
           }
@@ -2196,7 +2236,7 @@
           "Product Agreements"
         ],
         "summary": "LIST",
-        "description": "Returns the paginated collection of **Product Agreements** for a legal\nentity.\n\n## Purpose\nDiscover configured product agreements before selecting one for update,\nsubmission, or evaluation.\n\n## Behaviour\n- Requires `READ_PRODUCT_AGREEMENT`.\n- Paginates via `PaginationSettings`.\n- Scopes results to the provided customer and legal entity.\n\n",
+        "description": "Returns the paginated collection of **Product Agreements** for a legal\nentity.\n\n## Purpose\nDiscover configured product agreements before selecting one for update,\nsubmission, or evaluation.\n\n## Behaviour\n- Requires `READ_PRODUCT_AGREEMENT`.n- Requires `READ_PRODUCT_AGREEMENT_SYSTEM_DATA` to view 'system_data'.\n- Paginates via `PaginationSettings`.\n- Scopes results to the provided customer and legal entity.\n\n",
         "operationId": "query_products",
         "parameters": [
           {
@@ -2294,6 +2334,46 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal error"
           }
@@ -2304,7 +2384,7 @@
           "Product Agreements"
         ],
         "summary": "CREATE",
-        "description": "Creates a new **Product Agreement** for the specified Customer and (typically)\nassociated Legal Entity.\nA product agreement defines which products or services the customer intends\nto use, together with configuration, eligibility information, and any\nproduct-specific operational requirements.\n\n## Purpose\nProduct Agreements serve as the core artefacts for enabling and configuring\nproducts within the platform.\nThey describe:\n- Which products a customer is onboarding to\n- The configuration and parameters for each product\n- Product-specific requirements (documents, checks, capabilities)\n- The lifecycle and state of each activated product\n\nThey act as a contract-level definition between the platform and the\ncustomer's legal entity.\n\n## Lifecycle & Versions\nProduct Agreements follow the standard entity lifecycle:\n- `draft`, `submitted`, and `approved` version numbers all begin at `0`\n- The **draft** copy is populated using the request body\n\nIf `submit=true` is provided:\n- The draft is also copied to the submitted slot\n- The Product Agreement is **immediately submitted for evaluation**\n\nIf not submitted:\n- The agreement remains in draft form until explicitly submitted via the\n  submit endpoint or by workflows that automatically trigger submission\n\nThe **approved** slot is only updated once evaluation completes and the\napply workflow has been successfully executed.\n\n## Submission & Evaluation\nUpon submission, a Product Agreement is evaluated using the product's\ndefinition and configured workflow logic. Evaluation may identify:\n- Missing or invalid configuration fields\n- Inconsistent product selections\n- Required documents or compliance checks\n- Product dependency issues (e.g., prerequisites not met)\n\nFindings are returned to the caller and must be resolved before approval\ncan occur.\n\n## Relationships\nProduct Agreements typically relate to:\n- A **Legal Entity** that the product applies to\n- One or more **Product Definitions** that specify rules and capabilities\n- Associated configuration entities (billing, locations, bank accounts)\n\nThese links allow workflows to determine what configuration must exist\nbefore the agreement can be approved.\n\n## Validation & Authorisation\n- Caller must present a valid JWT containing `CREATE_PRODUCT_AGREEMENT` or\n  equivalent permissions for the target customer.\n- The referenced customer must exist.\n- Request payload must pass validation; structured error responses are\n  returned for invalid data.\n\n## Result\nReturns the newly created Product Agreement wrapped in an\n`EntityResponse` with a **201 Created** status.\n\n",
+        "description": "Creates a new **Product Agreement** for the specified Customer and (typically)\nassociated Legal Entity.\nA product agreement defines which products or services the customer intends\nto use, together with configuration, eligibility information, and any\nproduct-specific operational requirements.\n\n## Purpose\nProduct Agreements serve as the core artefacts for enabling and configuring\nproducts within the platform.\nThey describe:\n- Which products a customer is onboarding to\n- The configuration and parameters for each product\n- Product-specific requirements (documents, checks, capabilities)\n- The lifecycle and state of each activated product\n\nThey act as a contract-level definition between the platform and the\ncustomer's legal entity.\n\n## Lifecycle & Versions\nProduct Agreements follow the standard entity lifecycle:\n- `draft`, `submitted`, and `approved` version numbers all begin at `0`\n- The **draft** copy is populated using the request body\n\nIf `submit=true` is provided:\n- The draft is also copied to the submitted slot\n- The Product Agreement is **immediately submitted for evaluation**\n\nIf not submitted:\n- The agreement remains in draft form until explicitly submitted via the\n  submit endpoint or by workflows that automatically trigger submission\n\nThe **approved** slot is only updated once evaluation completes and the\napply workflow has been successfully executed.\n\n## Submission & Evaluation\nUpon submission, a Product Agreement is evaluated using the product's\ndefinition and configured workflow logic. Evaluation may identify:\n- Missing or invalid configuration fields\n- Inconsistent product selections\n- Required documents or compliance checks\n- Product dependency issues (e.g., prerequisites not met)\n\nFindings are returned to the caller and must be resolved before approval\ncan occur.\n\n## Relationships\nProduct Agreements typically relate to:\n- A **Legal Entity** that the product applies to\n- One or more **Product Definitions** that specify rules and capabilities\n- Associated configuration entities (billing, locations, bank accounts)\n\nThese links allow workflows to determine what configuration must exist\nbefore the agreement can be approved.\n\n## Validation & Authorisation\n- Caller must present a valid JWT containing `CREATE_PRODUCT_AGREEMENT` or\n  equivalent permissions for the target customer.\n- Caller must have `MANAGE_PRODUCT_AGREEMENT_SYSTEM_DATA` permissions to manage 'system_data'. \n- The referenced customer must exist.\n- Request payload must pass validation; structured error responses are\n  returned for invalid data.\n\n## Result\nReturns the newly created Product Agreement wrapped in an\n`EntityResponse` with a **201 Created** status.\n\n",
         "operationId": "create_product",
         "parameters": [
           {
@@ -2357,6 +2437,46 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal error"
           }
@@ -2369,7 +2489,7 @@
           "Product Agreements"
         ],
         "summary": "GET",
-        "description": "Retrieves a specific **Product Agreement** by ID.\n\n## Purpose\nDisplay the current draft/submitted/approved state for an agreement before\nediting or submission.\n\n## Behaviour\n- Requires `READ_PRODUCT_AGREEMENT`.\n- Returns 404 when the agreement is not found or not visible to the caller.\n- Includes version/status context in `EntityResponse<ProductAgreement>`.\n\n",
+        "description": "Retrieves a specific **Product Agreement** by ID.\n\n## Purpose\nDisplay the current draft/submitted/approved state for an agreement before\nediting or submission.\n\n## Behaviour\n- Requires `READ_PRODUCT_AGREEMENT`.\n- Requires `READ_PRODUCT_AGREEMENT_SYSTEM_DATA` to view 'system_data'.\n- Returns 404 when the agreement is not found or not visible to the caller.\n- Includes version/status context in `EntityResponse<ProductAgreement>`.\n\n",
         "operationId": "get_one_product",
         "parameters": [
           {
@@ -2411,8 +2531,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -2424,7 +2581,7 @@
           "Product Agreements"
         ],
         "summary": "UPDATE",
-        "description": "Updates an existing **Product Agreement** draft.\n\n## Purpose\nRefine product configuration before submission or after evaluation feedback.\n\n## Behaviour\n- Requires `UPDATE_PRODUCT_AGREEMENT`.\n- Uses optimistic concurrency via `EntityUpdateRequest.version`.\n- Optional `submit` flag copies the change to the submitted slot and\n  triggers evaluation.\n- Authorisation scoped to customer and legal entity.\n\n",
+        "description": "Updates an existing **Product Agreement** draft.\n\n## Purpose\nRefine product configuration before submission or after evaluation feedback.\n\n## Behaviour\n- Requires `UPDATE_PRODUCT_AGREEMENT`.\n- Requires `MANAGE_PRODUCT_AGREEMENT_SYSTEM_DATA` to update 'system_data'.\n- Uses optimistic concurrency via `EntityUpdateRequest.version`.\n- Optional `submit` flag copies the change to the submitted slot and\n  triggers evaluation.\nNot all properties can be updated once applied.\n- Authorisation scoped to customer and legal entity.\n\n",
         "operationId": "update_product",
         "parameters": [
           {
@@ -2486,8 +2643,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -2499,7 +2693,7 @@
           "Product Agreements"
         ],
         "summary": "DELETE",
-        "description": "Deletes an existing **Product Agreement**.\n\n## Purpose\nRemove obsolete or erroneous agreements prior to activation or usage in\ndownstream flows.\n\n## Behaviour\n- Requires `DELETE_PRODUCT_AGREEMENT`.\n- Returns 200 on successful deletion; 404 if the record does not exist.\n- Authorisation scoped to the customer and legal entity.\n\n",
+        "description": "Deletes an existing **Product Agreement**.\n\n## Purpose\nRemove obsolete or erroneous agreements prior to activation or usage in\ndownstream flows.\n\n## Behaviour\n- Requires `DELETE_PRODUCT_AGREEMENT`.\n- Requires `MANAGE_PRODUCT_AGREEMENT_SYSTEM_DATA` to delete 'system_data'.\n- Returns 200 on successful deletion; 404 if the record does not exist.\n- Authorisation scoped to the customer and legal entity.\n\n",
         "operationId": "delete_product",
         "parameters": [
           {
@@ -2534,8 +2728,45 @@
           "204": {
             "description": "Successfully deleted item"
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -2549,7 +2780,7 @@
           "Product Agreements"
         ],
         "summary": "SUBMIT",
-        "description": "Submits the current draft of a **Product Agreement** for evaluation.\n\n## Purpose\nTrigger validation of product configuration and eligibility prior to\nactivation.\n\n## Behaviour\n- Requires `SUBMIT_PRODUCT_AGREEMENT`.\n- Copies draft data to the submitted slot; approved data is unchanged until\n  evaluation/apply completes.\n- Returns 202 Accepted with submission metadata.\n- Authorisation scoped to the customer and legal entity.",
+        "description": "Submits the current draft of a **Product Agreement** for evaluation.\n\n## Purpose\nTrigger validation of product configuration and eligibility prior to\nactivation.\n\n## Behaviour\n- Requires `SUBMIT_PRODUCT_AGREEMENT`.\n- Copies draft data to the submitted slot; approved data is unchanged until\n  evaluation/apply completes.\n- Returns 202 Accepted with submission meta_data.\n- Authorisation scoped to the customer and legal entity.",
         "operationId": "submit_product_agreement",
         "parameters": [
           {
@@ -2664,7 +2895,7 @@
           "Trading Locations"
         ],
         "summary": "LIST",
-        "description": "Returns the paginated collection of **Trading Locations** for a legal\nentity.\n\n## Purpose\nDiscover configured operating locations before selecting one for update,\nsubmission, or evaluation.\n\n## Behaviour\n- Requires `READ_TRADING_LOCATION`.\n- Paginates via `PaginationSettings`.\n- Scopes results to the provided customer and legal entity.\n\n",
+        "description": "Returns the paginated collection of **Trading Locations** for a legal\nentity.\n\n## Purpose\nDiscover configured operating locations before selecting one for update,\nsubmission, or evaluation.\n\n## Behaviour\n- Requires `READ_TRADING_LOCATION`.\n- Requires `READ_TRADING_LOCATION_SYSTEM_DATA` to view system data.\n- Paginates via `PaginationSettings`.\n- Scopes results to the provided customer and legal entity.\n\n",
         "operationId": "query_trading_locations",
         "parameters": [
           {
@@ -2762,6 +2993,46 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal error"
           }
@@ -2772,7 +3043,7 @@
           "Trading Locations"
         ],
         "summary": "CREATE",
-        "description": "Creates a new **Trading Location** for the specified Customer and Legal Entity.\nA trading location represents a place (physical or online) where the\nbusiness conducts trading activity.\n\n## Purpose\nTrading locations provide structured, versioned records of:\n- Where the business operates (shops, sites, online channels, etc.)\n- How those locations are identified and described operationally\n- Which Legal Entity is responsible for activity at each location\n\nThey are a key part of onboarding and risk evaluation, and are used by\ndownstream systems for routing, reporting, and compliance checks.\n\n## Lifecycle & Versions\nTrading locations follow the standard entity lifecycle:\n- `draft`, `submitted`, and `approved` version numbers all begin at `0`.\n- The **draft** copy is populated with the data from the request body.\n\nIf `submit=true` is provided:\n- The draft data is also copied to the submitted slot.\n- The trading location is immediately **submitted for evaluation**.\n\nIf `submit` is not set:\n- The trading location remains in draft form until explicitly submitted via\n  the submit endpoint or via a Legal Entity–driven workflow.\n\nThe **approved** slot is only updated once evaluation completes successfully\nand the apply workflow has run.\n\nThe trading location is created with its `legal_entity_id` set from the URL;\nthis association **cannot be changed** after creation.\n\n## Submission & Evaluation\nSubmission may be triggered:\n- Directly by calling this endpoint with `submit=true`, or\n- Indirectly from a Legal Entity workflow that includes one or more trading\n  locations as part of a wider change set.\n\nDuring evaluation, the system may identify:\n- Missing or invalid address / location details\n- Conflicts or inconsistencies with the Legal Entity configuration\n- Additional document or data requirements\n\nAny findings are returned to the caller and must be resolved before the\napproved copy is updated.\n\n## Validation & Authorisation\n- Caller must have permission to `CREATE_TRADING_LOCATION` for the target\n  customer and legal entity.\n- Authorisation is provided via a signed JWT issued by the authorisation\n  server.\n- The request payload must pass validation; failures are returned with\n  structured error details.\n\n## Result\nReturns the newly created Trading Location wrapped in an\n`EntityResponse<TradingLocation>` with a **201 Created** status.\n\n",
+        "description": "Creates a new **Trading Location** for the specified Customer and Legal Entity.\nA trading location represents a place (physical or online) where the\nbusiness conducts trading activity.\n\n## Purpose\nTrading locations provide structured, versioned records of:\n- Where the business operates (shops, sites, online channels, etc.)\n- How those locations are identified and described operationally\n- Which Legal Entity is responsible for activity at each location\n\nThey are a key part of onboarding and risk evaluation, and are used by\ndownstream systems for routing, reporting, and compliance checks.\n\n## Lifecycle & Versions\nTrading locations follow the standard entity lifecycle:\n- `draft`, `submitted`, and `approved` version numbers all begin at `0`.\n- The **draft** copy is populated with the data from the request body.\n\nIf `submit=true` is provided:\n- The draft data is also copied to the submitted slot.\n- The trading location is immediately **submitted for evaluation**.\n\nIf `submit` is not set:\n- The trading location remains in draft form until explicitly submitted via\n  the submit endpoint or via a Legal Entity–driven workflow.\n\nThe **approved** slot is only updated once evaluation completes successfully\nand the apply workflow has run.\n\nThe trading location is created with its `legal_entity_id` set from the URL;\nthis association **cannot be changed** after creation.\n\n## Submission & Evaluation\nSubmission may be triggered:\n- Directly by calling this endpoint with `submit=true`, or\n- Indirectly from a Legal Entity workflow that includes one or more trading\n  locations as part of a wider change set.\n\nDuring evaluation, the system may identify:\n- Missing or invalid address / location details\n- Conflicts or inconsistencies with the Legal Entity configuration\n- Additional document or data requirements\n\nAny findings are returned to the caller and must be resolved before the\napproved copy is updated.\n\n## Validation & Authorisation\n- Caller must have permission to `CREATE_TRADING_LOCATION` for the target\n  customer and legal entity. \n - Caller must have `MANAGE_TRADING_LOATION_SYSTEM_DATA` to manage 'system_data'. \n- Authorisation is provided via a signed JWT issued by the authorisation\n  server.\n- The request payload must pass validation; failures are returned with\n  structured error details.\n\n## Result\nReturns the newly created Trading Location wrapped in an\n`EntityResponse<TradingLocation>` with a **201 Created** status.\n\n",
         "operationId": "create_trading_location",
         "parameters": [
           {
@@ -2825,6 +3096,46 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal error"
           }
@@ -2837,7 +3148,7 @@
           "Trading Locations"
         ],
         "summary": "GET",
-        "description": "Retrieves a specific **Trading Location** by ID.\n\n## Purpose\nDisplay the current draft/submitted/approved state for a location before\nediting or submission.\n\n## Behaviour\n- Requires `READ_TRADING_LOCATION`.\n- Returns 404 when the location is not found or not visible to the caller.\n- Includes version/status context in `EntityResponse<TradingLocation>`.\n\n",
+        "description": "Retrieves a specific **Trading Location** by ID.\n\n## Purpose\nDisplay the current draft/submitted/approved state for a location before\nediting or submission.\n\n## Behaviour\n- Requires `READ_TRADING_LOCATION`.\n- Requires `READ_TRADING_LOCATION_SYSTEM_DATA` to view 'system_data'.\n- Returns 404 when the location is not found or not visible to the caller.\n- Includes version/status context in `EntityResponse<TradingLocation>`.\n\n",
         "operationId": "get_one_trading_location",
         "parameters": [
           {
@@ -2879,8 +3190,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -2892,7 +3240,7 @@
           "Trading Locations"
         ],
         "summary": "UPDATE",
-        "description": "Updates an existing **Trading Location** draft.\n\n## Purpose\nRefine location details before submission or after evaluation feedback.\n\n## Behaviour\n- Requires `UPDATE_TRADING_LOCATION`.\n- Uses optimistic concurrency via `EntityUpdateRequest.version`.\n- Optional `submit` flag copies the change to the submitted slot and\n  triggers evaluation.\n- Authorisation scoped to customer and legal entity.\n\n",
+        "description": "Updates an existing **Trading Location** draft.\n\n## Purpose\nRefine location details before submission or after evaluation feedback.\n\n## Behaviour\n- Requires `UPDATE_TRADING_LOCATION`.\n- Requires `MANAGE_TRADING_LOCATION_SYSTEM_DATA` to modify 'system_data'.\n- Uses optimistic concurrency via `EntityUpdateRequest.version`.\n- Optional `submit` flag copies the change to the submitted slot and\n  triggers evaluation.\n- Authorisation scoped to customer and legal entity.\n\n",
         "operationId": "update_trading_location",
         "parameters": [
           {
@@ -2954,8 +3302,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -3002,8 +3387,45 @@
           "204": {
             "description": "Successfully deleted item"
           },
+           "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -3017,7 +3439,7 @@
           "Trading Locations"
         ],
         "summary": "SUBMIT",
-        "description": "Submits the current draft of a **Trading Location** for evaluation.\n\n## Purpose\nTrigger validation of the location (address, operations, associations) prior\nto activation.\n\n## Behaviour\n- Requires `SUBMIT_TRADING_LOCATION`.\n- Copies draft data to the submitted slot; approved data is unchanged until\n  evaluation/apply completes.\n- Returns 202 Accepted with submission metadata.\n- Authorisation scoped to the customer and legal entity.",
+        "description": "Submits the current draft of a **Trading Location** for evaluation.\n\n## Purpose\nTrigger validation of the location (address, operations, associations) prior\nto activation.\n\n## Behaviour\n- Requires `SUBMIT_TRADING_LOCATION`.\n- Copies draft data to the submitted slot; approved data is unchanged until\n  evaluation/apply completes.\n- Returns 202 Accepted with submission meta_data.\n- Authorisation scoped to the customer and legal entity.",
         "operationId": "submit_trading_location",
         "parameters": [
           {
@@ -3070,8 +3492,45 @@
               }
             }
           },
+           "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "ID was not found"
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal error"
@@ -3120,6 +3579,46 @@
           "204": {
             "description": "Successfully triggered change evaluation"
           },
+           "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal error"
           }
@@ -3129,6 +3628,147 @@
   },
   "components": {
     "schemas": {
+
+      "Product.Payit.SingleDomesticPayment": {
+        "type": "object",
+        "description": "Payit Single Domestic Payment features",
+        "properties": {
+            "Features": {
+                "type": "object",
+                "properties": {
+                    "FundSettledAdvice": {
+                        "type": "boolean",
+                        "description": "Indicates if fund settled advice is enabled"
+                    },
+                    "UnsolicitedPaymentIdentification": {
+                        "type": "boolean",
+                        "description": "Indicates if unsolicited payment identification is enabled"
+                    }
+                }
+            },
+            "Configuration": {
+                "$ref": "#/components/schemas/Product.Payit.PaymentCommon.Configuration"
+            }
+        }
+      },
+
+      "Product.Payit.PaymentCommon.Configuration": {
+      "type": ["object", "null"],
+        "properties": {
+          "StatusUpdateUrl": {
+            "type": "string",
+            "description": "URL to which payment status updates will be sent"
+          },
+          "ClientRedirectUrl": {
+            "type": "string",
+            "description": "URL to which the client will be redirected after completing the payment"
+          },
+          "IntegrationType": {
+            "type": "string",
+            "description": "Integration type for the international payment (ie., 'Embedded', 'SDK', 'Plugin')"
+          }
+        }
+      },
+
+      "Product.Payit.SingleInternationalPayment": {
+        "type": "object",
+        "description": "Payit Single International Payment features",
+        "properties": {
+          "Features": {
+            "type": "object",
+            "properties": {
+              "FundSettledAdvice": {
+                "type": "boolean",
+                "description": "Indicates if fund settled advice is enabled"
+              },
+              "UnsolicitedPaymentIdentification": {
+                "type": "boolean",
+                "description": "Indicates if unsolicited payment identification is enabled"
+              }
+            }
+          },
+          "Configuration": {
+            "$ref": "#/components/schemas/Product.Payit.PaymentCommon.Configuration"
+          }
+        }
+      },
+
+      "Product.Payit.CommercialVRP": {
+        "type": "object",
+        "description": "Payit Commercial VRM Payment features",
+        "properties": {
+          "Features": {
+            "type": "object",
+            "properties": {
+              "FundSettledAdvice": {
+                "type": "boolean",
+                "description": "Indicates if fund settled advice is enabled"
+              },
+              "UnsolicitedPaymentIdentification": {
+                "type": "boolean",
+                "description": "Indicates if unsolicited payment identification is enabled"
+              },
+              "Wave": {
+                "type": "string",
+                "enum": ["Wave1", "Wave2"],
+                "description": "TODO  "
+              }
+            }
+          },
+          "Configuration": {
+            "$ref": "#/components/schemas/Product.Payit.PaymentCommon.Configuration"
+          }
+        }
+      },
+
+
+      "Product.Payit.SweepingVRP": {
+        "type": "object",
+        "description": "Payit Sweeping VRM Payment product configuration",
+        "properties": {
+          "Features": {
+            "type": "object",
+            "properties": {
+              "FundSettledAdvice": {
+                "type": "boolean",
+                "description": "Indicates if fund settled advice is enabled"
+              },
+              "UnsolicitedPaymentIdentification": {
+                "type": "boolean",
+                "description": "Indicates if unsolicited payment identification is enabled"
+              },
+              "Wave": {
+                "type": "string",
+                "enum": ["Wave1", "Wave2"],
+                "description": "TODO  "
+              }
+            }
+          },
+          "Configuration": {
+            "$ref": "#/components/schemas/Product.Payit.PaymentCommon.Configuration"
+          }
+        }
+      },
+
+      "ProductDetails": {
+        "type": "object",
+        "description": "Product features and configuration",
+        "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Product.Payit.SingleDomesticPayment"
+                },
+                {
+                  "$ref": "#/components/schemas/Product.Payit.SingleInternationalPayment"
+                },
+                {
+                  "$ref": "#/components/schemas/Product.Payit.CommercialVRP"
+                },
+                {
+                  "$ref": "#/components/schemas/Product.Payit.SweepingVRP"
+                }
+        ]
+      },
+
       "Address": {
         "type": "object",
         "description": "Postal address",
@@ -3225,14 +3865,14 @@
             "type": [ "string", "null" ],
             "description": "Swift code identifies the bank holding the account"
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -3265,14 +3905,14 @@
             "type": ["string", "null"],
             "description": "Direct debit reference"            
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -3367,14 +4007,14 @@
             "type": [ "string", "null" ],
             "description": "Primary telephone numbers dialling code"
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -3463,14 +4103,14 @@
             "type": [ "string", "null" ],
             "description": "Swift code identifies the bank holding the account"
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -3503,14 +4143,14 @@
             "type": ["string", "null"],
             "description": "Direct debit reference"
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -3551,14 +4191,14 @@
             "type": [ "string", "null" ],
             "description": "Primary telephone numbers dialling code"
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -3711,14 +4351,14 @@
             ],
             "default": "Registered"
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used to query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -3868,38 +4508,45 @@
           "end_of_business_relationship": {
             "$ref": "#/components/schemas/BusinessRelationship"
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
       "CreateUpdateProductAgreement": {
         "type": "object",
         "description": "Provides the details required to create a new product agreement.",
-        "required": [ "product_type", "features", "rate_card_id", "product_configuration" ],
+        "required": [ "product_id", "product_details", "rate_card_id" ],
         "properties": {
+           "product_id": {
+            "type": "string",
+            "description": "Product catalogue identifier - as defined in the product catalogue"
+          },
           "display_name": {
             "type": [ "string", "null" ],
             "description": "Display name for the product"
           },
-          "features": {
-            "type": "array",
-            "items": { "type": "string" },
-            "description": "list of additional features enabled for the product"
-          },
-          "product_configuration": 
-          { 
-            "description": "Product Configuration - object containing product specific configuration" 
-          },
-          "product_type": {
-            "type": "string",
-            "description": "Product type - as defined in the product catalogue"
+          "product_details": {
+            "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Product.Payit.SingleDomesticPayment"
+                },
+                {
+                  "$ref": "#/components/schemas/Product.Payit.SingleInternationalPayment"
+                },
+                {
+                  "$ref": "#/components/schemas/Product.Payit.CommercialVRP"
+                },
+                {
+                  "$ref": "#/components/schemas/Product.Payit.SweepingVRP"
+                }
+            ]
           },
           "rate_card_id": {
             "type": "string",
@@ -3909,14 +4556,18 @@
             "type": [ "string", "null" ],
             "description": "Billing group identifier for the product agreement"
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "trading_location_id": {
+            "type": [ "string", "null" ],
+            "description": "Trading location identifier for the product agreement"
+          },
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -3948,14 +4599,14 @@
             "description": "The website url (eg https://my.domain.con) of the trading location (either postal address or website must be specified)",
             "default": "https://example.com"
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -4002,6 +4653,9 @@
           "uploaded_filename": {
             "type": [ "string", "null" ],
             "description": "Original filename of uploaded file"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -4033,7 +4687,7 @@
             "description": "If omitted, the event applies to the current document version."
           },
           "event_type": { "$ref": "#/components/schemas/DocumentEventType" },
-          "payload": { "description": "Arbitrary payload containing proof or metadata for the event." }
+          "payload": { "description": "Arbitrary payload containing proof or meta_data for the event." }
         }
       },
       "DocumentEventType": {
@@ -4094,8 +4748,7 @@
             "format": "int64",
             "description": "Version of this item.  The draft version is incremented each time any change is made.  The correct version, matching the current draft version, must be provided in a request to update to prevent multi-user updates."
           },
-         
-          "issues": {
+          "feedback": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" },
             "description": "Details of any errors in the evaluation or while applying the data for the entity\nDetails of any requests for input that were generated for this entity (updated after evaluation workflow completes)"
@@ -4158,7 +4811,7 @@
             "format": "int64",
             "description": "Version of this item."
           },
-          "issues": {
+          "feedback": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" }
           },
@@ -4221,7 +4874,7 @@
             "format": "int64",
             "description": "Version of this item."
           },
-          "issues": {
+          "feedback": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" }
           },
@@ -4277,7 +4930,7 @@
             "type": "integer",
             "format": "int64"
           },         
-          "issues": {
+          "feedback": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" }
           },
@@ -4322,7 +4975,7 @@
             "type": "integer",
             "format": "int64"
           },
-          "issues": {
+          "feedback": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" }
           },
@@ -4363,7 +5016,7 @@
             "type": "integer",
             "format": "int64"
           },         
-          "issues": {
+          "feedback": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" }
           },
@@ -4408,7 +5061,7 @@
           "WaitingForProductSelection",
           "MissingRequiredInformation",
           "InternalError",
-          "WaitingForContractSignature",
+          "WaitingForContractSignatureOrAcceptance",
           "UserActionRequired",
           "WaitingForLegalEntityApproval",
           "WaitingForConfiguration"
@@ -4445,10 +5098,10 @@
             "type": "string",
             "description": "The ID of the item the status relates to"
           },
-          "issues": {
+          "feedback": {
             "type": [ "array", "null" ],
             "items": { "$ref": "#/components/schemas/EntityStateResult" },
-            "description": "issues array for the entity"
+            "description": "Feedback array for the entity"
           },
           "status": {
             "$ref": "#/components/schemas/EntityState",
@@ -4537,14 +5190,14 @@
           { 
             "$ref": "#/components/schemas/BusinessRelationship" 
           },
-          "descriptors": {
-            "$ref": "#/components/schemas/Descriptor",
-            "description": "Meta-data that describes entity"
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
-            "type": ["array", "null"],
-            "items": { "type": ["string", "null"] },
-            "description": "Label that can be used query customer data"
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
           }
         }
       },
@@ -4576,10 +5229,14 @@
           },
           "date_from": {
             "type": [ "string", "null" ],
+            "format": "date",
+            "example": "2020-01-01",
             "description": "The date from which the person has been in control"
           },
           "date_to": {
             "type": [ "string", "null" ],
+            "format": "date",
+            "example": "2020-01-01",
             "description": "The date until which the person has been in control"
           }
         }
@@ -4612,10 +5269,8 @@
             "type": "string",
             "description": "The legal entity that this document is associated with"
           },
-          "metadata": {
-            "type": "object",
-            "additionalProperties": { "type": "string" },
-            "propertyNames": { "type": "string" }
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           },
           "payload_data": {},
           "product_agreement_id": {
@@ -4700,27 +5355,51 @@
           },
           "date_from": {
             "type": [ "string", "null" ],
+            "format": "date",
+            "example": "2020-01-01",
             "description": "The date from which the person has been in control"
           },
           "date_to": {
             "type": [ "string", "null" ],
+            "format": "date",
+            "example": "2020-01-01",
             "description": "The date until which the person has been in control"
           }
         }
       },
       "ProductAgreement": {
         "type": "object",
-        "required": [ "product_type", "features", "rate_card_id", "legal_entity_id", "product_configuration" ],
+        "required": [ "product_id", "product_detao;s", "rate_card_id", "legal_entity_id" ],
         "properties": {
+          "product__id": { "type": [ "string", "null" ] },
           "display_name": { "type": [ "string", "null" ] },
-          "features": {
-            "type": "array",
-            "items": { "type": "string" }
+          "product_details": {
+            "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Product.Payit.SingleDomesticPayment"
+                },
+                {
+                  "$ref": "#/components/schemas/Product.Payit.SingleInternationalPayment"
+                },
+                {
+                  "$ref": "#/components/schemas/Product.Payit.CommercialVRP"
+                },
+                {
+                  "$ref": "#/components/schemas/Product.Payit.SweepingVRP"
+                }
+            ]
           },
           "legal_entity_id": { "type": "string" },
-          "product_configuration": {},
-          "product_type": { "type": "string" },
-          "rate_card_id": { "type": "string" }
+          "billing_group_id": { "type": [ "string", "null" ] },
+          "trading_location_id": { "type": [ "string", "null" ] },
+          "rate_card_id": { "type": "string" },
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {  "$ref": "#/components/schemas/SystemData" }
         }
       },
       "RegisteredAddress": {
@@ -4734,11 +5413,15 @@
           },
           "date_from": {
             "type": "string",
-            "default": "2015-01-01"
+            "format": "date",
+            "example": "2015-01-01",
+            "description": "The date from which the address is valid"
           },
           "date_to": {
             "type": [ "string", "null" ],
-            "default": "2015-01-01"
+            "format": "date",
+            "example": "2015-01-01",
+            "description": "The date until which the address is valid"
           }
         }
       },
@@ -4787,15 +5470,13 @@
           "legal_entity_id": { "type": "string" },
           "name": { "type": "string" },
           "website": { "type": [ "string", "null" ] },
-            "descriptors": {
-              "$ref": "#/components/schemas/Descriptor",
-              "description": "Meta-data that describes entity"
-            },
-            "labels": {
-              "type": ["array", "null"],
-              "items": { "type": ["string", "null"] },
-              "description": "Label that can be used query customer data"
-            }
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": { "$ref": "#/components/schemas/SystemData" }
         }
       },
       "TradingLocationContact": {
@@ -4803,7 +5484,19 @@
         "required": [ "contact_type", "contact_id" ],
         "properties": {
           "contact_id": { "type": "string" },
-          "contact_type": { "$ref": "#/components/schemas/TradingLocationContactType" }
+          "contact_type": { "$ref": "#/components/schemas/TradingLocationContactType" },
+          "date_from": {
+            "type": [ "string", "null" ],
+            "format": "date",
+            "example": "2020-01-01",
+            "description": "The date from which the contact has been associated with the trading location"
+          },
+          "date_to": {
+            "type": [ "string", "null" ],
+            "format": "date",
+            "example": "2020-01-01",
+            "description": "The date until which the contact has been associated with the trading location"
+          }
         }
       },
       "TradingLocationContactType": {
@@ -4813,10 +5506,6 @@
       "VatRegistrationStatus": {
         "type": "string",
         "enum": [ "Registered", "NotRegistered", "RegistrationPending" ]
-      },
-      "Descriptor": {
-        "type": ["array", "null"],
-        "items": { "$ref": "#/components/schemas/KeyValuePair" }
       },
       "KeyValuePair": {
         "properties": {
@@ -4837,10 +5526,8 @@
             "type": "string",
             "description": "ID of the legal entity the partner has interest in"
           },
-           "descriptors": {
-            "type": ["array", "null"],
-            "items": { "$ref": "#/components/schemas/Descriptor" },
-            "description": "Additional description of the partner's interest in the legal entity represented as key value pairs"
+           "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
           }
         }
       },
@@ -4858,8 +5545,21 @@
         "description": "Ownership of goods or services offered"
       },
       "SystemData": {
+        "type": ["object", "null"],
+        "description": "System-generated data used for internal processing.",
+        "additionalProperties": { "type": "string" },
+        "propertyNames": { "type": "string" }
+      },
+      "MetaData": {
+        "type": ["object", "null"],
+        "description": "Caller-defined metadata for the resource represented as key value pairs.  This may be used to store additional information about the resource that is not captured in the defined properties, and can be used for any purpose relevant to the caller.",
+        "additionalProperties": { "type": "string" },
+        "propertyNames": { "type": "string" }
+      },
+      "Labels": {
         "type": ["array", "null"],
-        "items": { "$ref": "#/components/schemas/KeyValuePair" }
+        "items": { "type": ["string", "null"] },
+          "description": "Label that can be used query customer data"
       },
       "BusinessRelationship": {
         "type": [ "object", "null" ],
@@ -4879,44 +5579,6 @@
             "description": "Additional details about the end of the business relationship"
           }
         }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "description": "Standard error response",
-        "properties": {
-          "error": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string",
-                "description": "Error code for programmatic handling"
-              },
-              "message": {
-                "type": "string",
-                "description": "Human-readable error message"
-              },
-              "details": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "field": {
-                      "type": "string",
-                      "description": "Field that caused the error"
-                    },
-                    "message": {
-                      "type": "string",
-                      "description": "Validation error message"
-                    }
-                  }
-                },
-                "description": "Detailed validation errors (for 400 responses)"
-              }
-            },
-            "required": ["code", "message"]
-          }
-        },
-        "required": ["error"]
       }
     },
     "securitySchemes": {
