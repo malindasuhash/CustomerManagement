@@ -55,7 +55,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [new Feedback() { Type = FeedbackType.Warning, Key = "FINE", Value = "S" }], [])).Wait();
+            stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_COMPLETED, [new Feedback() {Type = FeedbackType.WaitingForExternalRiskChecks, Message = "S" }], [])).Wait();
 
             contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($"Contact: {contactDocument}"); Console.WriteLine();

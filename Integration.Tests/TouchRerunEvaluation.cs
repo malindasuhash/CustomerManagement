@@ -44,7 +44,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() { Type = FeedbackType.Error, Key = "ALL_GOOD", Value = "BLA" }], [])).Wait();
+            stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() {Type = FeedbackType.WaitingForExternalRiskChecks, Message = "BLA" }], [])).Wait();
 
             contactDocument = await database.FindEntity<Contact>(contactDocument.SearchBy());
             Console.WriteLine($" Contact: {contactDocument}"); Console.WriteLine();
@@ -81,7 +81,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED after TOUCH"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() { Type = FeedbackType.Warning, Key = "ALL_GOOD_AFTER_TOUCH", Value = "OK" }], [])).Wait();
+            stateManager.ProcessUpdateAsync<Contact>(StepToSend(contactDocument.EntityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() {Type = FeedbackType.WaitingForExternalRiskChecks, Message = "OK" }], [])).Wait();
 
             contactDocument = await database.FindEntity<Contact>(envelop.SearchBy());
             Console.WriteLine($"Contact after EVALUATION_STARTED: {contactDocument}"); Console.WriteLine();

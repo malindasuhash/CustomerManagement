@@ -88,9 +88,11 @@ namespace Api.Controllers
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
-        public async Task<ActionResult<EntityDocumentModel>> GetBankAccountById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
+        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> GetBankAccountById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            return await GetById<BankAccount>(LookupPredicate.Create(bankAccountId, customerId, legalEntityId));
+            var entityDocument = await customerDatabase.FindEntity<BankAccount>(LookupPredicate.Create(bankAccountId, customerId, legalEntityId));
+
+            return new ActionResult<ApiContract.EntityResponse_BankAccount>(MessageEnvelop_ToEntityResponse_BankAccount.Convert(entityDocument));
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -115,7 +117,7 @@ namespace Api.Controllers
         {
             var bankAccount = new BankAccount
             {
-                Label = patchModel.Label,
+                //Label = patchModel.Labels,
                 Name = patchModel.Name,
                 AccountNumber = patchModel.AccountNumber,
                 BankAccountHolderNames = patchModel.BankAccountHolderNames,
@@ -129,9 +131,9 @@ namespace Api.Controllers
                 SortCode = patchModel.SortCode
             };
 
-            if (patchModel.Descriptors != null)
+            if (patchModel.MetaData != null)
             {
-                bankAccount.Descriptors = [.. patchModel.Descriptors.Select(a => new Descriptor() { Key = a.Key, Value = a.Value })];
+                //bankAccount.MetaData = [.. patchModel.MetaData.Select(a => new MetaData() { Key = a.Key, Value = a.Value })];
             }
 
             return bankAccount;

@@ -22,7 +22,7 @@ namespace Api.ApiModels
         public string StandardIndustryClassification { get; set; }
         public PersonWithControlModel[] PersonsWithControl { get; set; }
         public RegisteredAddressModel[] RegisteredAddresses { get; set; }
-        public DescriptorModel[] Descriptors { get; set; } = [];
+        public MetaData[] Descriptors { get; set; } = [];
         public string Label { get; set; }
         public int TargetVersion { get; set; } = 0;
     }

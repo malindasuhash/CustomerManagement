@@ -90,7 +90,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"--> Sent EVALUATION_STARTED after DELETE"); Console.WriteLine();
 
-            stateManager.ProcessUpdateAsync<Contact>(StepToSend(entityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() { Type = FeedbackType.Warning, Key = "PROCESSING_DELETE", Value = "BLA" }], [])).Wait();
+            stateManager.ProcessUpdateAsync<Contact>(StepToSend(entityId, customerId, contactDocument.SubmittedVersion, RuntimeStatus.EVALUATION_STARTED, [new Feedback() {Type = FeedbackType.WaitingForExternalRiskChecks, Message = "BLA" }], [])).Wait();
 
             Console.WriteLine($"--> Sent EVALUATION_COMPLETED after DELETE"); Console.WriteLine();
 

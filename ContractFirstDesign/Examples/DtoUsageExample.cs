@@ -4,9 +4,9 @@ namespace ContractFirstDesign.Examples;
 
 public class DtoUsageExample
 {
-    public CreateLegalEntity BuildNewLegalEntity()
+    public CreateLegalEntityModel BuildNewLegalEntity()
     {
-        return new CreateLegalEntity
+        return new CreateLegalEntityModel
         {
             Name = "Acme Ltd",
             Business_email = "info@acme.com",
@@ -19,7 +19,7 @@ public class DtoUsageExample
             Card_turnover_per_annum = 200000,
             Maximum_transaction_value = 5000,
             Vat_registration_status = VatRegistrationStatus.Registered,
-            Vat_registration_no = "GB123456789",
+            Vat_registration = "GB123456789",
             Date_business_created = "2020-06-15",
             Date_trading_started = "2020-07-01",
             Persons_with_control =
@@ -38,7 +38,7 @@ public class DtoUsageExample
                             new RegisteredAddress
                 {
                     Current = true,
-                    Date_from = "2020-06-15",
+                    Date_from = DateTime.Parse("2020-06-15"),
                     Address = new Address
                     {
                         Name = "Acme House",
@@ -52,7 +52,7 @@ public class DtoUsageExample
                              new RegisteredAddress
                 {
                     Current = true,
-                    Date_from = "2020-06-15",
+                    Date_from = DateTime.Parse("2020-06-15"),
                     Address = new Address
                     {
                         Name = "Acme House",
@@ -73,7 +73,7 @@ public class DtoUsageExample
                 new RegisteredAddress
                 {
                     Current = true,
-                    Date_from = "2020-06-15",
+                    Date_from = DateTime.Parse("2020-06-15"),
                     Address = new Address
                     {
                         Name = "Acme House",

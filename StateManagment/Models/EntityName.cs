@@ -20,6 +20,7 @@
         ATTENTION_REQUIRED,
         IN_REVIEW,
         IN_PROGRESS,
-        SYNCHRONISED
+        SYNCHRONISED,
+        IN_PROGRESS_EXTERNAL
     }
 }

@@ -102,7 +102,7 @@ namespace Api.Controllers
             var billingGroup = new BillingGroup
             {
                 BillingBankAccountId = patchModel.BillingBankAccountId,
-                // Label = patchModel.Label,
+                // Labels = patchModel.Labels,
                 Name = patchModel.Name,
                 LegalEntityId = patchModel.LegalEntityId,
                 Description = patchModel.Description
@@ -110,7 +110,7 @@ namespace Api.Controllers
 
             if (patchModel.Descriptors != null)
             {
-                billingGroup.Descriptors = [.. patchModel.Descriptors.Select(a => new Descriptor() { Key = a.Key, Value = a.Value })];
+                // billingGroup.Descriptors = [.. patchModel.Descriptors.Select(a => new MetaData() { Key = a.Key, Value = a.Value })];
             }
 
             return billingGroup;
@@ -133,7 +133,7 @@ namespace Api.Controllers
             return new ApiContract.BillingGroup
             {
                 Billing_bank_account_id = billingGroupModel.BillingBankAccountId,
-                Labels = billingGroupModel.Labels,
+                //Labels = billingGroupModel.Labels,
                 Name = billingGroupModel.Name,
                 Legal_entity_id = billingGroupModel.LegalEntityId,
                 Description = billingGroupModel.Description

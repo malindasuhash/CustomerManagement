@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StateManagment.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace StateManagment.Entity
     public class BankAccount : IEntity, ILegalEntityAttached
     {
         public string LegalEntityId { get; set; }
-        public string BankAccountHolderNames { get; set; }
+        public string[] BankAccountHolderNames { get; set; }
         public string AccountNumber { get; set; }
         public string BankCity { get; set; }
         public string BankCountry { get; set; }
@@ -19,7 +20,8 @@ namespace StateManagment.Entity
         public string Name { get; set; }
         public string SortCode { get; set; }
         public string Swift { get; set; }
-        public Descriptor[] Descriptors { get; set; } = [];
-        public string Label { get; set; }
+        public MetaData[] MetaData { get; set; } = [];
+        public string[] Labels { get; set; }
+        public SystemData[] SystemData { get; set; } = [];
     }
 }

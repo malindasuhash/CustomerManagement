@@ -158,7 +158,7 @@ namespace Api.Controllers
 
             if (patchModel.Descriptors != null)
             {
-                tradingLocation.Descriptors = [.. patchModel.Descriptors.Select(a => new Descriptor() { Key = a.Key, Value = a.Value })];
+                //tradingLocation.Descriptors = [.. patchModel.Descriptors.Select(a => new MetaData() { Key = a.Key, Value = a.Value })];
             }
 
             return tradingLocation;

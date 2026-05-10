@@ -26,7 +26,7 @@ namespace StateManagment.Entity
         public string StandardIndustryClassification { get; set; }
         public PersonWithControl[] PersonsWithControl { get; set; }
         public RegisteredAddress[] RegisteredAddresses { get; set; }
-        public Descriptor[] Descriptors { get; set; } = [];
+        public MetaData[] Descriptors { get; set; } = [];
         public string Label { get; set; }
     }
 }

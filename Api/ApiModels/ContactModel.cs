@@ -16,7 +16,7 @@ namespace Api.ApiModels
         public string? AltTelephone { get; set; }
         public string? AltTelephoneCode { get; set; }
         public AddressModel? PostalAddress { get; set; }
-        public DescriptorModel[]? Descriptors { get; set; }
+        public MetaData[]? Descriptors { get; set; }
         public string? Label { get; set; }
 
         public int TargetVersion { get; set; } = 0;

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StateManagment.Models
+﻿namespace StateManagment.Models
 {
     public class Feedback
     {
         public FeedbackType Type { get; set; }
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public Dictionary<string, string> Details { get; set; }
+        public string Context { get; set; }
+        public string Message { get; set; }
     }
 }

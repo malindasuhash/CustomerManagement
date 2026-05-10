@@ -85,7 +85,7 @@ namespace Api.Tests.Controllers
             {
                 Iban = "IBAN",
                 BankName = "BankName",
-                Label = "Label",
+                Labels = ["Label"],
                 BankCountry = "Country",
                 TargetVersion = 10
             };
@@ -106,7 +106,7 @@ namespace Api.Tests.Controllers
                 && messageEnvelop.DraftVersion == 10
                 && bankAccountMapped.Iban.Equals(bankAccount.Iban)
                 && bankAccountMapped.BankName.Equals(bankAccountMapped.BankName)
-                && bankAccountMapped.Label.Equals(bankAccount.Label)
+                && bankAccountMapped.Labels.Equals(bankAccount.Labels)
                 && bankAccountMapped.BankCountry.Equals(bankAccount.BankCountry);
         }
 

@@ -421,7 +421,7 @@ namespace StateManagment.Tests
             messageEnvelop.SetState(EntityState.EVALUATING);
             var searchBy = messageEnvelop.SearchBy();
             database.FindEntity<Contact>(searchBy).Returns(messageEnvelop);
-            var feedbacks = new Feedback() { Type = FeedbackType.Warning, Key = "PendingRiskChecks", Value = "Waiting" };
+            var feedbacks = new Feedback() { Type = FeedbackType.WaitingForExternalRiskChecks, Message = "Waiting" };
 
             // Act
             var result = await changeHandler.ChangeStatusTo<Contact>(messageEnvelop.SearchBy(), EntityState.IN_REVIEW, [feedbacks]);

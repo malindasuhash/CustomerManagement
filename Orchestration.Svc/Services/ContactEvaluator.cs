@@ -27,12 +27,12 @@ namespace Contact.Orchestration.Svc.Services
             // Checks to perform:
             if (contactRequest.Submitted.FirstName == null || contactRequest.Submitted.FirstName.StartsWith("test"))
             {
-                feedbacks.Add(new Feedback() { Type = FeedbackType.Error, Key = "FirstName", Value = "InvalidFirstName" });
+                feedbacks.Add(new Feedback() {Type = FeedbackType.WaitingForExternalRiskChecks, Message = "InvalidFirstName" });
             }
 
             if (contactRequest.Submitted.PostalAddress == null)
             {
-                feedbacks.Add(new Feedback() { Type = FeedbackType.Error, Key = "PostalAddress", Value = "PostalAddressMissing" });
+                feedbacks.Add(new Feedback() {Type = FeedbackType.WaitingForExternalRiskChecks, Message = "PostalAddressMissing" });
             }
 
             if (feedbacks.Count == 0)

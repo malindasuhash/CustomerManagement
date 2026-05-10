@@ -8,7 +8,7 @@ namespace Api.ApiModels
         public string Description { get; set; }
         public string LegalEntityId { get; set; }
         public string Name { get; set; }
-        public DescriptorModel[] Descriptors { get; set; } = [];
+        public MetaData[] Descriptors { get; set; } = [];
         public string[] Labels { get; set; }
         public int TargetVersion { get; set; }
     }

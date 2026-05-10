@@ -167,7 +167,7 @@ namespace Api.Controllers
 
             if (patch.Descriptors != null)
             {
-                legalEntity.Descriptors = [.. patch.Descriptors.Select(x => new Descriptor() { Key = x.Key, Value = x.Value })];
+                // legalEntity.Descriptors = [.. patch.Descriptors.Select(x => new MetaData() { Key = x.Key, Value = x.Value })];
             }
 
             if (patch.LegalEntitiesWithControl != null)

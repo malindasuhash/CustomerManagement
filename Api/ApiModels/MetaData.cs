@@ -1,6 +1,6 @@
-﻿namespace StateManagment.Entity
+﻿namespace Api.ApiModels
 {
-    public class Descriptor : IEntity
+    public class MetaData
     {
         public string Key { get; set; }
         public string Value { get; set; }

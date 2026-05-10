@@ -3,7 +3,15 @@
     public enum FeedbackType
     {
         None,
-        Warning,
-        Error
+        DocumentRequired,
+        WaitingForExternalRiskChecks,
+        LegalEntityMissing,
+        WaitingForProductSelection,
+        MissingRequiredInformation,
+        InternalError,
+        WaitingForContractSignatureOrAcceptance,
+        UserActionRequired,
+        WaitingForLegalEntityApproval,
+        WaitingForConfiguration
     }
 }

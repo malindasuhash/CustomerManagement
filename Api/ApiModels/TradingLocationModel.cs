@@ -11,7 +11,7 @@ namespace Api.ApiModels
         public string LegalEntityId { get; set; }
 
         public string Label { get; set; }
-        public DescriptorModel[] Descriptors { get; set; }
+        public MetaData[] Descriptors { get; set; }
 
         public int TargetVersion { get; set; }
     }
