@@ -16,7 +16,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/touch")]
-        public async Task<ActionResult<EntityDocumentModel>> TouchBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
+        public async Task<StatusCodeResult> TouchBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
             var envelop = new MessageEnvelop()
             {
@@ -29,12 +29,17 @@ namespace Api.Controllers
                     LegalEntityId = legalEntityId
                 }
             };
+            var result = await SubmitForProcessing<BankAccount>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
 
-            return await Process<BankAccount>(envelop);
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/submit")]
-        public async Task<ActionResult<EntityDocumentModel>> SubmitBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] SubmitEntityModel submitModel)
+        public async Task<ActionResult<ApiContract.SubmitActionResponse>> SubmitBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] ApiContract.SubmitActionRequest submitActionRequest)
         {
             var envelop = new MessageEnvelop()
             {
@@ -47,14 +52,24 @@ namespace Api.Controllers
                 {
                     LegalEntityId = legalEntityId
                 },
-                DraftVersion = submitModel.TargetVersion
+                DraftVersion = submitActionRequest.Draft_version
             };
 
-            return await Process<BankAccount>(envelop);
+            var result = await SubmitForProcessing<BankAccount>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new ApiContract.SubmitActionResponse()
+            {
+                Entity_id = bankAccountId,
+                Submitted_version = (long)result.SubmittedVersion
+            };
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
-        public async Task<ActionResult<EntityDocumentModel>> RemoveBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
+        public async Task<StatusCodeResult> RemoveBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
             var envelop = new MessageEnvelop()
             {
@@ -68,13 +83,19 @@ namespace Api.Controllers
                 },
             };
 
-            return await Process<BankAccount>(envelop);
+            var result = await SubmitForProcessing<BankAccount>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts")]
-        public async Task<ActionResult<EntityDocumentModel>> CreateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] BankAccount bankAccount)
+        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> CreateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ApiContract.CreateUpdateBankAccount apiBankAccountRequest)
         {
-            bankAccount.LegalEntityId = legalEntityId; // Legal entity scoped.
+            var bankAccount = ApiContractBankAccount_ToModelBankAccountMap.Convert(apiBankAccountRequest, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
@@ -84,7 +105,13 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Process<BankAccount>(envelop);
+            var result = await SubmitForProcessing<BankAccount>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponse_BankAccount.Convert(result);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -92,7 +119,7 @@ namespace Api.Controllers
         {
             var entityDocument = await customerDatabase.FindEntity<BankAccount>(LookupPredicate.Create(bankAccountId, customerId, legalEntityId));
 
-            return new ActionResult<ApiContract.EntityResponse_BankAccount>(MessageEnvelop_ToEntityResponse_BankAccount.Convert(entityDocument));
+            return MessageEnvelop_ToEntityResponse_BankAccount.Convert(entityDocument);
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -133,7 +160,7 @@ namespace Api.Controllers
 
             if (patchModel.MetaData != null)
             {
-                //bankAccount.MetaData = [.. patchModel.MetaData.Select(a => new MetaData() { Key = a.Key, Value = a.Value })];
+                //bankAccount.MetaDataModel = [.. patchModel.MetaDataModel.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
             }
 
             return bankAccount;

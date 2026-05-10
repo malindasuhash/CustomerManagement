@@ -13,9 +13,9 @@ namespace StateManagment.Models
 
         public required string CustomerId { get; set; }
         public string? EntityId { get; set; }
-        public int DraftVersion { get; set; }
-        public int SubmittedVersion { get; set; }
-        public int AppliedVersion { get; set; }
+        public decimal DraftVersion { get; set; }
+        public decimal SubmittedVersion { get; set; }
+        public decimal AppliedVersion { get; set; }
         public bool IsSubmitted { get; set; }
         public EntityState State
         {
@@ -61,7 +61,7 @@ namespace StateManagment.Models
         // MIDs or ApplicationIDs or third party references that logically
         // belong to this entity. System Data is access controlled
         // e.g. READ_SYSTEM_DATA, SET_SYSTEM_DATA permission.
-        public SystemData[]? SystemData { get; set; }
+        public SystemDataModel[]? SystemData { get; set; }
 
         public void SetState(EntityState targetState)
         {

@@ -34,6 +34,18 @@ namespace Api.Controllers
             return await GetById<T>(messageEnvelop.SearchBy());
         }
 
+        protected async Task<MessageEnvelop> SubmitForProcessing<T>(MessageEnvelop messageEnvelop) where T : IEntity
+        {
+            var result = await changeProcessor.ProcessChangeAsync<T>(messageEnvelop);
+
+            if (result != TaskOutcome.OK)
+            {
+                return MessageEnvelop.NONE;
+            }
+
+            return await customerDatabase.FindEntity<T>(messageEnvelop.SearchBy());
+        }
+
         protected EntityDocumentModel Translate(MessageEnvelop messageEnvelop)
         {
             var model = new EntityDocumentModel()
@@ -41,13 +53,13 @@ namespace Api.Controllers
                 CustomerId = messageEnvelop.CustomerId,
                 EntityId = messageEnvelop.EntityId,
                 Submitted = messageEnvelop.Submitted,
-                SubmittedVersion = messageEnvelop.SubmittedVersion,
+                //SubmittedVersion = (long)messageEnvelop.SubmittedVersion,
                 Applied = messageEnvelop.Applied,
-                AppliedVersion = messageEnvelop.AppliedVersion,
+               // AppliedVersion = messageEnvelop.AppliedVersion,
                 CreatedTimestamp = messageEnvelop.CreatedTimestamp,
                 CreatedUser = messageEnvelop.CreatedUser,
                 Draft = messageEnvelop.Draft,
-                DraftVersion = messageEnvelop.DraftVersion,
+                //DraftVersion = messageEnvelop.DraftVersion,
                 State = messageEnvelop.State.ToString(),
                 Feedback = messageEnvelop.Feedback,
                 Removed = messageEnvelop.Removed,

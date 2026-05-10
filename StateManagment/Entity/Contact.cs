@@ -18,7 +18,7 @@ namespace StateManagment.Entity
         public string AltTelephone { get; set; }
         public string AltTelephoneCode { get; set; }
         public Address PostalAddress { get; set; }
-        public MetaData[] Descriptors { get; set; } = [];
+        public MetaDataModel[] Descriptors { get; set; } = [];
         public string Label { get; set; }
         override public string ToString()
         {

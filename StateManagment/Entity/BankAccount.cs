@@ -20,8 +20,8 @@ namespace StateManagment.Entity
         public string Name { get; set; }
         public string SortCode { get; set; }
         public string Swift { get; set; }
-        public MetaData[] MetaData { get; set; } = [];
+        public MetaDataModel[] MetaData { get; set; } = [];
         public string[] Labels { get; set; }
-        public SystemData[] SystemData { get; set; } = [];
+        public SystemDataModel[] SystemData { get; set; } = [];
     }
 }

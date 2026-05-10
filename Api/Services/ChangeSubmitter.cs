@@ -59,8 +59,8 @@ namespace Api.Services
         public EntityName Name { get; set; }
         public string EntityId { get; set; }
         public EntityState State { get; set; }
-        public int DraftVersion { get; set; }
-        public int SubmittedVersion { get; set; }
+        public decimal DraftVersion { get; set; }
+        public decimal SubmittedVersion { get; set; }
         public string? Link { get; set; }
         public string Result { get; set; }
     }

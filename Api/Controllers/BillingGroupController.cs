@@ -110,7 +110,7 @@ namespace Api.Controllers
 
             if (patchModel.Descriptors != null)
             {
-                // billingGroup.Descriptors = [.. patchModel.Descriptors.Select(a => new MetaData() { Key = a.Key, Value = a.Value })];
+                // billingGroup.Descriptors = [.. patchModel.Descriptors.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
             }
 
             return billingGroup;

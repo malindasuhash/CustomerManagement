@@ -10,8 +10,8 @@
         public required string CustomerId { get; set; }
         public string LegalEntityId { get; set; }
         public EntityName Name { get; set; }
-        public int DraftVersion { get; set; }
-        public int SubmittedVersion { get; set; }
+        public decimal DraftVersion { get; set; }
+        public decimal SubmittedVersion { get; set; }
         public RuntimeStatus Status { get; set; }
         public Feedback[] Feedbacks { get; set; } = [];
         public OrchestrationData[] OrchestrationData { get; set; } = [];

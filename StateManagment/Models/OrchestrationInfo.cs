@@ -19,6 +19,6 @@ namespace StateManagment.Models
         public int SubmittedVersion { get; set; }
         public int AppliedVersion { get; set; }
         public OrchestrationData[] OrchestrationData { get; set; } = [];
-        public SystemData[] SystemData { get; set; } = [];
+        public SystemDataModel[] SystemData { get; set; } = [];
     }
 }

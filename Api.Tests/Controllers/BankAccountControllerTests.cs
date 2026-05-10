@@ -39,7 +39,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitBankAccount_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await bankAccountController.SubmitBankAccount(CustomerId, LegalEntityId, BankAccountId, new SubmitEntityModel() { TargetVersion = 10 });
+            await bankAccountController.SubmitBankAccount(CustomerId, LegalEntityId, BankAccountId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(BankAccountId) && p.Change == ChangeType.Submit && p.Name == EntityName.BankAccount && p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId) && p.DraftVersion.Equals(10)));
@@ -58,13 +58,13 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateBankAccount_WhenInvoked_ThenUseAccurateCommand()
         {
-            var bankAccount = new BankAccount();
+            var bankAccount = new ApiContract.CreateUpdateBankAccount();
 
             // Act
             await bankAccountController.CreateBankAccount(CustomerId, LegalEntityId, bankAccount);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(p => p.CustomerId.Equals(CustomerId) && SameDraft(bankAccount, p) && LegalEntityIdCheck(p, LegalEntityId)));
+            await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(p => p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId)));
         }
 
         [Fact]
@@ -115,11 +115,6 @@ namespace Api.Tests.Controllers
             var bankAccount = envelop.Draft as BankAccount;
 
             return bankAccount.LegalEntityId.Equals(legalEntityId);
-        }
-
-        private static bool SameDraft(BankAccount bankAccount, MessageEnvelop messageEnvelop)
-        {
-            return bankAccount == messageEnvelop.Draft;
         }
     }
 }

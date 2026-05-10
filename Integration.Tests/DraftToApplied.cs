@@ -71,7 +71,7 @@ namespace Integration.Tests
             Console.ReadKey();
         }
 
-        private static OrchestrationEnvelop StepToSend(string entityId, string customerId, int submittedVersion, RuntimeStatus runtimeStatus, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string? legalEntityId = null)
+        private static OrchestrationEnvelop StepToSend(string entityId, string customerId, decimal submittedVersion, RuntimeStatus runtimeStatus, Feedback[] feedbacks, OrchestrationData[] orchestrationData, string? legalEntityId = null)
         {
             var step = new OrchestrationEnvelop
             {

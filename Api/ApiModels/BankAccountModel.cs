@@ -21,6 +21,54 @@ namespace Api.ApiModels
         public int TargetVersion { get; set; }
     }
 
+    public class ApiContractBankAccount_ToModelBankAccountMap
+    {
+        public static BankAccount Convert(ApiContract.CreateUpdateBankAccount apiContractBankAccount, string legalEntityId)
+        {
+            var modelBankAccount = new BankAccount()
+            {
+                BankAccountHolderNames = [.. apiContractBankAccount.Account_holder_names],
+                AccountNumber = apiContractBankAccount.Account_number,
+                BankCity = apiContractBankAccount.Bank_city,
+                BankCountry = apiContractBankAccount.Bank_country,
+                BankName = apiContractBankAccount.Bank_name,
+                BillingDefault = true, // Billing default is set to true for new bank accounts
+                Iban = apiContractBankAccount.Iban,
+                Name = apiContractBankAccount.Name,
+                SortCode = apiContractBankAccount.Sort_code,
+                Swift = apiContractBankAccount.Swift,
+                LegalEntityId = legalEntityId
+            };
+
+            if (apiContractBankAccount.Labels != null)
+            {
+                modelBankAccount.Labels = [.. apiContractBankAccount.Labels];
+            }
+
+            if (apiContractBankAccount.Meta_data != null)
+            {
+                var metaDataList = new List<MetaDataModel>();
+                foreach (var data in apiContractBankAccount.Meta_data)
+                {
+                    metaDataList.Add(new MetaDataModel { Key = data.Key, Value = data.Value });
+                }
+                modelBankAccount.MetaData = [.. metaDataList];
+            }
+
+            if (apiContractBankAccount.System_data != null)
+            {
+                var systemDataList = new List<SystemDataModel>();
+                foreach (var data in apiContractBankAccount.System_data)
+                {
+                    systemDataList.Add(new SystemDataModel { Key = data.Key, Value = data.Value });
+                }
+                modelBankAccount.SystemData = [.. systemDataList];
+            }
+
+            return modelBankAccount;
+        }
+    }
+
     public class MessageEnvelop_ToEntityResponse_BankAccount
     {
         public static ApiContract.EntityResponse_BankAccount Convert(MessageEnvelop entityDocument)
@@ -31,13 +79,13 @@ namespace Api.ApiModels
                 Id = entityDocument.EntityId,
 
                 Draft = BankAccount_ToApiContractMap.Convert(entityDocument.Draft),
-                Draft_version = entityDocument.DraftVersion,
+                Draft_version = (long)entityDocument.DraftVersion,
 
                 Submitted = BankAccount_ToApiContractMap.Convert(entityDocument.Submitted),
-                Submitted_version = entityDocument.SubmittedVersion,
+                Submitted_version = (long)entityDocument.SubmittedVersion,
 
                 Applied = BankAccount_ToApiContractMap.Convert(entityDocument.Applied),
-                Applied_version = entityDocument.AppliedVersion,
+                Applied_version = (long)entityDocument.AppliedVersion,
 
                 Created = entityDocument.CreatedTimestamp.ToString(),
                 Created_by = entityDocument.CreatedUser,

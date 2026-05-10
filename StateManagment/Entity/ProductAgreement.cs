@@ -14,7 +14,7 @@ namespace StateManagment.Entity
         public ProductFeature[] Features { get; set; }
         public ProductConfiguration[] Configuration { get; set; }
         public string LegalEntityId { get; set; }
-        public MetaData[] Descriptors { get; set; } = [];
+        public MetaDataModel[] Descriptors { get; set; } = [];
         public string Label { get; set; }
     }
 }

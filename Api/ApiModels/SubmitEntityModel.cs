@@ -2,6 +2,6 @@
 {
     public class SubmitEntityModel
     {
-        public int TargetVersion { get; set; }
+        public decimal TargetVersion { get; set; }
     }
 }

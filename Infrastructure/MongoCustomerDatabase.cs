@@ -101,7 +101,7 @@ namespace Infrastructure
             return storedBasics;
         }
 
-        public async Task<TaskOutcome> MergeDraft<T>(MessageEnvelop envelop, int latestDraftVersion) where T : IEntity
+        public async Task<TaskOutcome> MergeDraft<T>(MessageEnvelop envelop, decimal latestDraftVersion) where T : IEntity
         {
             DbEexecutionParams dbEexecution;
 
@@ -123,7 +123,7 @@ namespace Infrastructure
             return TaskOutcome.OK;
         }
 
-        public async Task<TaskOutcome> StoreDraft<T>(MessageEnvelop messageEnvelop, int incrementalDraftVersion) where T : IEntity
+        public async Task<TaskOutcome> StoreDraft<T>(MessageEnvelop messageEnvelop, decimal incrementalDraftVersion) where T : IEntity
         {
             DbEexecutionParams dbEexecution;
 

@@ -9,6 +9,6 @@
         public string LegalEntityId { get; set; }
 
         public string Label { get; set; }
-        public MetaData[] Descriptors { get; set; }
+        public MetaDataModel[] Descriptors { get; set; }
     }
 }

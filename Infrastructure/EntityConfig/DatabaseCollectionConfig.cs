@@ -105,7 +105,7 @@ namespace Infrastructure.EntityConfig
             });
         }
 
-        public static async Task<DbEexecutionParams> Patch<T>(MessageEnvelop messageEnvelop, int latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
+        public static async Task<DbEexecutionParams> Patch<T>(MessageEnvelop messageEnvelop, decimal latestDraftVersion, IMongoDatabase db, string updatedUser = "SYSTEM") where T : IEntity
         {
             var predicate = messageEnvelop.SearchBy();
             var stored = await FindBy<T>(predicate, db);
@@ -296,7 +296,7 @@ namespace Infrastructure.EntityConfig
             };
         }
 
-        public static Task<DbEexecutionParams> AddToDraft<T>(MessageEnvelop messageEnvelop, int incrementalDraftVersion, IMongoDatabase db) where T : IEntity
+        public static Task<DbEexecutionParams> AddToDraft<T>(MessageEnvelop messageEnvelop, decimal incrementalDraftVersion, IMongoDatabase db) where T : IEntity
         {
             messageEnvelop.EntityId = Guid.NewGuid().ToString();
             messageEnvelop.DraftVersion = incrementalDraftVersion;
