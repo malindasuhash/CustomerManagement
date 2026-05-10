@@ -16,7 +16,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/touch")]
-        public async Task<ActionResult<EntityDocumentModel>> TouchBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
+        public async Task<ActionResult<StatusCodeResult>> TouchBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
         {
             var envelop = new MessageEnvelop()
             {
@@ -26,11 +26,17 @@ namespace Api.Controllers
                 Name = EntityName.BillingGroup
             };
 
-            return await Process<BillingGroup>(envelop);
+            var result = await SubmitForProcessing<BillingGroup>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/submit")]
-        public async Task<ActionResult<EntityDocumentModel>> SubmitBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] SubmitEntityModel submitModel)
+        public async Task<ActionResult<ApiContract.SubmitActionResponse>> SubmitBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] ApiContract.SubmitActionRequest submitActionRequest)
         {
             var envelop = new MessageEnvelop()
             {
@@ -39,10 +45,20 @@ namespace Api.Controllers
                 CustomerId = customerId,
                 EntityId = billingGroupId,
                 IsSubmitted = true,
-                DraftVersion = submitModel.TargetVersion
+                DraftVersion = submitActionRequest.Draft_version
             };
 
-            return await Process<BillingGroup>(envelop);
+            var result = await SubmitForProcessing<BillingGroup>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new ApiContract.SubmitActionResponse()
+            {
+                Entity_id = billingGroupId,
+                Submitted_version = (long)result.SubmittedVersion
+            };
         }
 
         [HttpDelete("{customerId}/billing-groups/{billingGroupId}")]
@@ -56,27 +72,47 @@ namespace Api.Controllers
                 EntityId = billingGroupId,
             };
 
-            return await Process<BillingGroup>(envelop);
+            var result = await SubmitForProcessing<BillingGroup>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/billing-groups")]
-        public async Task<ActionResult<EntityDocumentModel>> CreateBillingGroup([FromRoute] string customerId, [FromBody] ApiContract.CreateBillingGroup billingGroup)
+        public async Task<ActionResult<ApiContract.EntityResponse_BillingGroup>> CreateBillingGroup([FromRoute] string customerId, [FromBody] ApiContract.CreateBillingGroup billingGroup)
         {
+            var domainBillingGroup = ApiContactBillingGroup_ToModelBillingGroupMap.Convert(billingGroup);
+
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
                 Name = EntityName.BillingGroup,
-                Draft = NewBillingGroup(billingGroup),
+                Draft = domainBillingGroup,
                 CustomerId = customerId
             };
 
-            return await Process<BillingGroup>(envelop);
+            var result = await SubmitForProcessing<BillingGroup>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponse_BillingGroup.Convert(result);
         }
 
         [HttpGet("{customerId}/billing-groups/{billingGroupId}")]
-        public async Task<ActionResult<EntityDocumentModel>> GetBillingGroupById(string customerId, string billingGroupId)
+        public async Task<ActionResult<ApiContract.EntityResponse_BillingGroup>> GetBillingGroupById(string customerId, string billingGroupId)
         {
-            return await GetById<BillingGroup>(LookupPredicate.Create(billingGroupId, customerId));
+            var entityDocument = await customerDatabase.FindEntity<BillingGroup>(LookupPredicate.Create(billingGroupId, customerId));
+            if (entityDocument == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponse_BillingGroup.Convert(entityDocument);
         }
 
         [HttpPatch("{customerId}/billing-groups/{billingGroupId}")]
@@ -110,7 +146,7 @@ namespace Api.Controllers
 
             if (patchModel.Descriptors != null)
             {
-                // billingGroup.Descriptors = [.. patchModel.Descriptors.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
+                // billingGroup.MetaData = [.. patchModel.MetaData.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
             }
 
             return billingGroup;

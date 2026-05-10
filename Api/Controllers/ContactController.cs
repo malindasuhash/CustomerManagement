@@ -115,7 +115,7 @@ namespace Api.Controllers
 
             if (patchModel.Descriptors != null)
             {
-                //contact.Descriptors = [.. patchModel.Descriptors.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
+                //contact.MetaData = [.. patchModel.MetaData.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
             }
 
             if (patchModel.PostalAddress != null)

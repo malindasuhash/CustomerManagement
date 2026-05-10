@@ -135,7 +135,7 @@ namespace Api.Controllers
 
             if (patchModel.Descriptors != null)
             {
-                // productAgreement.Descriptors = [.. patchModel.Descriptors.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
+                // productAgreement.MetaData = [.. patchModel.MetaData.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
             }
 
             return productAgreement;

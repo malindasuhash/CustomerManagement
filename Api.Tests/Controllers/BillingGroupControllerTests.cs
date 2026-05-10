@@ -37,7 +37,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitBankAccount_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await billingGroupController.SubmitBillingGroup(CustomerId, BillingGroupId, new SubmitEntityModel() { TargetVersion = 10 });
+            await billingGroupController.SubmitBillingGroup(CustomerId, BillingGroupId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<BillingGroup>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(BillingGroupId) && p.Change == ChangeType.Submit && p.Name == EntityName.BillingGroup && p.CustomerId.Equals(CustomerId) && p.DraftVersion.Equals(10)));
