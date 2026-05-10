@@ -27,8 +27,8 @@ namespace ExternalAdapter.Tests.Services.AmendContact
         public async Task Assess_WhenContactHasChangedAndLinkedToAccount_ThenReturnsSummaryAndInvokeNextAssessment()
         {
             // Arrange
-            var contactApplied = new Contact() { FirstName = "A", LastName = "B" };
-            var contactSubmitted = new Contact() { FirstName = "P", LastName = "Q" };
+            var contactApplied = new Contact() {Name = "A" };
+            var contactSubmitted = new Contact() {Name = "P" };
 
             var orchestrationInfo = new OrchestrationInfo()
             {
@@ -77,8 +77,8 @@ namespace ExternalAdapter.Tests.Services.AmendContact
         public async Task Assess_WhenNoLegalEntitiesFound_ThenNoCaseAddedAndNextAssessmentInvoked()
         {
             // Arrange
-            var contactApplied = new Contact() { FirstName = "A", LastName = "B" };
-            var contactSubmitted = new Contact() { FirstName = "P", LastName = "Q" };
+            var contactApplied = new Contact() {Name = "A" };
+            var contactSubmitted = new Contact() {Name = "P" };
 
             var orchestrationInfo = new OrchestrationInfo()
             {
@@ -102,8 +102,8 @@ namespace ExternalAdapter.Tests.Services.AmendContact
         public async Task Assess_WhenContactLinkedWithNonAccountType_ThenNoCaseAddedAndNextAssessmentInvoked()
         {
             // Arrange
-            var contactApplied = new Contact() { FirstName = "A", LastName = "B" };
-            var contactSubmitted = new Contact() { FirstName = "P", LastName = "Q" };
+            var contactApplied = new Contact() {Name = "A" };
+            var contactSubmitted = new Contact() {Name = "P" };
 
             var orchestrationInfo = new OrchestrationInfo()
             {
@@ -148,8 +148,8 @@ namespace ExternalAdapter.Tests.Services.AmendContact
         public async Task Assess_WhenContactLinkedToMultipleLegalEntitiesWithAccountType_ThenMultipleCasesAdded()
         {
             // Arrange
-            var contactApplied = new Contact() { FirstName = "A", LastName = "B" };
-            var contactSubmitted = new Contact() { FirstName = "P", LastName = "Q" };
+            var contactApplied = new Contact() {Name = "A" };
+            var contactSubmitted = new Contact() {Name = "P" };
 
             var orchestrationInfo = new OrchestrationInfo()
             {

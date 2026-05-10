@@ -26,7 +26,7 @@ namespace Integration.Tests
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
-            var contact = new Contact { FirstName = "John", LastName = "Doe" };
+            var contact = new Contact {Name = "John" };
             // Create new Contact
             var envelop = new MessageEnvelop
             {
@@ -47,7 +47,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"-> Created - Contact: {contactDocument}"); Console.WriteLine();
 
-            contact.FirstName = "Malinda"; contact.LastName = null;
+            contact.Name = "Malinda";
 
             envelop = new MessageEnvelop
             {
@@ -68,7 +68,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"-> Updated 1 - Contact: {contactDocument}"); Console.WriteLine();
 
-            contact.FirstName = "Amith"; contact.LastName = "K";
+            contact.Name = "Amith";
 
             envelop = new MessageEnvelop
             {
@@ -89,7 +89,7 @@ namespace Integration.Tests
 
             Console.WriteLine($"-> Updated 2 - Contact: {contactDocument}"); Console.WriteLine();
 
-            contact.FirstName = "Final"; contact.LastName = "Update";
+            contact.Name = "Final";
 
             envelop = new MessageEnvelop
             {

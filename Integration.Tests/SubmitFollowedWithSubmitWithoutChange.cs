@@ -26,7 +26,7 @@ namespace Integration.Tests
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
-            var contact = new Contact { FirstName = "John", LastName = "Doe" };
+            var contact = new Contact {Name = "John" };
             // Create new Contact
             var envelop = new MessageEnvelop
             {

@@ -21,7 +21,60 @@ namespace Api.ApiModels
         public int TargetVersion { get; set; }
     }
 
-    public class ApiContactBillingGroup_ToModelBillingGroupMap
+    public class ApiContractContact_ToModelContactMap
+    {
+        public static Contact Convert(ApiContract.CreateUpdateContact apiContractContact)
+        {
+            var modelContact = new Contact()
+            {
+                Name = apiContractContact.Name,
+                Email = apiContractContact.Email,
+                AltTelephone = apiContractContact.Alt_telephone,
+                AltTelephoneCode = apiContractContact.Alt_telephone_code,
+                Telephone = apiContractContact.Telephone,
+                TelephoneCode = apiContractContact.Telephone_code,
+                PostalAddress = Address_ToModelAddressMap.Convert(apiContractContact.Postal_address)
+            };
+            if (apiContractContact.Labels != null)
+            {
+                modelContact.Labels = [.. apiContractContact.Labels];
+            }
+            if (apiContractContact.Meta_data != null)
+            {
+                var metaDataList = new List<MetaDataModel>();
+                foreach (var data in apiContractContact.Meta_data)
+                {
+                    metaDataList.Add(new MetaDataModel { Key = data.Key, Value = data.Value });
+                }
+                modelContact.MetaData = [.. metaDataList];
+            }
+            return modelContact;
+        }
+    }
+
+    public class Address_ToModelAddressMap
+    {
+        public static Address Convert(ApiContract.Address address)
+        {
+            if (address == null)
+            {
+                return null;
+            }
+            return new Address()
+            {
+                Line1 = address.Line1,
+                Line2 = address.Line2,
+                Line3 = address.Line3,
+                Region = address.Region,
+                Locality = address.Locality,
+                Code = address.Code,
+                Country = address.Country,
+                City = address.City
+            };
+        }
+    }
+
+    public class ApiContractBillingGroup_ToModelBillingGroupMap
     {
         public static BillingGroup Convert(ApiContract.CreateBillingGroup apiContractBillingGroup)
         {
@@ -105,7 +158,97 @@ namespace Api.ApiModels
         }
     }
 
-    public class  MessageEnvelop_ToEntityResponse_BillingGroup
+    public class MessageEnvelop_ToEntityResponse_Contact
+    {
+        public static ApiContract.EntityResponse_Contact Convert(MessageEnvelop messageEnvelop)
+        {
+            return new ApiContract.EntityResponse_Contact()
+            {
+                Customer = messageEnvelop.CustomerId,
+                Id = messageEnvelop.EntityId,
+                Draft = Contact_ToApiContractMap.Convert(messageEnvelop.Draft),
+                Draft_version = (long)messageEnvelop.DraftVersion,
+                Submitted = Contact_ToApiContractMap.Convert(messageEnvelop.Submitted),
+                Submitted_version = (long)messageEnvelop.SubmittedVersion,
+                Applied = Contact_ToApiContractMap.Convert(messageEnvelop.Applied),
+                Applied_version = (long)messageEnvelop.AppliedVersion,
+                Created = messageEnvelop.CreatedTimestamp.ToString(),
+                Created_by = messageEnvelop.CreatedUser,
+                Updated = messageEnvelop.UpdateTimestamp.ToString(),
+                Updated_by = messageEnvelop.UpdateUser,
+                State = EntityState_ToApiStateMap.Convert(messageEnvelop.State),
+                Feedback = messageEnvelop.Feedback != null ? messageEnvelop.Feedback.Select(f => new ApiContract.EntityStateResult
+                {
+                    Kind = FeedbackType_ToApiEntityStateKindMap.Convert(f.Type),
+                    Message = f.Message,
+                    Context = f.Context,
+                    Details = f.Details
+                }).ToArray() : null
+            };
+        }
+    }
+
+    public class Contact_ToApiContractMap
+    {
+        public static ApiContract.Contact Convert(Contact contactStateModel)
+        {
+            var responseContact = new ApiContract.Contact()
+            {
+                Name = contactStateModel.Name,
+                Email = contactStateModel.Email,
+                Alt_telephone = contactStateModel.AltTelephone,
+                Alt_telephone_code = contactStateModel.AltTelephoneCode,
+                Telephone = contactStateModel.Telephone,
+                Telephone_code = contactStateModel.TelephoneCode,
+                Postal_address = Address_ToApiContractMap.Convert(contactStateModel.PostalAddress),
+            };
+
+            if (contactStateModel.Labels != null)
+            {
+                var labels = new ApiContract.Labels();
+                foreach (var label in contactStateModel.Labels)
+                {
+                    labels.Add(label);
+                }
+                responseContact.Labels = labels;
+            }
+            if (contactStateModel.MetaData != null)
+            {
+                var metaData = new ApiContract.MetaData();
+                foreach (var data in contactStateModel.MetaData)
+                {
+                    metaData.Add(data.Key, data.Value);
+                }
+                responseContact.Meta_data = metaData;
+            }
+            return responseContact;
+        }
+    }
+
+    public class Address_ToApiContractMap
+    {
+        public static ApiContract.Address Convert(Address addressStateModel)
+        {
+            if (addressStateModel == null)
+            {
+                return null;
+            }
+
+            return new ApiContract.Address()
+            {
+                Line1 = addressStateModel.Line1,
+                Line2 = addressStateModel.Line2,
+                Line3 = addressStateModel.Line3,
+                Region = addressStateModel.Region,
+                Locality = addressStateModel.Locality,
+                Code = addressStateModel.Code,
+                Country = addressStateModel.Country,
+                City = addressStateModel.City
+            };
+        }
+    }
+
+    public class MessageEnvelop_ToEntityResponse_BillingGroup
     {
         public static ApiContract.EntityResponse_BillingGroup Convert(MessageEnvelop messageEnvelop)
         {
@@ -113,9 +256,9 @@ namespace Api.ApiModels
             {
                 Customer = messageEnvelop.CustomerId,
                 Id = messageEnvelop.EntityId,
-                Draft = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Draft), 
+                Draft = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Draft),
                 Draft_version = (long)messageEnvelop.DraftVersion,
-                Submitted = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Submitted), 
+                Submitted = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Submitted),
                 Submitted_version = (long)messageEnvelop.SubmittedVersion,
                 Applied = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Applied),
                 Applied_version = (long)messageEnvelop.AppliedVersion,
@@ -131,7 +274,7 @@ namespace Api.ApiModels
                     Context = f.Context,
                     Details = f.Details
                 }).ToArray() : null
-             };
+            };
         }
     }
 

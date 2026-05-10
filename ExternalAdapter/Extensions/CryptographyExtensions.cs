@@ -16,7 +16,7 @@ namespace ExternalAdapter.Extensions
 
         public static string GenerateContactChecksum(Contact contact)
         {
-            return $"{contact.Title}|{contact.FirstName}|{contact.LastName}|{contact.Telephone}|{contact.TelephoneCode}|{contact.AltTelephone}|{contact.AltTelephoneCode}|{contact.Email}".ToMD5Hash();
+            return $"{contact.Title}|{contact.Name}|{contact.TelephoneCode}|{contact.AltTelephone}|{contact.AltTelephoneCode}|{contact.Email}".ToMD5Hash();
         }
     }
 }

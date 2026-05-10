@@ -20,7 +20,7 @@ namespace StateManagment.Tests
                 EntityId = "entity1",
                 CustomerId = "customer1",
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" }
+                Draft = new Contact() {Name = "Apple" }
             };
             var searchBy = messageEnvelop.SearchBy();
             database.FindEntity<Contact>(searchBy).Returns(messageEnvelop);
@@ -50,7 +50,7 @@ namespace StateManagment.Tests
                 EntityId = "entity1",
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 3,
                 UpdateUser = "testUser"
             };
@@ -60,7 +60,7 @@ namespace StateManagment.Tests
                 EntityId = "entity1",
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Pink", LastName = "Blue" },
+                Draft = new Contact() {Name = "Pink" },
                 DraftVersion = 3,
                 UpdateUser = "testUser"
             };
@@ -142,7 +142,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() { Name = "Apple" },
                 DraftVersion = 2,
             };
             var after = new MessageEnvelop
@@ -150,7 +150,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Cactus", LastName = "Mango" },
+                Draft = new Contact() { Name = "Cactus" },
                 DraftVersion = 5,
             };
 
@@ -186,7 +186,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 1,
             };
 
@@ -219,7 +219,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 5,
             };
             var after = new MessageEnvelop
@@ -228,7 +228,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Green", LastName = "Black" },
+                Draft = new Contact() {Name = "Green" },
                 DraftVersion = 5,
             };
 
@@ -264,7 +264,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 2,
                 IsSubmitted = true,
                 UpdateUser = "testUser",
@@ -276,7 +276,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 4,
                 IsSubmitted = true,
                 UpdateUser = "testUser",
@@ -308,7 +308,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 2,
                 IsSubmitted = true,
                 UpdateUser = "testUser"
@@ -316,7 +316,7 @@ namespace StateManagment.Tests
 
             var searchBy = messageEnvelop.SearchBy();
 
-            var storedDraft = new Contact() { FirstName = "Apple", LastName = "Orange" };
+            var storedDraft = new Contact() {Name = "Apple" };
             database.FindEntity<Contact>(searchBy).Returns(new MessageEnvelop()
             {
                 Name = EntityName.Contact,
@@ -353,7 +353,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 2,
                 IsSubmitted = true,
                 UpdateUser = "testUser"
@@ -364,13 +364,13 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 2,
                 IsSubmitted = true,
                 UpdateUser = "testUser"
             };
 
-            var storedDraft = new Contact() { FirstName = "Apple", LastName = "Orange" };
+            var storedDraft = new Contact() {Name = "Apple" };
 
             var before = new MessageEnvelop()
             {
@@ -414,7 +414,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 2,
                 IsSubmitted = true
             };
@@ -449,7 +449,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Apple", LastName = "Orange" },
+                Draft = new Contact() {Name = "Apple" },
                 DraftVersion = 2,
                 IsSubmitted = true,
                 RemoveRequested = true
@@ -459,7 +459,7 @@ namespace StateManagment.Tests
                 EntityId = entityId,
                 CustomerId = customerId,
                 Name = EntityName.Contact,
-                Draft = new Contact() { FirstName = "Gray", LastName = "Yellow" },
+                Draft = new Contact() {Name = "Gray" },
                 DraftVersion = 2,
                 IsSubmitted = true
             };

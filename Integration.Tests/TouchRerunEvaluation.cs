@@ -28,7 +28,7 @@ namespace Integration.Tests
                 Name = EntityName.Contact,
                 Change = ChangeType.Create,
                 IsSubmitted = true,
-                Draft = new Contact { FirstName = "John", LastName = "Doe" },
+                Draft = new Contact {Name = "John" },
                 CreatedUser = "Tester",
                 UpdateUser = "Malinda",
                 CustomerId = customerId

@@ -84,7 +84,7 @@ namespace Api.Controllers
         [HttpPost("{customerId}/billing-groups")]
         public async Task<ActionResult<ApiContract.EntityResponse_BillingGroup>> CreateBillingGroup([FromRoute] string customerId, [FromBody] ApiContract.CreateBillingGroup billingGroup)
         {
-            var domainBillingGroup = ApiContactBillingGroup_ToModelBillingGroupMap.Convert(billingGroup);
+            var domainBillingGroup = ApiContractBillingGroup_ToModelBillingGroupMap.Convert(billingGroup);
 
             var envelop = new MessageEnvelop
             {

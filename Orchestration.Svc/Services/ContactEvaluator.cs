@@ -25,7 +25,7 @@ namespace Contact.Orchestration.Svc.Services
             var feedbacks = new List<Feedback>();
 
             // Checks to perform:
-            if (contactRequest.Submitted.FirstName == null || contactRequest.Submitted.FirstName.StartsWith("test"))
+            if (contactRequest.Submitted.Name == null || contactRequest.Submitted.Name.StartsWith("test"))
             {
                 feedbacks.Add(new Feedback() {Type = FeedbackType.WaitingForExternalRiskChecks, Message = "InvalidFirstName" });
             }

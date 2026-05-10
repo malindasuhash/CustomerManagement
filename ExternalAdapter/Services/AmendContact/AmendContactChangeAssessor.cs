@@ -30,8 +30,6 @@ namespace ExternalAdapter.Services.AmendContact
             // If there are no changes then assessement stops.
             // Perhaps this is a 'Touch' operation.
             if (submittedContact.Title == appliedContact.Title
-                  && submittedContact.FirstName == appliedContact.FirstName
-                  && submittedContact.LastName == appliedContact.LastName
                   && submittedContact.Telephone == appliedContact.Telephone
                   && submittedContact.TelephoneCode == appliedContact.TelephoneCode
                   && submittedContact.AltTelephone == appliedContact.AltTelephone

@@ -122,14 +122,9 @@ namespace Infrastructure.EntityConfig
                 var receivedContact = receivedEntity as Contact;
                 var storedContact = storedEntity as Contact;
 
-                if (receivedContact.FirstName != null)
+                if (receivedContact.Name != null)
                 {
-                    storedContact.FirstName = receivedContact.FirstName;
-                }
-
-                if (receivedContact.LastName != null)
-                {
-                    storedContact.LastName = receivedContact.LastName;
+                    storedContact.Name = receivedContact.Name;
                 }
             }
             if (messageEnvelop.Name == EntityName.LegalEntity && messageEnvelop.Change == ChangeType.Update)

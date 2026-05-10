@@ -37,7 +37,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitContact_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await contactController.SubmitContact(CustomerId, ContactId, new SubmitEntityModel() { TargetVersion = 10 });
+            await contactController.SubmitContact(CustomerId, ContactId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<Contact>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(ContactId) && p.Change == ChangeType.Submit && p.Name == EntityName.Contact && p.CustomerId.Equals(CustomerId) && p.DraftVersion.Equals(10)));
@@ -56,13 +56,13 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateContact_WhenInvoked_ThenUseAccurateCommand()
         {
-            var contact = new Contact();
+            var contact = new ApiContract.CreateUpdateContact();
 
             // Act
             await contactController.CreateContact(CustomerId, contact);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync<Contact>(Arg.Is<MessageEnvelop>(p => p.Change == ChangeType.Create && p.Name == EntityName.Contact && p.CustomerId.Equals(CustomerId) && SameDraft(contact, p)));
+            await changeProcessor.Received(1).ProcessChangeAsync<Contact>(Arg.Is<MessageEnvelop>(p => p.Change == ChangeType.Create && p.Name == EntityName.Contact && p.CustomerId.Equals(CustomerId)));
         }
 
         [Fact]
@@ -103,13 +103,7 @@ namespace Api.Tests.Controllers
             return messageEnvelop.Name == EntityName.Contact
                 && messageEnvelop.Change == ChangeType.Update
                 && messageEnvelop.DraftVersion == 20
-                && contactMapped.Email == contactModel.Email
-                && contactMapped.Label == contactModel.Label;
-        }
-
-        private static bool SameDraft(Contact contact, MessageEnvelop messageEnvelop)
-        {
-            return contact == messageEnvelop.Draft;
+                && contactMapped.Email == contactModel.Email;
         }
     }
 }

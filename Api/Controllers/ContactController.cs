@@ -16,7 +16,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/contacts/{contactId}/touch")]
-        public async Task<ActionResult<EntityDocumentModel>> TouchContact([FromRoute] string customerId, [FromRoute] string contactId)
+        public async Task<ActionResult<StatusCodeResult>> TouchContact([FromRoute] string customerId, [FromRoute] string contactId)    
         {
             var envelop = new MessageEnvelop()
             {
@@ -26,11 +26,17 @@ namespace Api.Controllers
                 Change = ChangeType.Touch
             };
 
-            return await Process<Contact>(envelop);
+            var result = await SubmitForProcessing<Contact>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/contacts/{contactId}/submit")]
-        public async Task<ActionResult<EntityDocumentModel>> SubmitContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] SubmitEntityModel submitModel)
+        public async Task<ActionResult<ApiContract.SubmitActionResponse>> SubmitContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ApiContract.SubmitActionRequest submitActionRequest)
         {
             var envelop = new MessageEnvelop()
             {
@@ -39,10 +45,20 @@ namespace Api.Controllers
                 CustomerId = customerId,
                 EntityId = contactId,
                 IsSubmitted = true,
-                DraftVersion = submitModel.TargetVersion
+                DraftVersion = submitActionRequest.Draft_version
             };
 
-            return await Process<Contact>(envelop);
+            var result = await SubmitForProcessing<Contact>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new ApiContract.SubmitActionResponse()
+            {
+                Entity_id = contactId,
+                Submitted_version = (long)result.SubmittedVersion
+            };
         }
 
         [HttpDelete("{customerId}/contacts/{contactId}")]
@@ -56,27 +72,47 @@ namespace Api.Controllers
                 EntityId = contactId,
             };
 
-            return await Process<Contact>(envelop);
+            var result = await SubmitForProcessing<Contact>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/contacts")]
-        public async Task<ActionResult<EntityDocumentModel>> CreateContact([FromRoute] string customerId, [FromBody] Contact contact)
+        public async Task<ActionResult<ApiContract.EntityResponse_Contact>> CreateContact([FromRoute] string customerId, [FromBody] ApiContract.CreateUpdateContact apiContact)
         {
+            var domainContact = ApiContractContact_ToModelContactMap.Convert(apiContact);
+
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
                 Name = EntityName.Contact,
-                Draft = contact,
+                Draft = domainContact,
                 CustomerId = customerId
             };
 
-            return await Process<Contact>(envelop);
+            var result = await SubmitForProcessing<Contact>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponse_Contact.Convert(result);
         }
 
         [HttpGet("{customerId}/contacts/{contactId}")]
-        public async Task<ActionResult<EntityDocumentModel>> GetContactById(string customerId, string contactId)
+        public async Task<ActionResult<ApiContract.EntityResponse_Contact>> GetContactById(string customerId, string contactId)
         {
-            return await GetById<Contact>(LookupPredicate.Create(contactId, customerId));
+            var entityDocument = await customerDatabase.FindEntity<Contact>(LookupPredicate.Create(contactId, customerId));
+            if (entityDocument == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponse_Contact.Convert(entityDocument);
         }
 
         [HttpPatch("{customerId}/contacts/{contactId}")]
@@ -103,12 +139,12 @@ namespace Api.Controllers
             // operational.
             var contact = new Contact
             {
-                FirstName = patchModel.FirstName,
-                LastName = patchModel.LastName,
+                //FirstName = patchModel.FirstName,
+                //LastName = patchModel.LastName,
                 AltTelephone = patchModel.AltTelephone,
                 AltTelephoneCode = patchModel.AltTelephoneCode,
                 Email = patchModel.Email,
-                Label = patchModel.Label,
+                //Label = patchModel.Label,
                 Telephone = patchModel.Telephone,
                 TelephoneCode = patchModel.TelephoneCode
             };
