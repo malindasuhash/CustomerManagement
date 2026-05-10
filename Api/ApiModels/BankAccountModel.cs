@@ -158,6 +158,101 @@ namespace Api.ApiModels
         }
     }
 
+    public class MessageEnvelop_ToEntityResponseLegalEntityMap
+    {
+        public static ApiContract.EntityResponse_LegalEntity Convert(MessageEnvelop messageEnvelop)
+        {
+            return new ApiContract.EntityResponse_LegalEntity()
+            {
+                Customer = messageEnvelop.CustomerId,
+                Id = messageEnvelop.EntityId,
+                Draft = LegalEntity_ToApiContractMap.Convert(messageEnvelop.Draft),
+                Draft_version = (long)messageEnvelop.DraftVersion,
+                Submitted = LegalEntity_ToApiContractMap.Convert(messageEnvelop.Submitted),
+                Submitted_version = (long)messageEnvelop.SubmittedVersion,
+                Applied = LegalEntity_ToApiContractMap.Convert(messageEnvelop.Applied),
+                Applied_version = (long)messageEnvelop.AppliedVersion,
+                Created = messageEnvelop.CreatedTimestamp.ToString(),
+                Created_by = messageEnvelop.CreatedUser,
+                Updated = messageEnvelop.UpdateTimestamp.ToString(),
+                Updated_by = messageEnvelop.UpdateUser,
+                State = EntityState_ToApiStateMap.Convert(messageEnvelop.State),
+                Feedback = messageEnvelop.Feedback != null ? messageEnvelop.Feedback.Select(f => new ApiContract.EntityStateResult
+                {
+                    Kind = FeedbackType_ToApiEntityStateKindMap.Convert(f.Type),
+                    Message = f.Message,
+                    Context = f.Context,
+                    Details = f.Details
+                }).ToArray() : null
+            };
+        }
+    }
+
+    public class LegalEntity_ToApiContractMap
+    {
+        public static ApiContract.LegalEntity Convert(LegalEntity legalEntityStateModel)
+        {
+            var responseLegalEntity = new ApiContract.LegalEntity()
+            {
+                Name = legalEntityStateModel.Name,
+                Business_email = legalEntityStateModel.BusinessEmail,
+                Business_type = legalEntityStateModel.BusinessType,
+                Date_business_created = legalEntityStateModel.DateBusinessStarted.ToString(),
+                Date_trading_started = legalEntityStateModel.DateTradingStarted.ToString(),
+                Charity_registration = legalEntityStateModel.CharityRegistration,
+                Vat_registration = legalEntityStateModel.VatRegistration,
+                Vat_registration_status = legalEntityStateModel.VatRegistrationStatus,
+                Country_of_authority = legalEntityStateModel.CountryOfAuthority,
+                Company_registration = legalEntityStateModel.CompanyRegistration,
+                Operating_as = legalEntityStateModel.TradingName, // TODO: confirm if this is correct mapping as there is also TradingName property in legal entity model
+                Maximum_transaction_value = legalEntityStateModel.MaximumTransactionValue,
+                Merchant_category_code = legalEntityStateModel.MerchantCategoryCode,
+                Standard_industry_classification = legalEntityStateModel.StandardIndustryClassification,
+                Turnover_per_annum = legalEntityStateModel.TurnoverPerAnnum,
+                Card_turnover_per_annum = legalEntityStateModel.CardTurnoverPerAnnum,
+                Trading_name = legalEntityStateModel.TradingName,
+                Trading_industry_classification = legalEntityStateModel.TradingIndustryClassification,
+                Business_identification = legalEntityStateModel.BusinessIdentification,
+                Registered_addresses = RegisteredAddresses_ToApiContractMap.Convert(legalEntityStateModel.RegisteredAddresses),
+                Business_contacts = BusinessContacts_ToApiContractMap.Convert(legalEntityStateModel.BusinessContacts),
+                End_of_business_relationship = EndOfBusinessRelationship_ToApiContractMap(legalEntityStateModel.EndOfBusinessRelationship),
+                Goods_ownership = GoodsOwnership_ToApiContractMap.Convert(legalEntityStateModel.GoodsOwnership),
+                Legal_entity_status = legalEntityStateModel.Status,
+                Legal_entity_with_control = LegalEntitiesWithControl_ToApiContractMap.Convert(legalEntityStateModel.LegalEntitiesWithControl),
+                Persons_with_control = PersonsWithControl_ToApiContractMap.Convert(legalEntityStateModel.PersonsWithControl),
+                Partners_with_interest = PartnersWithInterest_ToApiContractMap.Convert(legalEntityStateModel.PartnersWithInterest)                
+            };
+            if (legalEntityStateModel.MetaData != null)
+            {
+                var metaData = new ApiContract.MetaData();
+                foreach (var data in legalEntityStateModel.MetaData)
+                {
+                    metaData.Add(data.Key, data.Value);
+                }
+                responseLegalEntity.Meta_data = metaData;
+            }
+            if (legalEntityStateModel.Labels != null)
+            {
+                var labels = new ApiContract.Labels();
+                foreach (var label in legalEntityStateModel.Labels)
+                {
+                    labels.Add(label);
+                }
+                responseLegalEntity.Labels = labels;
+            }
+            if (legalEntityStateModel.SystemData != null)
+            {
+                var systemData = new ApiContract.SystemData();
+                foreach (var data in legalEntityStateModel.SystemData)
+                {
+                    systemData.Add(data.Key, data.Value);
+                }
+                responseLegalEntity.System_data = systemData;
+            }
+            return responseLegalEntity;
+        }
+    }
+
     public class MessageEnvelop_ToEntityResponse_Contact
     {
         public static ApiContract.EntityResponse_Contact Convert(MessageEnvelop messageEnvelop)

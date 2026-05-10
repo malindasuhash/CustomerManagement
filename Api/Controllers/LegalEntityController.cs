@@ -31,7 +31,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/touch")]
-        public async Task<ActionResult<EntityDocumentModel>> TouchLegalEntity([FromRoute] string customerId, [FromRoute] string entityId)
+        public async Task<ActionResult<StatusCodeResult>> TouchLegalEntity([FromRoute] string customerId, [FromRoute] string entityId)
         {
             // LEGAL_ENTITY_TOUCH
             // LEGAL_ENTITY_READ
@@ -45,11 +45,17 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            return await Process<LegalEntity>(envelop);
+            var result = await SubmitForProcessing<LegalEntity>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/submit")]
-        public async Task<ActionResult<EntityDocumentModel>> SubmitLegalEntity([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] SubmitEntityModel submitModel)
+        public async Task<ActionResult<ApiContract.SubmitActionResponse>> SubmitLegalEntity([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] ApiContract.SubmitActionRequest submitActionRequest)
         {
             // LEGAL_ENTITY_SUBMIT
             // LEGAL_ENTITY_READ
@@ -62,10 +68,20 @@ namespace Api.Controllers
                 CustomerId = customerId,
                 EntityId = entityId,
                 IsSubmitted = true,
-                DraftVersion = submitModel.TargetVersion
+                DraftVersion = submitActionRequest.Draft_version
             };
 
-            return await Process<LegalEntity>(envelop);
+            var result = await SubmitForProcessing<LegalEntity>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new ApiContract.SubmitActionResponse()
+            {
+                Entity_id = result.EntityId,
+                Submitted_version = (long)result.SubmittedVersion
+            };
         }
 
         [HttpDelete("{customerId}/legal-entities/{entityId}")]
@@ -83,7 +99,13 @@ namespace Api.Controllers
                 EntityId = entityId
             };
 
-            return await Process<LegalEntity>(envelop);
+            var result = await SubmitForProcessing<LegalEntity>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities")]
@@ -105,11 +127,17 @@ namespace Api.Controllers
         }
 
         [HttpGet("{customerId}/legal-entities/{entityId}")]
-        public async Task<ActionResult<EntityDocumentModel>> GetLegalEntityById(string customerId, string entityId)
+        public async Task<ActionResult<ApiContract.EntityResponse_LegalEntity>> GetLegalEntityById(string customerId, string entityId)
         {
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
+            var entityDocument = await customerDatabase.FindEntity<LegalEntity>(LookupPredicate.Create(entityId, customerId));
+            if (entityDocument == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
             return await GetById<LegalEntity>(LookupPredicate.Create(entityId, customerId));
         }
 
@@ -145,7 +173,7 @@ namespace Api.Controllers
                 CompanyRegistration = patch.CompanyRegistration,
                 DateBusinessStarted = !string.IsNullOrWhiteSpace(patch.DateBusinessStarted) ? DateTime.Parse(patch.DateBusinessStarted) : null,
                 DateTradingStarted = !string.IsNullOrWhiteSpace(patch.DateTradingStarted) ? DateTime.Parse(patch.DateTradingStarted) : null,
-                Label = patch.Label,
+                // Label = patch.Label,
                 MaximumTransactionValue = patch.MaximumTransactionValue,
                 MerchantCategoryCode = patch.MerchantCategoryCode,
                 Name = patch.Name,
