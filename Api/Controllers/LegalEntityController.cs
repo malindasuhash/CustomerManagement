@@ -109,21 +109,30 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities")]
-        public async Task<ActionResult<EntityDocumentModel>> CreateLegalEntity([FromRoute] string customerId, [FromBody] LegalEntity legalEntity)
+        public async Task<ActionResult<ApiContract.EntityResponse_LegalEntity>> CreateLegalEntity([FromRoute] string customerId, [FromBody] ApiContract.CreateLegalEntityModel legalEntity)
         {
             // LEGAL_ENTITY_WRITE
             // LEGAL_ENTITY_READ
             // SYSTEM_DATA_READ
             // SOFTDELETE_DATA_READ
+
+            var domainLegalEntity = ApiContractLegalEntity_ToModelLegalEntityMap.Convert(legalEntity);
+
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
                 Name = EntityName.BankAccount,
-                Draft = legalEntity,
+                Draft = domainLegalEntity,
                 CustomerId = customerId
             };
 
-            return await Process<LegalEntity>(envelop);
+            var result = await SubmitForProcessing<LegalEntity>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponseLegalEntityMap.Convert(result);
         }
 
         [HttpGet("{customerId}/legal-entities/{entityId}")]
@@ -138,7 +147,7 @@ namespace Api.Controllers
                 return NotFound();
             }
 
-            return await GetById<LegalEntity>(LookupPredicate.Create(entityId, customerId));
+            return MessageEnvelop_ToEntityResponseLegalEntityMap.Convert(entityDocument);
         }
 
         [HttpPatch("{customerId}/legal-entities/{entityId}")]
@@ -168,7 +177,7 @@ namespace Api.Controllers
             var legalEntity = new LegalEntity()
             {
                 BusinessEmail = patch.BusinessEmail,
-                BusinessType = patch.BusinessType,
+                //BusinessType = patch.BusinessType,
                 CardTurnoverPerAnnum = patch.CardTurnoverPerAnnum,
                 CompanyRegistration = patch.CompanyRegistration,
                 DateBusinessStarted = !string.IsNullOrWhiteSpace(patch.DateBusinessStarted) ? DateTime.Parse(patch.DateBusinessStarted) : null,
@@ -181,7 +190,7 @@ namespace Api.Controllers
                 TradingName = patch.TradingName,
                 TurnoverPerAnnum = patch.TurnoverPerAnnum,
                 VatRegistration = patch.VatRegistration,
-                VatRegistrationStatus = patch.VatRegistrationStatus
+                //VatRegistrationStatus = patch.VatRegistrationStatus
             };
 
             if (patch.BusinessContacts != null)

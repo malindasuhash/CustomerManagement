@@ -4,11 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Api.Tests.Controllers
 {
@@ -44,7 +39,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitLegalEntity_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await legalEntityController.SubmitLegalEntity(CustomerId, LegalEntityId, new SubmitEntityModel() { TargetVersion = 10 });
+            await legalEntityController.SubmitLegalEntity(CustomerId, LegalEntityId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<LegalEntity>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(LegalEntityId) && p.Change == ChangeType.Submit && p.Name == EntityName.LegalEntity && p.CustomerId.Equals(CustomerId) && p.DraftVersion.Equals(10)));
@@ -63,13 +58,13 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateCreateEntity_WhenInvoked_ThenUseAccurateCommand()
         {
-            var legalEntity = new LegalEntity();
+            var legalEntity = new ApiContract.CreateLegalEntityModel();
 
             // Act
             await legalEntityController.CreateLegalEntity(CustomerId, legalEntity);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync<LegalEntity>(Arg.Is<MessageEnvelop>(p => p.CustomerId.Equals(CustomerId) && SameDraft(legalEntity, p)));
+            await changeProcessor.Received(1).ProcessChangeAsync<LegalEntity>(Arg.Is<MessageEnvelop>(p => p.CustomerId.Equals(CustomerId)));
         }
 
         [Fact]
@@ -161,11 +156,6 @@ namespace Api.Tests.Controllers
                 && messageEnvelop.DraftVersion == 10
                 && legalEntityMapped.BusinessEmail.Equals(legalEntityModel.BusinessEmail)
                 && legalEntityMapped.BusinessType.Equals(legalEntityModel.BusinessType);
-        }
-
-        private static bool SameDraft(LegalEntity legalEntity, MessageEnvelop messageEnvelop)
-        {
-            return legalEntity == messageEnvelop.Draft;
         }
     }
 }

@@ -1,9 +1,4 @@
 ﻿using StateManagment.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StateManagment.Entity
 {
@@ -11,7 +6,7 @@ namespace StateManagment.Entity
     {
         public string Name { get; set; }
         public string TradingName { get; set; }
-        public string BusinessType { get; set; }
+        public BusinessType BusinessType { get; set; }
         public string BusinessEmail { get; set; }
         public BusinessContact[] BusinessContacts { get; set; }
         public GoodsOwnership GoodsOwnership { get; set; }
@@ -21,7 +16,7 @@ namespace StateManagment.Entity
         public string CountryOfAuthority { get; set; }
         public string CharityRegistration { get; set; }
         public string VatRegistration { get; set; }
-        public string VatRegistrationStatus { get; set; }
+        public VatRegistrationStatus VatRegistrationStatus { get; set; }
         public DateTime? DateBusinessStarted { get; set; }
         public DateTime? DateTradingStarted { get; set; }
         public LegalEntityWithControl[] LegalEntitiesWithControl { get; set; }
@@ -34,11 +29,42 @@ namespace StateManagment.Entity
         public PartnersWithInterest[] PartnersWithInterest { get; set; }
         public RegisteredAddress[] RegisteredAddresses { get; set; }
         public EndOfBusinessRelationship EndOfBusinessRelationship { get; set; }
-        public string Status { get; set; }
+        public LegalEntityStatus Status { get; set; }
         public MetaDataModel[] MetaData { get; set; } = [];
         public string[] Labels { get; set; }
         public SystemDataModel[] SystemData { get; set; }
         
+    }
+
+    public enum LegalEntityStatus
+    {
+        Active,
+        Inactive,
+        Suspended,
+        Closed,
+        Pending,
+        Other
+    }
+
+    public enum VatRegistrationStatus
+    {
+        None,
+        Registered,
+        NotRegistered,
+        Pending,
+        Exempt,
+        Other
+    }
+
+    public enum BusinessType
+    {
+        SoleProprietorship,
+        Partnership,
+        Corporation,
+        LimitedLiabilityCompany,
+        Cooperative,
+        NonProfit,
+        Other
     }
 
     public enum GoodsOwnership
@@ -47,6 +73,7 @@ namespace StateManagment.Entity
         Owned,
         Leased,
         Rented,
+        ThirdParty,
         Other
     }
 
