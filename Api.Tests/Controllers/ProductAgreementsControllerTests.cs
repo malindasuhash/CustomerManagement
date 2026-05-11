@@ -45,7 +45,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitProductAgreement_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await productAgreementController.SubmitProductAgreement(CustomerId, LegalEntityId, ProductAgreementId, new SubmitEntityModel() { TargetVersion = 10 });
+            await productAgreementController.SubmitProductAgreement(CustomerId, LegalEntityId, ProductAgreementId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<ProductAgreement>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(ProductAgreementId) && p.Change == ChangeType.Submit && p.Name == EntityName.ProductAgreement && p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId) && p.DraftVersion.Equals(10)));
@@ -65,13 +65,13 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateProductAgreement_WhenInvoked_ThenUseAccurateCommand()
         {
-            var productAgreement = new ProductAgreement();
+            var productAgreement = new ApiContract.CreateUpdateProductAgreement();
 
             // Act
             await productAgreementController.CreateProductAgreement(CustomerId, LegalEntityId, productAgreement);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync<ProductAgreement>(Arg.Is<MessageEnvelop>(p => p.CustomerId.Equals(CustomerId) && SameDraft(productAgreement, p) && LegalEntityIdCheck(p, LegalEntityId)));
+            await changeProcessor.Received(1).ProcessChangeAsync<ProductAgreement>(Arg.Is<MessageEnvelop>(p => p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId)));
         }
 
         [Fact]
@@ -113,11 +113,6 @@ namespace Api.Tests.Controllers
                 && productAgreementMapped.DisplayName.Equals(productAgreementModel.DisplayName)
                 && productAgreementMapped.ProductType.Equals(productAgreementMapped.ProductType)
                 && productAgreementMapped.Label.Equals(productAgreementModel.Label);
-        }
-
-        private static bool SameDraft(ProductAgreement bankAccount, MessageEnvelop messageEnvelop)
-        {
-            return bankAccount == messageEnvelop.Draft;
         }
 
         private static bool LegalEntityIdCheck(MessageEnvelop envelop, string legalEntityId)

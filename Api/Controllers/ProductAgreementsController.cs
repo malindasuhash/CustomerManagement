@@ -30,11 +30,17 @@ namespace Api.Controllers
                 }
             };
 
-            return await Process<ProductAgreement>(envelop);
+            var result = await SubmitForProcessing<ProductAgreement>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}/submit")]
-        public async Task<ActionResult<EntityDocumentModel>> SubmitProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId, [FromBody] SubmitEntityModel submitModel)
+        public async Task<ActionResult<ApiContract.SubmitActionResponse>> SubmitProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId, [FromBody] ApiContract.SubmitActionRequest submitActionRequest)
         {
             var envelop = new MessageEnvelop()
             {
@@ -47,10 +53,20 @@ namespace Api.Controllers
                 {
                     LegalEntityId = legalEntityId
                 },
-                DraftVersion = submitModel.TargetVersion
+                DraftVersion = submitActionRequest.Draft_version
             };
 
-            return await Process<ProductAgreement>(envelop);
+            var result = await SubmitForProcessing<ProductAgreement>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new ApiContract.SubmitActionResponse()
+            {
+                Entity_id = legalEntityId,
+                Submitted_version = (long)result.SubmittedVersion
+            };
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
@@ -68,29 +84,47 @@ namespace Api.Controllers
                 },
             };
 
-            return await Process<ProductAgreement>(envelop);
+            var result = await SubmitForProcessing<ProductAgreement>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements")]
-        public async Task<ActionResult<EntityDocumentModel>> CreateProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ProductAgreement productAgreement)
+        public async Task<ActionResult<ApiContract.EntityResponse_ProductAgreement>> CreateProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ApiContract.CreateUpdateProductAgreement productAgreement)
         {
-            productAgreement.LegalEntityId = legalEntityId; // Legal entity scoped.
+            var domainProductAgreement = ApiContractProductAgreement_ToModelProductAgreementMap.Convert(productAgreement, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
                 Name = EntityName.ProductAgreement,
-                Draft = productAgreement,
+                Draft = domainProductAgreement,
                 CustomerId = customerId
             };
 
-            return await Process<ProductAgreement>(envelop);
+            var result = await SubmitForProcessing<ProductAgreement>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponse_ProductAgreement.Convert(result);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
-        public async Task<ActionResult<EntityDocumentModel>> GetProductAgreementById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId)
+        public async Task<ActionResult<ApiContract.EntityResponse_ProductAgreement>> GetProductAgreementById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId)
         {
-            return await GetById<ProductAgreement>(LookupPredicate.Create(productAgreementId, customerId, legalEntityId));
+            var entityDocument = await customerDatabase.FindEntity<ProductAgreement>(LookupPredicate.Create(productAgreementId, customerId, legalEntityId));
+            if (entityDocument == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponse_ProductAgreement.Convert(entityDocument);
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
