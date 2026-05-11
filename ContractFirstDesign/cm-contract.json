@@ -816,7 +816,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUpdateContact"
+                "$ref": "#/components/schemas/CreateContact"
               }
             }
           },
@@ -994,7 +994,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Contact"
+                "$ref": "#/components/schemas/UpdateContact"
               }
             }
           },
@@ -1442,7 +1442,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateLegalEntityModel"
+                "$ref": "#/components/schemas/CreateLegalEntity"
               }
             }
           },
@@ -1553,7 +1553,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateLegalEntityModel"
+                "$ref": "#/components/schemas/UpdateLegalEntity"
               }
             }
           },
@@ -2420,7 +2420,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUpdateProductAgreement"
+                "$ref": "#/components/schemas/CreateProductAgreement"
               }
             }
           },
@@ -2626,7 +2626,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUpdateProductAgreement"
+                "$ref": "#/components/schemas/UpdateProductAgreement"
               }
             }
           },
@@ -3079,7 +3079,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUpdateTradingLocation"
+                "$ref": "#/components/schemas/CreateTradingLocation"
               }
             }
           },
@@ -3285,7 +3285,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUpdateTradingLocation"
+                "$ref": "#/components/schemas/UpdateTradingLocation"
               }
             }
           },
@@ -4223,7 +4223,7 @@
           }
         }
       },
-      "CreateUpdateContact": {
+      "CreateContact": {
         "type": "object",
         "description": "Provides the details to be used to create a new contact.",
         "properties": {
@@ -4271,6 +4271,59 @@
           }
         }
       },
+      "UpdateContact": {
+        "type": "object",
+        "description": "Provides the details to be used to create a new contact.",
+        "properties": {
+          "alt_telephone": {
+            "type": [ "string", "null" ],
+            "description": "Alternative number"
+          },
+          "alt_telephone_code": {
+            "type": [ "string", "null" ],
+            "description": "Alternative number dialling code"
+          },
+          "email": {
+            "type": [ "string", "null" ],
+            "description": "Email address"
+          },
+          "name": {
+            "type": [ "string", "null" ],
+            "description": "Name associated with the contact"
+          },
+          "postal_address": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "$ref": "#/components/schemas/Address",
+                "description": "Postal address"
+              }
+            ]
+          },
+          "telephone": {
+            "type": [ "string", "null" ],
+            "description": "Primay telephone number"
+          },
+          "telephone_code": {
+            "type": [ "string", "null" ],
+            "description": "Primary telephone numbers dialling code"
+          },
+          "target_draft_version": {
+            "type": ["integer", "null"],
+            "format": "int64",
+            "description": "Version that the caller expects to update. Caller must populate this field."
+          },
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
+          }
+        }
+      },
       "CreateDocumentRequest": {
         "type": "object",
         "description": "Request payload for creating a document library entry.",
@@ -4287,7 +4340,7 @@
           }
         }
       },
-      "CreateLegalEntityModel": {
+      "CreateLegalEntity": {
         "type": "object",
         "description": "Provides the details to be used to create a new legal entity in a customer.",
         "required": [ "business_email" ],
@@ -4305,7 +4358,12 @@
           "business_type": {
             "$ref": "#/components/schemas/BusinessType"            
           },  
-          "goods_ownership": { "$ref": "#/components/schemas/GoodsOwnership" },       
+          "goods_ownership": { "$ref": "#/components/schemas/GoodsOwnership" },  
+          "nature_of_business": {
+            "type": [ "string", "null" ],
+            "description": "Description of the nature of the business (what the business does)",
+            "default": "Example nature of business"
+          },
           "card_turnover_per_annum": {
             "type": [ "integer", "null" ],
             "format": "int32",
@@ -4327,6 +4385,11 @@
             "type": [ "string", "null" ],
             "description": "The charity registration number as recorded with the relevant authority (not required if not a charity)",
             "default": "987654321"
+          },
+          "national_insurance_number": {
+            "type": [ "string", "null" ],
+            "description": "The national insurance number for the business (if a sole trader)",
+            "default": "QQ123456C"
           },
           "business_identification": {
             "type": [ "string", "null" ],
@@ -4431,9 +4494,9 @@
           }
         }
       },
-      "UpdateLegalEntityModel": {
+       "UpdateLegalEntity": {
         "type": "object",
-        "description": "Provides the details to be used to create a new legal entity in a customer.",
+        "description": "Provides the details to be used to update an existing legal entity in a customer.",
         "required": [ "business_email" ],
         "properties": {
           "business_contacts": {
@@ -4449,7 +4512,12 @@
           "business_type": {
             "$ref": "#/components/schemas/BusinessType"            
           },  
-          "goods_ownership": { "$ref": "#/components/schemas/GoodsOwnership" },       
+          "goods_ownership": { "$ref": "#/components/schemas/GoodsOwnership" },  
+          "nature_of_business": {
+            "type": [ "string", "null" ],
+            "description": "Description of the nature of the business (what the business does)",
+            "default": "Example nature of business"
+          },
           "card_turnover_per_annum": {
             "type": [ "integer", "null" ],
             "format": "int32",
@@ -4472,6 +4540,11 @@
             "description": "The charity registration number as recorded with the relevant authority (not required if not a charity)",
             "default": "987654321"
           },
+          "national_insurance_number": {
+            "type": [ "string", "null" ],
+            "description": "The national insurance number for the business (if a sole trader)",
+            "default": "QQ123456C"
+          },
           "business_identification": {
             "type": [ "string", "null" ],
             "description": "The business number associated within the Group (BIN)."
@@ -4485,16 +4558,6 @@
             "type": [ "string", "null" ],
             "description": "The date the business started trading (if different to the date the business was formed)",
             "default": "2025-01-01"
-          },
-          "legal_entity_status": {
-            "oneOf": [
-              { "type": "null" },
-              {
-                "$ref": "#/components/schemas/LegalEntityStatus",
-                "description": "The status of this legal entity (deprecate)"
-              }
-            ],
-            "default": "Active"
           },
           "legal_entity_with_control": {
             "type": [ "array", "null" ],
@@ -4574,8 +4637,10 @@
             ],
             "default": "Registered"
           },
-          "end_of_business_relationship": {
-            "$ref": "#/components/schemas/BusinessRelationship"
+          "target_draft_version": {
+            "type": ["integer", "null"],
+            "format": "int64",
+            "description": "Version that the caller expects to update. Caller must populate this field when updating an existing legal entity."
           },
           "meta_data": {
             "$ref": "#/components/schemas/MetaData"
@@ -4588,34 +4653,27 @@
           }
         }
       },
-      "CreateUpdateProductAgreement": {
+
+      "CreateProductAgreement": {
         "type": "object",
         "description": "Provides the details required to create a new product agreement.",
         "required": [ "product_id", "product_details", "rate_card_id" ],
         "properties": {
-           "product_id": {
-            "type": "string",
-            "description": "Product catalogue identifier - as defined in the product catalogue"
+          "product_catalogue_id": {
+            "type": [ "string", "null" ],
+            "description": "Product catalogue identifier - as defined in the product catalogue."
           },
           "display_name": {
             "type": [ "string", "null" ],
             "description": "Display name for the product"
           },
-          "product_details": {
-            "oneOf": [
-                {
-                  "$ref": "#/components/schemas/Product.Payit.SingleDomesticPayment"
-                },
-                {
-                  "$ref": "#/components/schemas/Product.Payit.SingleInternationalPayment"
-                },
-                {
-                  "$ref": "#/components/schemas/Product.Payit.CommercialVRP"
-                },
-                {
-                  "$ref": "#/components/schemas/Product.Payit.SweepingVRP"
-                }
-            ]
+          "features": {
+            "type": "object",
+            "description": "Details of the product.  The schema of this object will vary based on the product type.  The product type is determined based on the product catalogue"
+          },
+          "configuration": {
+            "type": "object",
+            "description": "Configuration details for the product agreement.  The schema of this object will vary based on the product type.  The product type is determined based on the product catalogue"
           },
           "rate_card_id": {
             "type": "string",
@@ -4640,7 +4698,62 @@
           }
         }
       },
-      "CreateUpdateTradingLocation": {
+
+      "UpdateProductAgreement": {
+        "type": "object",
+        "description": "Provides the details required to update an existing product agreement.",
+        "required": [ "product_id", "product_details", "rate_card_id" ],
+        "properties": {
+           "product_id": {
+            "type": "string",
+            "description": "Unique identifier for the product agreement.  This field is immutable."
+          },
+          "product_catalogue_id": {
+            "type": [ "string", "null" ],
+            "description": "Product catalogue identifier - as defined in the product catalogue, this cannot be changed once the product agreement is applied, this field is for informational purposes only"
+          },
+          "display_name": {
+            "type": [ "string", "null" ],
+            "description": "Display name for the product"
+          },
+          "features": {
+            "type": "object",
+            "description": "Details of the product.  The schema of this object will vary based on the product type.  The product type is determined based on the product catalogue"
+          },
+          "configuration": {
+            "type": "object",
+            "description": "Configuration details for the product agreement.  The schema of this object will vary based on the product type.  The product type is determined based on the product catalogue"
+          },
+          "rate_card_id": {
+            "type": "string",
+            "description": "Rate card identifier"
+          },
+          "billing_group_id": {
+            "type": [ "string", "null" ],
+            "description": "Billing group identifier for the product agreement"
+          },
+          "trading_location_id": {
+            "type": [ "string", "null" ],
+            "description": "Trading location identifier for the product agreement"
+          },
+          "target_draft_version": {
+              "type": ["integer", "null"],
+              "format": "int64",
+              "description": "Version that the caller expects to update. Caller must populate this field when updating an existing product agreement."
+            },
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
+          }
+        }
+      },
+
+      "CreateTradingLocation": {
         "type": "object",
         "description": "Provides the details to create a new trading entity",
         "required": [ "name", "contacts" ],
@@ -4667,6 +4780,50 @@
             "type": [ "string", "null" ],
             "description": "The website url (eg https://my.domain.con) of the trading location (either postal address or website must be specified)",
             "default": "https://example.com"
+          },
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
+          }
+        }
+      },
+      "UpdateTradingLocation": {
+        "type": "object",
+        "description": "Provides the details to update an existing trading location",
+        "required": [ "name", "contacts" ],
+        "properties": {
+          "address": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "$ref": "#/components/schemas/Address",
+                "description": "The postal address of the trading location (either postal address or website must be specified)"
+              }
+            ]
+          },
+          "contacts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TradingLocationContact" },
+            "description": "A list of contacts associated with the trading location"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name used to refer to this location"
+          },
+          "website": {
+            "type": [ "string", "null" ],
+            "description": "The website url (eg https://my.domain.con) of the trading location (either postal address or website must be specified)",
+            "default": "https://example.com"
+          },
+          "target_draft_version": {
+            "type": ["integer", "null"],
+            "format": "int64",
+            "description": "Version that the caller expects to update. Caller must populate this field when updating an existing trading location."
           },
           "meta_data": {
             "$ref": "#/components/schemas/MetaData"
@@ -5193,6 +5350,11 @@
             "minimum": 0
           },
           "goods_ownership": { "$ref": "#/components/schemas/GoodsOwnership" },
+          "nature_of_business": {
+            "type": [ "string", "null" ],
+            "description": "Description of the nature of the business (what the business does)",
+            "default": "Example nature of business"
+          },
           "company_registration": { "type": [ "string", "null" ] },
           "operating_as": {
             "type": [ "string", "null" ],
@@ -5203,6 +5365,11 @@
           "business_identification": { 
             "type": [ "string", "null" ],
             "description": "The business number associated within the Group (BIN)."
+          },
+          "national_insurance_number": {
+            "type": [ "string", "null" ],
+            "description": "The national insurance number for the business (if a sole trader)",
+            "default": "QQ123456C"
           },
           "date_business_created": { "type": [ "string", "null" ] },
           "date_trading_started": { "type": [ "string", "null" ] },
