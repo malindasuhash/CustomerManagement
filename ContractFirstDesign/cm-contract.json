@@ -1872,7 +1872,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUpdateBankAccount"
+                "$ref": "#/components/schemas/CreateBankAccount"
               }
             }
           },
@@ -2001,7 +2001,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUpdateBankAccount"
+                "$ref": "#/components/schemas/UpdateBankAccount"
               }
             }
           },
@@ -4050,7 +4050,7 @@
           }
         }
       },
-      "CreateUpdateBankAccount": {
+      "CreateBankAccount": {
         "type": "object",
         "required": [ "name" ],
         "properties": {
@@ -4102,6 +4102,75 @@
           "swift": {
             "type": [ "string", "null" ],
             "description": "Swift code identifies the bank holding the account"
+          },
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
+          }
+        }
+      },
+      "UpdateBankAccount": {
+        "type": "object",
+        "required": [ "target_version" ],
+        "properties": {
+          "account_holder_names": {
+            "type": [ "array", "null" ],
+            "items": { "type": "string" },
+            "description": "List of names of the account holders for the account",
+            "default": "MR A C HOLDER"
+          },
+          "account_number": {
+            "type": [ "string", "null" ],
+            "description": "The account number of the bank account",
+            "default": "12345678"
+          },
+          "bank_city": {
+            "type": [ "string", "null" ],
+            "description": "City of the branch of the bank at which the account is held",
+            "default": "London"
+          },
+          "bank_country": {
+            "type": [ "string", "null" ],
+            "description": "Country of the bank at which the account is held",
+            "default": "GB"
+          },
+          "bank_name": {
+            "type": [ "string", "null" ],
+            "description": "Name of the bank at which the account is held",
+            "default": "NatWest"
+          },
+          "billing_default": {
+            "type": [ "boolean", "null" ],
+            "description": "Indicator for assigning this bank account as the default bank account for billing, there must be at least one default bank account at all times. If not specified, false is assumed.",
+            "default": false
+          },
+          "iban": {
+            "type": [ "string", "null" ],
+            "description": "International Bank Account Number (IBAN)"
+          },
+          "name": {
+            "type": "string",
+            "description": "A unique name used to identify the bank account within this system",
+            "default": "Example bank account"
+          },
+          "sort_code": {
+            "type": [ "string", "null" ],
+            "description": "Sort code of the account",
+            "default": "12-34-56"
+          },
+          "swift": {
+            "type": [ "string", "null" ],
+            "description": "Swift code identifies the bank holding the account"
+          },
+          "target_draft_version": {
+            "type": ["integer", "null"],
+            "format": "int64",
+            "description": "Version that the caller expects to update. Caller must populate this field."
           },
           "meta_data": {
             "$ref": "#/components/schemas/MetaData"
@@ -5369,9 +5438,9 @@
       },
       "ProductAgreement": {
         "type": "object",
-        "required": [ "product_id", "product_detao;s", "rate_card_id", "legal_entity_id" ],
+        "required": [ "product_id", "product_details", "rate_card_id", "legal_entity_id" ],
         "properties": {
-          "product__id": { "type": [ "string", "null" ] },
+          "product_id": { "type": [ "string", "null" ] },
           "display_name": { "type": [ "string", "null" ] },
           "product_details": {
             "oneOf": [
