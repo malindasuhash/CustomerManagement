@@ -1,4 +1,5 @@
 ﻿using Api.ApiModels;
+using Api.Mappers;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
@@ -31,25 +32,37 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/trading-locations")]
-        public async Task<ActionResult<EntityDocumentModel>> CreateTradingLocation(string customerId, string legalEntityId, TradingLocation tradingLocation)
+        public async Task<ActionResult<ApiContract.EntityResponse_TradingLocation>> CreateTradingLocation(string customerId, string legalEntityId, [FromBody] ApiContract.CreateUpdateTradingLocation tradingLocation)
         {
-            tradingLocation.LegalEntityId = legalEntityId;
+            var domainTradingLocation = ApiContractTradingLocation_ToModelTradingLocationMap.Convert(tradingLocation, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
-                Name = EntityName.ProductAgreement,
-                Draft = tradingLocation,
+                Name = EntityName.TradingLocation,
+                Draft = domainTradingLocation,
                 CustomerId = customerId
             };
 
-            return await Process<TradingLocation>(envelop);
+            var result = await SubmitForProcessing<TradingLocation>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponse_TradingLocation.Convert(result);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/trading-locations/{tradingLocationId}")]
-        public async Task<ActionResult<EntityDocumentModel>> GetTradingLocationById([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId)
+        public async Task<ActionResult<ApiContract.EntityResponse_TradingLocation>> GetTradingLocationById([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId)
         {
-            return await GetById<TradingLocation>(LookupPredicate.Create(tradingLocationId, customerId, legalEntityId));
+            var entityDocument = await customerDatabase.FindEntity<TradingLocation>(LookupPredicate.Create(tradingLocationId, customerId, legalEntityId));
+            if (entityDocument == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return MessageEnvelop_ToEntityResponse_TradingLocation.Convert(entityDocument);
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/trading-locations/{tradingLocationId}")]
@@ -67,11 +80,17 @@ namespace Api.Controllers
                 },
             };
 
-            return await Process<TradingLocation>(envelop);
+            var result = await SubmitForProcessing<TradingLocation>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/trading-locations/{tradingLocationId}/submit")]
-        public async Task<ActionResult<EntityDocumentModel>> SubmitTradingLocation([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId, SubmitEntityModel submitEntityModel)
+        public async Task<ActionResult<ApiContract.SubmitActionResponse>> SubmitTradingLocation([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId, [FromBody] ApiContract.SubmitActionRequest submitActionRequest)
         {
             var envelop = new MessageEnvelop()
             {
@@ -84,10 +103,20 @@ namespace Api.Controllers
                 {
                     LegalEntityId = legalEntityId
                 },
-                DraftVersion = submitEntityModel.TargetVersion
+                DraftVersion = submitActionRequest.Draft_version
             };
 
-            return await Process<TradingLocation>(envelop);
+            var result = await SubmitForProcessing<ProductAgreement>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new ApiContract.SubmitActionResponse()
+            {
+                Entity_id = legalEntityId,
+                Submitted_version = (long)result.SubmittedVersion
+            };
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/trading-locations/{tradingLocationId}/touch")]

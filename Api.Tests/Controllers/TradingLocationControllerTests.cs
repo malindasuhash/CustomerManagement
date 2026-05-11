@@ -45,7 +45,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitTradingLocation_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await tradingLocationController.SubmitTradingLocation(CustomerId, LegalEntityId, TradingLocationId, new SubmitEntityModel() { TargetVersion = 10 });
+            await tradingLocationController.SubmitTradingLocation(CustomerId, LegalEntityId, TradingLocationId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<TradingLocation>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(TradingLocationId) && p.Change == ChangeType.Submit && p.Name == EntityName.TradingLocation && p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId) && p.DraftVersion.Equals(10)));
@@ -64,13 +64,13 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateTradingLocation_WhenInvoked_ThenUseAccurateCommand()
         {
-            var tradingLocation = new TradingLocation();
+            var tradingLocation = new ApiContract.CreateUpdateTradingLocation();
 
             // Act
             await tradingLocationController.CreateTradingLocation(CustomerId, LegalEntityId, tradingLocation);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync<TradingLocation>(Arg.Is<MessageEnvelop>(p => p.CustomerId.Equals(CustomerId) && SameDraft(tradingLocation, p) && LegalEntityIdCheck(p, LegalEntityId)));
+            await changeProcessor.Received(1).ProcessChangeAsync<TradingLocation>(Arg.Is<MessageEnvelop>(p => p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId)));
         }
 
         [Fact]
@@ -152,11 +152,6 @@ namespace Api.Tests.Controllers
                 && tradingLocationMapped.Name.Equals(tradingLocationModel.Name)
                 && tradingLocationMapped.Website.Equals(tradingLocationModel.Website)
                 && tradingLocationMapped.Label.Equals(tradingLocationModel.Label);
-        }
-
-        private static bool SameDraft(TradingLocation tradingLocation, MessageEnvelop messageEnvelop)
-        {
-            return tradingLocation == messageEnvelop.Draft;
         }
 
         private static bool LegalEntityIdCheck(MessageEnvelop envelop, string legalEntityId)

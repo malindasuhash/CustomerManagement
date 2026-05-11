@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Models;
 
-namespace Api.Controllers
+namespace Api.Mappers
 {
     internal class MessageEnvelop_ToEntityResponse_ProductAgreement
     {

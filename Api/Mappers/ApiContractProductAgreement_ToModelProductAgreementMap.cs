@@ -1,6 +1,6 @@
 ﻿using ApiContract;
 
-namespace Api.Controllers
+namespace Api.Mappers
 {
     internal class ApiContractProductAgreement_ToModelProductAgreementMap
     {
