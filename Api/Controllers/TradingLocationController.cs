@@ -32,7 +32,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/trading-locations")]
-        public async Task<ActionResult<ApiContract.EntityResponse_TradingLocation>> CreateTradingLocation(string customerId, string legalEntityId, [FromBody] ApiContract.CreateUpdateTradingLocation tradingLocation)
+        public async Task<ActionResult<ApiContract.EntityResponse_TradingLocation>> CreateTradingLocation(string customerId, string legalEntityId, [FromBody] ApiContract.CreateTradingLocation tradingLocation)
         {
             var domainTradingLocation = ApiContractTradingLocation_ToModelTradingLocationMap.Convert(tradingLocation, legalEntityId);
 
@@ -103,7 +103,7 @@ namespace Api.Controllers
                 {
                     LegalEntityId = legalEntityId
                 },
-                DraftVersion = submitActionRequest.Draft_version
+                DraftVersion = submitActionRequest.Target_draft_version
             };
 
             var result = await SubmitForProcessing<ProductAgreement>(envelop);

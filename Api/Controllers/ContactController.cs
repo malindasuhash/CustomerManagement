@@ -45,7 +45,7 @@ namespace Api.Controllers
                 CustomerId = customerId,
                 EntityId = contactId,
                 IsSubmitted = true,
-                DraftVersion = submitActionRequest.Draft_version
+                DraftVersion = submitActionRequest.Target_draft_version
             };
 
             var result = await SubmitForProcessing<Contact>(envelop);
@@ -82,7 +82,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/contacts")]
-        public async Task<ActionResult<ApiContract.EntityResponse_Contact>> CreateContact([FromRoute] string customerId, [FromBody] ApiContract.CreateUpdateContact apiContact)
+        public async Task<ActionResult<ApiContract.EntityResponse_Contact>> CreateContact([FromRoute] string customerId, [FromBody] ApiContract.CreateContact apiContact)
         {
             var domainContact = ApiContractContact_ToModelContactMap.Convert(apiContact);
 

@@ -4,9 +4,9 @@ namespace ContractFirstDesign.Examples;
 
 public class DtoUsageExample
 {
-    public CreateLegalEntityModel BuildNewLegalEntity()
+    public CreateLegalEntity BuildNewLegalEntity()
     {
-        return new CreateLegalEntityModel
+        return new CreateLegalEntity
         {
             Name = "Acme Ltd",
             Business_email = "info@acme.com",

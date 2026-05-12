@@ -45,7 +45,7 @@ namespace Api.Controllers
                 CustomerId = customerId,
                 EntityId = billingGroupId,
                 IsSubmitted = true,
-                DraftVersion = submitActionRequest.Draft_version
+                DraftVersion = submitActionRequest.Target_draft_version
             };
 
             var result = await SubmitForProcessing<BillingGroup>(envelop);

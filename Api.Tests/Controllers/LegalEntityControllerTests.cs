@@ -22,7 +22,7 @@ namespace Api.Tests.Controllers
             changeProcessor = Substitute.For<IChangeProcessor>();
             customerDatabase = Substitute.For<ICustomerDatabase>();
             customerDatabase.FindEntity<LegalEntity>(Arg.Any<LookupPredicate>()).Returns(new MessageEnvelop() { CustomerId = CustomerId });
-            legalEntityController = new LegalEntityController(changeProcessor, customerDatabase);
+            legalEntityController = new LegalEntityController(changeProcessor, customerDatabase, null, null, null);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitLegalEntity_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await legalEntityController.SubmitLegalEntity(CustomerId, LegalEntityId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
+            await legalEntityController.SubmitLegalEntity(CustomerId, LegalEntityId, new ApiContract.SubmitActionRequest() { Target_draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<LegalEntity>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(LegalEntityId) && p.Change == ChangeType.Submit && p.Name == EntityName.LegalEntity && p.CustomerId.Equals(CustomerId) && p.DraftVersion.Equals(10)));
@@ -58,7 +58,7 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateCreateEntity_WhenInvoked_ThenUseAccurateCommand()
         {
-            var legalEntity = new ApiContract.CreateLegalEntityModel();
+            var legalEntity = new ApiContract.CreateLegalEntity();
 
             // Act
             await legalEntityController.CreateLegalEntity(CustomerId, legalEntity);

@@ -54,7 +54,7 @@ namespace Api.Controllers
                 {
                     LegalEntityId = legalEntityId
                 },
-                DraftVersion = submitActionRequest.Draft_version
+                DraftVersion = submitActionRequest.Target_draft_version
             };
 
             var result = await SubmitForProcessing<ProductAgreement>(envelop);
@@ -95,7 +95,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements")]
-        public async Task<ActionResult<ApiContract.EntityResponse_ProductAgreement>> CreateProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ApiContract.CreateUpdateProductAgreement productAgreement)
+        public async Task<ActionResult<ApiContract.EntityResponse_ProductAgreement>> CreateProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ApiContract.CreateProductAgreement productAgreement)
         {
             var domainProductAgreement = ApiContractProductAgreement_ToModelProductAgreementMap.Convert(productAgreement, legalEntityId);
 

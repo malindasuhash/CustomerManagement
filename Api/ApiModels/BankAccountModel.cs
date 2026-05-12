@@ -23,7 +23,7 @@ namespace Api.ApiModels
 
     public class ApiContractContact_ToModelContactMap
     {
-        public static Contact Convert(ApiContract.CreateUpdateContact apiContractContact)
+        public static Contact Convert(ApiContract.CreateContact apiContractContact)
         {
             var modelContact = new Contact()
             {
@@ -110,110 +110,6 @@ namespace Api.ApiModels
         }
     }
 
-    public class ApiContractBankAccount_ToModelBankAccountMap
-    {
-        public static BankAccount Convert(ApiContract.CreateUpdateBankAccount apiContractBankAccount, string legalEntityId)
-        {
-            var modelBankAccount = new BankAccount()
-            {
-                BankAccountHolderNames = [.. apiContractBankAccount.Account_holder_names],
-                AccountNumber = apiContractBankAccount.Account_number,
-                BankCity = apiContractBankAccount.Bank_city,
-                BankCountry = apiContractBankAccount.Bank_country,
-                BankName = apiContractBankAccount.Bank_name,
-                BillingDefault = true, // Billing default is set to true for new bank accounts
-                Iban = apiContractBankAccount.Iban,
-                Name = apiContractBankAccount.Name,
-                SortCode = apiContractBankAccount.Sort_code,
-                Swift = apiContractBankAccount.Swift,
-                LegalEntityId = legalEntityId
-            };
-
-            if (apiContractBankAccount.Labels != null)
-            {
-                modelBankAccount.Labels = [.. apiContractBankAccount.Labels];
-            }
-
-            if (apiContractBankAccount.Meta_data != null)
-            {
-                var metaDataList = new List<MetaDataModel>();
-                foreach (var data in apiContractBankAccount.Meta_data)
-                {
-                    metaDataList.Add(new MetaDataModel { Key = data.Key, Value = data.Value });
-                }
-                modelBankAccount.MetaData = [.. metaDataList];
-            }
-
-            if (apiContractBankAccount.System_data != null)
-            {
-                var systemDataList = new List<SystemDataModel>();
-                foreach (var data in apiContractBankAccount.System_data)
-                {
-                    systemDataList.Add(new SystemDataModel { Key = data.Key, Value = data.Value });
-                }
-                modelBankAccount.SystemData = [.. systemDataList];
-            }
-
-            return modelBankAccount;
-        }
-    }
-
-    public class ApiContractLegalEntity_ToModelLegalEntityMap
-    {
-        public static LegalEntity Convert(ApiContract.CreateLegalEntityModel apiContractLegalEntity)
-        {
-            var modelLegalEntity = new LegalEntity()
-            {
-                Name = apiContractLegalEntity.Name,
-                BusinessEmail = apiContractLegalEntity.Business_email,
-                //BusinessType = BusinessType_ToModelBusinessTypeMap.Convert(apiContractLegalEntity.Business_type),
-                DateBusinessStarted = DateTime.Parse(apiContractLegalEntity.Date_business_created),
-                DateTradingStarted = DateTime.Parse(apiContractLegalEntity.Date_trading_started),
-                CharityRegistration = apiContractLegalEntity.Charity_registration,
-                VatRegistration = apiContractLegalEntity.Vat_registration,
-                //VatRegistrationStatus = VatRegistrationStatus_ToModelVatRegistrationStatusMap.Convert(apiContractLegalEntity.Vat_registration_status),
-                CountryOfAuthority = apiContractLegalEntity.Country_of_authority,
-                CompanyRegistration = apiContractLegalEntity.Company_registration,
-                TradingName = apiContractLegalEntity.Operating_as,
-                MaximumTransactionValue = apiContractLegalEntity.Maximum_transaction_value,
-                MerchantCategoryCode = apiContractLegalEntity.Merchant_category_code,
-                StandardIndustryClassification = apiContractLegalEntity.Standard_industry_classification,
-                TurnoverPerAnnum = apiContractLegalEntity.Turnover_per_annum,
-                CardTurnoverPerAnnum = apiContractLegalEntity.Card_turnover_per_annum,
-                TradingIndustryClassification = apiContractLegalEntity.Trading_industry_classification,
-                BusinessIdentification = apiContractLegalEntity.Business_identification,
-                //RegisteredAddresses = RegisteredAddresses_ToModelRegisteredAddressesMap.Convert(apiContractLegalEntity.Registered_addresses),
-               // BusinessContacts = BusinessContacts_ToModelBusinessContactsMap.Convert(apiContractLegalEntity.Business_contacts),
-                //EndOfBusinessRelationship = EndOfBusinessRelationship_ToModelEndOfBusinessRelationshipMap.Convert(apiContractLegalEntity.End_of_business_relationship),
-                //GoodsOwnership = GoodsOwnership_ToModelGoodsOwnershipMap.Convert(apiContractLegalEntity.Goods_ownership),
-            };
-            if (apiContractLegalEntity.Meta_data != null)
-            {
-                var metaDataList = new List<MetaDataModel>();
-                foreach (var data in apiContractLegalEntity.Meta_data)
-                {
-                    metaDataList.Add(new MetaDataModel { Key = data.Key, Value = data.Value });
-                }
-                modelLegalEntity.MetaData = [.. metaDataList];
-            }
-            if (apiContractLegalEntity.Labels != null)
-            {
-                modelLegalEntity.Labels = [.. apiContractLegalEntity.Labels];
-            }
-
-            if (apiContractLegalEntity.System_data != null)
-            {
-                var systemDataList = new List<SystemDataModel>();
-                foreach (var data in apiContractLegalEntity.System_data)
-                {
-                    systemDataList.Add(new SystemDataModel { Key = data.Key, Value = data.Value });
-                }
-                modelLegalEntity.SystemData = [.. systemDataList];
-            }
-            
-            return modelLegalEntity;
-        }
-    }
     
 
     public class MessageEnvelop_ToEntityResponseLegalEntityMap
@@ -679,42 +575,6 @@ namespace Api.ApiModels
                 }
 
                 return responseBillingGroup;
-            }
-        }
-
-        public class MessageEnvelop_ToEntityResponse_BankAccount
-        {
-            public static ApiContract.EntityResponse_BankAccount Convert(MessageEnvelop entityDocument)
-            {
-                return new ApiContract.EntityResponse_BankAccount()
-                {
-                    Customer = entityDocument.CustomerId,
-                    Id = entityDocument.EntityId,
-
-                    Draft = BankAccount_ToApiContractMap.Convert(entityDocument.Draft),
-                    Draft_version = (long)entityDocument.DraftVersion,
-
-                    Submitted = BankAccount_ToApiContractMap.Convert(entityDocument.Submitted),
-                    Submitted_version = (long)entityDocument.SubmittedVersion,
-
-                    Applied = BankAccount_ToApiContractMap.Convert(entityDocument.Applied),
-                    Applied_version = (long)entityDocument.AppliedVersion,
-
-                    Created = entityDocument.CreatedTimestamp.ToString(),
-                    Created_by = entityDocument.CreatedUser,
-
-                    Updated = entityDocument.UpdateTimestamp.ToString(),
-                    Updated_by = entityDocument.UpdateUser,
-
-                    State = EntityState_ToApiStateMap.Convert(entityDocument.State),
-                    Feedback = entityDocument.Feedback != null ? entityDocument.Feedback.Select(f => new ApiContract.EntityStateResult
-                    {
-                        Kind = FeedbackType_ToApiEntityStateKindMap.Convert(f.Type),
-                        Message = f.Message,
-                        Context = f.Context,
-                        Details = f.Details
-                    }).ToArray() : null
-                };
             }
         }
 

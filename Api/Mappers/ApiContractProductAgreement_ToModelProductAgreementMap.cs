@@ -4,7 +4,7 @@ namespace Api.Mappers
 {
     internal class ApiContractProductAgreement_ToModelProductAgreementMap
     {
-        internal static StateManagment.Entity.ProductAgreement Convert(CreateUpdateProductAgreement productAgreement, string legalEntityId)
+        internal static StateManagment.Entity.ProductAgreement Convert(CreateProductAgreement productAgreement, string legalEntityId)
         {
             return new StateManagment.Entity.ProductAgreement()
             {

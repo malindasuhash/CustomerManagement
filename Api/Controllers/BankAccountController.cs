@@ -1,4 +1,5 @@
 ﻿using Api.ApiModels;
+using Api.Mappers;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
@@ -52,7 +53,7 @@ namespace Api.Controllers
                 {
                     LegalEntityId = legalEntityId
                 },
-                DraftVersion = submitActionRequest.Draft_version
+                DraftVersion = submitActionRequest.Target_draft_version
             };
 
             var result = await SubmitForProcessing<BankAccount>(envelop);
@@ -93,7 +94,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts")]
-        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> CreateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ApiContract.CreateUpdateBankAccount apiBankAccountRequest)
+        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> CreateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ApiContract.CreateBankAccount apiBankAccountRequest)
         {
             var bankAccount = ApiContractBankAccount_ToModelBankAccountMap.Convert(apiBankAccountRequest, legalEntityId);
 
@@ -123,18 +124,18 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpdateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] BankAccountModel patch)
+        public async Task<ActionResult<EntityDocumentModel>> UpdateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] ApiContract.UpdateBankAccount updateModelRequest)
         {
-            var patchModel = BankAccountToPatch(patch, legalEntityId);
+            var patchBankAccount = ApiContractBankAccount_ToModelBankAccountMap.Update(updateModelRequest, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
                 EntityId = bankAccountId,
                 Change = ChangeType.Update,
                 Name = EntityName.BankAccount,
-                Draft = patchModel,
+                Draft = patchBankAccount,
                 CustomerId = customerId,
-                DraftVersion = patch.TargetVersion
+                DraftVersion = 0 // TODO: This will need to be updated to handle versioning properly. For now, it is set to 0 to bypass the version
             };
 
             return await Process<BankAccount>(envelop);

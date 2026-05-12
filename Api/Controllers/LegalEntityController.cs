@@ -1,8 +1,13 @@
 ﻿using Api.ApiModels;
+using Api.Mappers;
+using Api.Services;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using StateManagment.Entity;
 using StateManagment.Models;
+using System.Net.Http;
 
 namespace Api.Controllers
 {
@@ -11,8 +16,15 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class LegalEntityController : EntityManagementController
     {
-        public LegalEntityController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
+        private readonly LinkGenerator linkGenerator;
+        private readonly IHttpClientFactory httpClientFactory;
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public LegalEntityController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase, LinkGenerator linkGenerator, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(changeProcessor, customerDatabase)
         {
+            this.linkGenerator = linkGenerator;
+            this.httpClientFactory = httpClientFactory;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet("legal-entities/find-by-contact")]
@@ -28,6 +40,33 @@ namespace Api.Controllers
             var results = envelopes?.Select(e => Translate(e)).ToList() ?? new List<EntityDocumentModel>();
 
             return Ok(results);
+        }
+
+        [HttpGet("{customerId}/legal-entities/{entityId}/changes")]
+        public async Task<ChangeSummary> GetChanges([FromRoute] string customerId, [FromQuery] string entityId)
+        {
+            var pendingChanges = await GetLinks(customerId, entityId);
+
+            return new ChangeSummary()
+            {
+                total = pendingChanges.Length,
+                Changes = pendingChanges
+            };
+        }
+
+        [HttpPost("{customerId}/legal-entities/{entityId}/changes")]
+        public async Task<ChangeSummarySubmitResult> ChangeSubmitResults([FromRoute] string customerId, [FromQuery] string entityId)
+        {
+            var pendingChanges = await GetLinks(customerId, entityId);
+            var changeSubmitter = new ChangeSubmitter(httpClientFactory, httpContextAccessor);
+
+            var submitResults = await changeSubmitter.SubmitAll(pendingChanges);
+
+            return new ChangeSummarySubmitResult()
+            {
+                total = submitResults.Count,
+                Changes = submitResults
+            };
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/touch")]
@@ -68,7 +107,7 @@ namespace Api.Controllers
                 CustomerId = customerId,
                 EntityId = entityId,
                 IsSubmitted = true,
-                DraftVersion = submitActionRequest.Draft_version
+                DraftVersion = submitActionRequest.Target_draft_version
             };
 
             var result = await SubmitForProcessing<LegalEntity>(envelop);
@@ -109,7 +148,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities")]
-        public async Task<ActionResult<ApiContract.EntityResponse_LegalEntity>> CreateLegalEntity([FromRoute] string customerId, [FromBody] ApiContract.CreateLegalEntityModel legalEntity)
+        public async Task<ActionResult<ApiContract.EntityResponse_LegalEntity>> CreateLegalEntity([FromRoute] string customerId, [FromBody] ApiContract.CreateLegalEntity legalEntity)
         {
             // LEGAL_ENTITY_WRITE
             // LEGAL_ENTITY_READ
@@ -170,6 +209,12 @@ namespace Api.Controllers
             };
 
             return await Process<LegalEntity>(envelop);
+        }
+
+        private async Task<ChangeLink[]> GetLinks(string customerId, string? legalEntityId)
+        {
+            var pendingChanges = await customerDatabase.GetPendingChanges(customerId, legalEntityId);
+            return pendingChanges.Select(change => ChangeLink.Create(change, linkGenerator, customerId, legalEntityId)).ToArray();
         }
 
         private static LegalEntity LegalEntityToPatch(LegalEntityModel patch)

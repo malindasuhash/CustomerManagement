@@ -37,7 +37,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitContact_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await contactController.SubmitContact(CustomerId, ContactId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
+            await contactController.SubmitContact(CustomerId, ContactId, new ApiContract.SubmitActionRequest() { Target_draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<Contact>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(ContactId) && p.Change == ChangeType.Submit && p.Name == EntityName.Contact && p.CustomerId.Equals(CustomerId) && p.DraftVersion.Equals(10)));
@@ -56,7 +56,7 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateContact_WhenInvoked_ThenUseAccurateCommand()
         {
-            var contact = new ApiContract.CreateUpdateContact();
+            var contact = new ApiContract.CreateContact();
 
             // Act
             await contactController.CreateContact(CustomerId, contact);

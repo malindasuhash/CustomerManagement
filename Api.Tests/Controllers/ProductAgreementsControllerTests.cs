@@ -45,7 +45,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitProductAgreement_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await productAgreementController.SubmitProductAgreement(CustomerId, LegalEntityId, ProductAgreementId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
+            await productAgreementController.SubmitProductAgreement(CustomerId, LegalEntityId, ProductAgreementId, new ApiContract.SubmitActionRequest() { Target_draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<ProductAgreement>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(ProductAgreementId) && p.Change == ChangeType.Submit && p.Name == EntityName.ProductAgreement && p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId) && p.DraftVersion.Equals(10)));
@@ -65,7 +65,7 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateProductAgreement_WhenInvoked_ThenUseAccurateCommand()
         {
-            var productAgreement = new ApiContract.CreateUpdateProductAgreement();
+            var productAgreement = new ApiContract.CreateProductAgreement();
 
             // Act
             await productAgreementController.CreateProductAgreement(CustomerId, LegalEntityId, productAgreement);

@@ -39,7 +39,7 @@ namespace Api.Tests.Controllers
         public async Task SubmitBankAccount_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await bankAccountController.SubmitBankAccount(CustomerId, LegalEntityId, BankAccountId, new ApiContract.SubmitActionRequest() { Draft_version = 10 });
+            await bankAccountController.SubmitBankAccount(CustomerId, LegalEntityId, BankAccountId, new ApiContract.SubmitActionRequest() { Target_draft_version = 10 });
 
             // Assert
             await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(BankAccountId) && p.Change == ChangeType.Submit && p.Name == EntityName.BankAccount && p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId) && p.DraftVersion.Equals(10)));
@@ -58,7 +58,7 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task CreateBankAccount_WhenInvoked_ThenUseAccurateCommand()
         {
-            var bankAccount = new ApiContract.CreateUpdateBankAccount();
+            var bankAccount = new ApiContract.CreateBankAccount();
 
             // Act
             await bankAccountController.CreateBankAccount(CustomerId, LegalEntityId, bankAccount);
@@ -81,13 +81,13 @@ namespace Api.Tests.Controllers
         public async Task UpdateBankAccount_WhenUpdating_ThenIssuesTheAppropriateCommand()
         {
             // Arrange
-            var patchModel = new BankAccountModel()
+            var patchModel = new ApiContract.UpdateBankAccount()
             {
                 Iban = "IBAN",
-                BankName = "BankName",
+                Name = "BankName",
                 Labels = ["Label"],
-                BankCountry = "Country",
-                TargetVersion = 10
+                Bank_country = "Country",
+                Target_draft_version = 10
             };
 
             // Act
@@ -97,7 +97,7 @@ namespace Api.Tests.Controllers
             await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(m => SameAfterMapped(patchModel, m)));
         }
 
-        private static bool SameAfterMapped(BankAccountModel bankAccount, MessageEnvelop messageEnvelop)
+        private static bool SameAfterMapped(ApiContract.UpdateBankAccount bankAccount, MessageEnvelop messageEnvelop)
         {
             var bankAccountMapped = messageEnvelop.Draft as BankAccount;
 
@@ -107,7 +107,7 @@ namespace Api.Tests.Controllers
                 && bankAccountMapped.Iban.Equals(bankAccount.Iban)
                 && bankAccountMapped.BankName.Equals(bankAccountMapped.BankName)
                 && bankAccountMapped.Labels.Equals(bankAccount.Labels)
-                && bankAccountMapped.BankCountry.Equals(bankAccount.BankCountry);
+                && bankAccountMapped.BankCountry.Equals(bankAccount.Bank_country);
         }
 
         private static bool LegalEntityIdCheck(MessageEnvelop envelop, string legalEntityId)
