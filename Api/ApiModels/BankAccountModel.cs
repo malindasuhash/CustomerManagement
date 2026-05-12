@@ -1,6 +1,5 @@
 ﻿using StateManagment.Entity;
 using StateManagment.Models;
-using System.Net.NetworkInformation;
 
 namespace Api.ApiModels
 {
@@ -19,37 +18,6 @@ namespace Api.ApiModels
         public MetaData[] MetaData { get; set; } = [];
         public string[] Labels { get; set; }
         public int TargetVersion { get; set; }
-    }
-
-    public class ApiContractContact_ToModelContactMap
-    {
-        public static Contact Convert(ApiContract.CreateContact apiContractContact)
-        {
-            var modelContact = new Contact()
-            {
-                Name = apiContractContact.Name,
-                Email = apiContractContact.Email,
-                AltTelephone = apiContractContact.Alt_telephone,
-                AltTelephoneCode = apiContractContact.Alt_telephone_code,
-                Telephone = apiContractContact.Telephone,
-                TelephoneCode = apiContractContact.Telephone_code,
-                PostalAddress = Address_ToModelAddressMap.Convert(apiContractContact.Postal_address)
-            };
-            if (apiContractContact.Labels != null)
-            {
-                modelContact.Labels = [.. apiContractContact.Labels];
-            }
-            if (apiContractContact.Meta_data != null)
-            {
-                var metaDataList = new List<MetaDataModel>();
-                foreach (var data in apiContractContact.Meta_data)
-                {
-                    metaDataList.Add(new MetaDataModel { Key = data.Key, Value = data.Value });
-                }
-                modelContact.MetaData = [.. metaDataList];
-            }
-            return modelContact;
-        }
     }
 
     public class Address_ToModelAddressMap
@@ -616,48 +584,6 @@ namespace Api.ApiModels
 
                     _ => throw new ArgumentOutOfRangeException(nameof(entityState), $"Not expected entity state value: {entityState}")
                 };
-            }
-        }
-
-        public class BankAccount_ToApiContractMap
-        {
-            public static ApiContract.BankAccount Convert(BankAccount bankAccountStateModel)
-            {
-                var responseBankAccount = new ApiContract.BankAccount()
-                {
-                    Account_holder_names = bankAccountStateModel.BankAccountHolderNames,
-                    Account_number = bankAccountStateModel.AccountNumber,
-                    Bank_city = bankAccountStateModel.BankCity,
-                    Bank_country = bankAccountStateModel.BankCountry,
-                    Bank_name = bankAccountStateModel.BankName,
-                    Billing_default = bankAccountStateModel.BillingDefault,
-                    Iban = bankAccountStateModel.Iban,
-                    Name = bankAccountStateModel.Name,
-                    Sort_code = bankAccountStateModel.SortCode,
-                    Swift = bankAccountStateModel.Swift,
-                };
-
-                if (bankAccountStateModel.Labels != null)
-                {
-                    var labels = new ApiContract.Labels();
-                    foreach (var label in bankAccountStateModel.Labels)
-                    {
-                        labels.Add(label);
-                    }
-                    responseBankAccount.Labels = labels;
-                }
-
-                if (bankAccountStateModel.MetaData != null)
-                {
-                    var metaData = new ApiContract.MetaData();
-                    foreach (var data in bankAccountStateModel.MetaData)
-                    {
-                        metaData.Add(data.Key, data.Value);
-                    }
-                    responseBankAccount.Meta_data = metaData;
-                }
-
-                return responseBankAccount;
             }
         }
     }

@@ -7,9 +7,14 @@ namespace Api.Mappers
     {
         internal static BankAccount Update(ApiContract.UpdateBankAccount apiContractBankAccount, string legalEntityId)
         {
+            if (apiContractBankAccount == null)
+            {
+                return null;
+            }
+
             var modelBankAccount = new BankAccount()
             {
-                BankAccountHolderNames = [.. apiContractBankAccount.Account_holder_names],
+                BankAccountHolderNames = apiContractBankAccount.Account_holder_names != null ? [.. apiContractBankAccount.Account_holder_names] : null,
                 AccountNumber = apiContractBankAccount.Account_number,
                 BankCity = apiContractBankAccount.Bank_city,
                 BankCountry = apiContractBankAccount.Bank_country,

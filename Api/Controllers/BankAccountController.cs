@@ -124,7 +124,7 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpdateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] ApiContract.UpdateBankAccount updateModelRequest)
+        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> UpdateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] ApiContract.UpdateBankAccount updateModelRequest)
         {
             var patchBankAccount = ApiContractBankAccount_ToModelBankAccountMap.Update(updateModelRequest, legalEntityId);
 
@@ -135,36 +135,16 @@ namespace Api.Controllers
                 Name = EntityName.BankAccount,
                 Draft = patchBankAccount,
                 CustomerId = customerId,
-                DraftVersion = 0 // TODO: This will need to be updated to handle versioning properly. For now, it is set to 0 to bypass the version
+                DraftVersion = (decimal)updateModelRequest.Target_draft_version
             };
 
-            return await Process<BankAccount>(envelop);
-        }
-
-        private static BankAccount BankAccountToPatch(BankAccountModel patchModel, string legalEntityId)
-        {
-            var bankAccount = new BankAccount
+            var result = await SubmitForProcessing<BankAccount>(envelop);
+            if (result == MessageEnvelop.NONE)
             {
-                //Label = patchModel.Labels,
-                Name = patchModel.Name,
-                AccountNumber = patchModel.AccountNumber,
-                BankAccountHolderNames = patchModel.BankAccountHolderNames,
-                BankCity = patchModel.BankCity,
-                BankCountry = patchModel.BankCountry,
-                BankName = patchModel.BankName,
-                BillingDefault = patchModel.BillingDefault,
-                Iban = patchModel.Iban,
-                LegalEntityId = legalEntityId,
-                Swift = patchModel.Swift,
-                SortCode = patchModel.SortCode
-            };
-
-            if (patchModel.MetaData != null)
-            {
-                //bankAccount.MetaDataModel = [.. patchModel.MetaDataModel.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
+                return NotFound();
             }
 
-            return bankAccount;
+            return MessageEnvelop_ToEntityResponse_BankAccount.Convert(result);
         }
     }
 }

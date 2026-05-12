@@ -1,6 +1,6 @@
 @Api_HostAddress = https://localhost:7296/api/v1
 
-GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24
+GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/e79cf88e-07d3-42cd-b313-cc4ff18492a5
 Accept: application/json
 
 ###
@@ -8,43 +8,46 @@ Accept: application/json
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts
 Content-Type: application/json
 {
-  "legalEntityId": "9938982",
-  "bankAccountHolderNames": "Bank Account holder name 1",
-  "accountNumber": "9938982",
-  "bankCity": "Watford",
-  "bankCountry": "GB",
-  "bankName": "Lloyds",
-  "billingDefault": true,
-  "iban": "Iban 2",
+  "account_holder_names": ["Bank Account holder name 1"],
+  "account_number": "9938982",
+  "bank_city": "Watford",
+  "bank_country": "GB",
+  "bank_name": "Lloyds",
+  "billing_default": true,
+  "iban": "IB736772674672",
   "name": "Bank account name",
-  "sortCode": "Sort code 3",
+  "sort_code": "Sort code 3",
   "swift": "Swift 4",
   "label": "Company main bank account",
-  "descriptors": [
-    {
-      "key": "SomeBankKey",
-      "value": "SomeBankValue"
-    }
-  ]
+  "meta_data": {
+    "where_opened": "UK",
+    "opened_date": "2024-01-01"
+  },
+  "system_data": {
+    "internal_note": "Send to Risk assessement service",
+    "created_date": "2024-01-01T10:00:00Z"
+  },
+  "labels": ["My company account"]
 }
 ###
 
-PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24
+PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/e79cf88e-07d3-42cd-b313-cc4ff18492a5
 Content-Type: application/json
 {
   "name": "Description Updated 4",
   "iban": "LK",
-  "targetVersion": 4
+  "target_draft_version": 1
 }
 ###
 
-DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24
+DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/e79cf88e-07d3-42cd-b313-cc4ff18492a5
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24/submit
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/e79cf88e-07d3-42cd-b313-cc4ff18492a5/submit
 Content-Type: application/json
 {
-  "targetVersion": 1
+  "target_draft_version": 2,
+  "reason": "Risk checks complete"
 }
 ###
 

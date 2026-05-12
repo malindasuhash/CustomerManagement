@@ -162,7 +162,7 @@ namespace Api.Controllers
                 LegalEntityId = legalEntityId,
                 Name = patchModel.Name,
                 Website = patchModel.Website,
-                Label = patchModel.Label
+                // Labels = patchModel.Label
             };
 
             if (patchModel.Contacts != null)

@@ -11,6 +11,7 @@ namespace Api.Mappers
                 LegalEntityId = legalEntityId,
                 Website = tradingLocation.Website,
                 Name = tradingLocation.Name,
+                Labels 
             };
         }
     }

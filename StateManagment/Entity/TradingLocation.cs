@@ -1,4 +1,6 @@
-﻿namespace StateManagment.Entity
+﻿using StateManagment.Models;
+
+namespace StateManagment.Entity
 {
     public class TradingLocation : IEntity, ILegalEntityAttached
     {
@@ -8,7 +10,8 @@
         public ContactReference[] Contacts { get; set; }
         public string LegalEntityId { get; set; }
 
-        public string Label { get; set; }
-        public MetaDataModel[] Descriptors { get; set; }
+        public string[] Labels { get; set; }
+        public MetaDataModel[] MetaData { get; set; }
+        public SystemDataModel[] SystemData { get; set; }
     }
 }
