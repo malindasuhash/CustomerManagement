@@ -4150,6 +4150,7 @@
       "Address": {
         "type": "object",
         "description": "Postal address",
+        "additionalProperties": false,
         "properties": {
           "code": {
             "type": [ "string", "null" ],
@@ -4197,6 +4198,7 @@
       "BankAccount": {
         "type": "object",
         "required": [ "legal_entity_id", "name", "billing_default" ],
+        "additionalProperties": false,
         "properties": {
           "account_holder_names": {
             "type": [ "array", "null" ],
@@ -4257,6 +4259,7 @@
       "BillingGroup": {
         "type": "object",
         "description": "Represents a billing group.  All products associated with a billing group utilise the settings for the group and are invoiced together.",
+        "additionalProperties": false,
         "required": [ "legal_entity_id", "billing_bank_account_id" ],
         "properties": {
           "billing_bank_account_id": {
@@ -5431,6 +5434,7 @@
       "EntityResponse_BankAccount": {
         "type": "object",
         "required": [ "id", "customer", "draft", "draft_version", "created", "created_by", "submitted_version", "applied_version", "state" ],
+        "additionalProperties": false,
         "properties": {
           "customer": {
             "type": "string",
