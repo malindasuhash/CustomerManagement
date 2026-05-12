@@ -6,7 +6,7 @@
     "license": {
       "name": ""
     },
-    "version": "0.0.2"
+    "version": "0.0.5"
   },
   "servers": [
     {
@@ -681,6 +681,304 @@
         }
       }
     },
+
+    "/customers" : {
+      "post": {
+        "tags": [
+          "Customers"
+        ],
+        "summary": "CREATE",
+        "description": "Creates a new **Customer** account record.\n\n## Purpose\nAdd new customers to the system, enabling subsequent management of their\nassociated legal entities, billing arrangements, contacts, and workflows.\n\n## Behaviour\n- Requires `CREATE_CUSTOMER` permission.\n\nRequires `CUSTOMER_SYSTEM_DATA_MANAGE` permission to modify system data.\n- Validates input data; returns errors for invalid or missing fields.\n- Returns the created Customer wrapped in `EntityResponse` with a `201 Created` status code.\n\n",
+        "operationId": "create_customer",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created new item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityResponse_Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+
+    "/customers/{customer_id}": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "summary": "GET",
+        "description": "Retrieves a specific **Customer** by ID.\n\n## Purpose\nDisplay the details of a customer record, including its current state and\nassociated metadata.\n\n## Behaviour\n- Requires `READ_CUSTOMER` permission.\n- Returns 404 if the customer is not found or not visible to the caller.\n- Provides customer details wrapped in `EntityResponse<Customer>`.\n\n",
+        "operationId": "get_one_customer",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityResponse_Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Customers"
+        ],
+        "summary": "UPDATE",
+        "description": "Updates an existing **Customer** record.\n\n## Purpose\nModify customer details such as name, contact information, or status to keep\nrecords accurate and up to date.\n\n## Behaviour\n- Requires `UPDATE_CUSTOMER` permission.\n- Validates input data; returns errors for invalid or missing fields.\n- Returns the updated Customer wrapped in `EntityResponse` with a `200 OK` status code.\n\n",
+        "operationId": "update_customer",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityResponse_Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+        },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Customers"
+        ],
+        "summary": "DELETE",
+        "description": "Deletes an existing **Customer** account record.\n\n## Purpose\nRemove obsolete or erroneous customer records from the system.\n\n## Behaviour\n- Requires `DELETE_CUSTOMER` permission.\n- Returns 204 No Content on successful deletion; 404 if the record does not exist.\n\n",
+        "operationId": "delete_customer",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted item"
+          },
+          "400": {
+            "description": "Bad Request - Validation failed or invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Resource does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rfc7807"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+
     "/customers/{customer_id}/contacts": {
       "get": {
         "tags": [
@@ -1673,6 +1971,86 @@
           },
           "500": {
             "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/legal-entities/{entity_id}/changes": {
+      "get": {
+        "tags": [
+          "Legal Entities"
+        ],
+        "summary": "CHANGES",
+        "description": "Retrieves the current draft of changes related to the **Legal Entity** that have not been submitted for processing.\n\n## Purpose\nSummary of pending changes.\n\n## Behaviour\n- Requires `READ_LEGAL_ENTITY`.",
+        "operationId": "changes_legal_entity",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "description": "Id of the legal entity for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully accepted submission request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeSummary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ID was not found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      },
+      "post": {
+         "tags": [
+          "Legal Entities"
+        ],
+        "summary": "CHANGES",
+        "description": "Submits all changes related to the **Legal Entity** for evaluation without copying the entire draft to the submitted slot.  This allows for partial updates to be evaluated without affecting unchanged data.\n\n## Purpose\nSubmit only the changes for evaluation, which can be useful for large entities or when only a subset of data has changed.\n\n## Behaviour\n- Requires `SUBMIT_LEGAL_ENTITY`.\n- Evaluates only the changes without overwriting the submitted slot.\n- Returns 202 Accepted with submission meta_data.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "description": "Id of the customer for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "description": "Id of the legal entity for the operation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -3919,9 +4297,9 @@
       "SubmitActionRequest": {
         "type": "object",
         "description": "Submit request payload for an entity.",
-        "required": [ "draft_version" ],
+        "required": [ "target_draft_version" ],
         "properties": {
-          "draft_version": {
+          "target_draft_version": {
             "type": "integer",
             "format": "int64",
             "description": "Draft version that the caller expects to submit."
@@ -3948,6 +4326,110 @@
           }
         }
       },
+      "ChangeSummary": {
+        "type": "object",
+        "description": "Summary of changes between the draft and submitted versions of an entity.",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of changes identified between the draft and submitted versions."
+          },
+          "changes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChangeLink" },
+            "description": "List of the types of changes identified (e.g., 'AddressChange', 'ContactChange', etc.)"
+          }
+        }
+      },
+
+      "ChangeLink": {
+        "type": "object",
+        "description": "Link to details about a specific change identified between the draft and submitted versions of an entity.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Enttity name (e.g., 'LegalEntity', 'BankAccount', etc.)"
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "Entity Id."
+          },
+          "state": {
+            "type": "string",
+            "description": "State of the change (e.g., 'NEW', 'EVALUATING')"
+          },
+          "draft_version": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Version number of the draft entity for which the change was identified."
+          },
+          "submitted_version": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Version number of the submitted entity for which the change was identified."
+          },
+          "link": {
+            "type": "string",
+            "description": "Link to retrieve details about the change."
+          }
+        }
+      },
+
+      "ChangeSummarySubmitResult": {
+        "type": "object",
+        "description": "Result of a submission attempt when changes are identified between the draft and submitted versions of an entity.",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of changes identified between the draft and submitted versions."
+          },
+          "changes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChangeLinkSummaryResult" },
+            "description": "List of the types of changes identified (e.g., 'AddressChange', 'ContactChange', etc.) along with the result of the submission attempt for each change (e.g., 'Submitted', 'Failed', etc.)"
+          }
+        }
+      },
+
+      "ChangeLinkSummaryResult": {
+        "type": "object",
+        "description": "Link to details about a specific change identified between the draft and submitted versions of an entity.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Enttity name (e.g., 'LegalEntity', 'BankAccount', etc.)"
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "Entity Id."
+          },
+          "state": {
+            "type": "string",
+            "description": "State of the change (e.g., 'NEW', 'EVALUATING')"
+          },
+          "draft_version": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Version number of the draft entity for which the change was identified."
+          },
+          "submitted_version": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Version number of the submitted entity for which the change was identified."
+          },
+          "link": {
+            "type": "string",
+            "description": "Link to retrieve details about the change."
+          },
+          "result" : {
+            "type": ["string", "null"],
+            "description": "Result of the change link summary request. (i.e. Submitted or Failed)"
+          }
+        }
+      },
+
       "BusinessContact": {
         "type": "object",
         "required": [ "contact_type", "contact_id" ],
@@ -5814,6 +6296,97 @@
             "$ref": "#/components/schemas/KeyValuePair",
             "description": "Additional details about the end of the business relationship"
           }
+        }
+      },
+      "CreateCustomer": {
+        "type": "object",
+        "required": [ "customer_id" ],
+        "properties": {
+          "meta_data": {
+            "type": ["object", "null"],
+            "description": "Caller-defined metadata for the resource represented as key value pairs.  This may be used to store additional information about the resource that is not captured in the defined properties, and can be used for any purpose relevant to the caller.",
+            "additionalProperties": { "type": "string" },
+            "propertyNames": { "type": "string" }
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
+          },
+          "system_data": {
+            "type": ["object", "null"],
+            "description": "System-generated data used for internal processing.",
+            "additionalProperties": { "type": "string" },
+            "propertyNames": { "type": "string" }
+          } 
+        }
+      },
+
+      "UpdateCustomer": {
+        "type": "object",
+        "required": [ "customer_id" ],
+        "properties": {
+          "meta_data": {
+            "type": ["object", "null"],
+            "description": "Caller-defined metadata for the resource represented as key value pairs.  This may be used to store additional information about the resource that is not captured in the defined properties, and can be used for any purpose relevant to the caller.",
+            "additionalProperties": { "type": "string" },
+            "propertyNames": { "type": "string" }
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
+          },
+          "system_data": {
+            "type": ["object", "null"],
+            "description": "System-generated data used for internal processing.",
+            "additionalProperties": { "type": "string" },
+            "propertyNames": { "type": "string" }
+          } 
+        }
+      },
+
+      "EntityResponse_Customer": {
+        "type": "object",
+        "required": [ "id", "created", "created_by", "updated", "updated_by" ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "Unique ID for this item"
+          },
+          "meta_data": {
+            "type": ["object", "null"],
+            "description": "Caller-defined metadata for the resource represented as key value pairs.  This may be used to store additional information about the resource that is not captured in the defined properties, and can be used for any purpose relevant to the caller.",
+            "additionalProperties": { "type": "string" },
+            "propertyNames": { "type": "string" }
+          },
+          "labels": {
+            "type": ["array", "null"],
+            "items": { "type": ["string", "null"] },
+            "description": "Label that can be used query customer data"
+          },
+          "system_data": {
+            "type": ["object", "null"],
+            "description": "System-generated data used for internal processing.",
+            "additionalProperties": { "type": "string" },
+            "propertyNames": { "type": "string" }
+          },
+          "updated": {
+            "type": "string",
+            "description": "Date this item was last updated"
+          },
+          "updated_by": {
+            "type": "string",
+            "description": "Unique user identifier for the user who last updated this item"
+           },
+          "created": {
+            "type": "string",
+            "description": "Date this item was created"
+           },
+          "created_by": {
+            "type": "string",
+            "description": "Unique user identitifier for the creator of this item"
+           }
         }
       }
     },
