@@ -16,16 +16,25 @@ Content-Type: application/json
       "line3": "Line 333",
       "region": "region 1",
       "country": "country 1",
+      "city": "watford",
       "locality": "GB"
     },
   "contacts": [
     {
-      "contactId": "123",
-      "contactType": "Account"
+      "contact_id": "123",
+      "contact_type": "Support"
     }
   ],
   "name": "trading name",
-  "website": "https://example.com"
+  "website": "https://example.com",
+  "meta_data": {
+    "where_opened": "My home address",
+    "moved_in_date": "2024-01-01"
+  },
+  "system_data": {
+    "internal_note": "We should not allow home addresses"    
+  },
+  "labels": ["My home location"]
 }
 ###
 
