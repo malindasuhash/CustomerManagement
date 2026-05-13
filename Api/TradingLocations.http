@@ -1,6 +1,6 @@
 @Api_HostAddress = https://localhost:7296/api/v1
 
-GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08
+GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/ddf4fde3-bc61-4ed7-8684-1546f6c3018c
 Accept: application/json
 
 ###
@@ -38,23 +38,24 @@ Content-Type: application/json
 }
 ###
 
-PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08
+PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/ddf4fde3-bc61-4ed7-8684-1546f6c3018c
 Content-Type: application/json
 {
   "name": "Description Updated 5",
-  "targetVersion": 7
+  "target_draft_version": 1
 }
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08/submit
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/ddf4fde3-bc61-4ed7-8684-1546f6c3018c/submit
 Content-Type: application/json
 {
-  "targetVersion": 3
+  "reason": "Just like it",
+  "target_draft_version": 2
 }
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08/touch
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/ddf4fde3-bc61-4ed7-8684-1546f6c3018c/touch
 ###

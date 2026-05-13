@@ -106,7 +106,7 @@ namespace Api.Controllers
                 DraftVersion = submitActionRequest.Target_draft_version
             };
 
-            var result = await SubmitForProcessing<ProductAgreement>(envelop);
+            var result = await SubmitForProcessing<TradingLocation>(envelop);
             if (result == MessageEnvelop.NONE)
             {
                 return NotFound();
