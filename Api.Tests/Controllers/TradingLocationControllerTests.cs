@@ -87,12 +87,11 @@ namespace Api.Tests.Controllers
         public async Task UpdateTradingLocation_WhenUpdating_ThenIssuesTheAppropriateCommand()
         {
             // Arrange
-            var patchModel = new TradingLocationModel()
+            var patchModel = new ApiContract.UpdateTradingLocation()
             {
                 Name = "Name1",
                 Website = "Website2",
-                Label = "Label",
-                TargetVersion = 10
+                Target_draft_version = 10,
             };
 
             // Act
@@ -142,7 +141,7 @@ namespace Api.Tests.Controllers
             Assert.Equal("TradingLocationName", submitted.Name);
         }
 
-        private static bool SameAfterMapped(TradingLocationModel tradingLocationModel, MessageEnvelop messageEnvelop)
+        private static bool SameAfterMapped(ApiContract.UpdateTradingLocation tradingLocationModel, MessageEnvelop messageEnvelop)
         {
             var tradingLocationMapped = messageEnvelop.Draft as TradingLocation;
 
@@ -150,8 +149,7 @@ namespace Api.Tests.Controllers
                 && messageEnvelop.Change == ChangeType.Update
                 && messageEnvelop.DraftVersion == 10
                 && tradingLocationMapped.Name.Equals(tradingLocationModel.Name)
-                && tradingLocationMapped.Website.Equals(tradingLocationModel.Website)
-                && tradingLocationMapped.Label.Equals(tradingLocationModel.Label);
+                && tradingLocationMapped.Website.Equals(tradingLocationModel.Website);
         }
 
         private static bool LegalEntityIdCheck(MessageEnvelop envelop, string legalEntityId)

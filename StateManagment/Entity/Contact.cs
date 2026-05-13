@@ -1,6 +1,4 @@
-﻿using StateManagment.Models;
-
-namespace StateManagment.Entity
+﻿namespace StateManagment.Entity
 {
     public class Contact : IEntity
     {

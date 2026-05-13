@@ -1,4 +1,4 @@
-﻿namespace StateManagment.Models
+﻿namespace StateManagment.Entity
 {
     public class SystemDataModel
     {

@@ -1,5 +1,4 @@
 ﻿using StateManagment.Entity;
-using StateManagment.Models;
 
 namespace Api.Mappers
 {

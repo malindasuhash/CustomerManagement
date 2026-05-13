@@ -1,5 +1,4 @@
-﻿using Api.ApiModels;
-using Api.Mappers;
+﻿using Api.Mappers;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
@@ -112,7 +111,7 @@ namespace Api.Controllers
                 return NotFound();
             }
 
-            return MessageEnvelop_ToEntityResponse_BankAccount.Convert(result);
+            return await GetBankAccountById(customerId, legalEntityId, result.EntityId);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
@@ -144,7 +143,7 @@ namespace Api.Controllers
                 return NotFound();
             }
 
-            return MessageEnvelop_ToEntityResponse_BankAccount.Convert(result);
+            return await GetBankAccountById(customerId, legalEntityId, bankAccountId);
         }
     }
 }

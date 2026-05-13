@@ -1,4 +1,5 @@
-﻿using StateManagment.Models;
+﻿using StateManagment.Entity;
+using StateManagment.Models;
 
 namespace Contact.Orchestration.Svc.Model
 {

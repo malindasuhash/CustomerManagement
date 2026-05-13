@@ -50,7 +50,7 @@ namespace Api.Controllers
                 return NotFound();
             }
 
-            return MessageEnvelop_ToEntityResponse_TradingLocation.Convert(result);
+            return await GetTradingLocationById(customerId, legalEntityId, result.EntityId);
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/trading-locations/{tradingLocationId}")]
@@ -134,13 +134,19 @@ namespace Api.Controllers
                 }
             };
 
-            return await Process<TradingLocation>(envelop);
+            var result = await SubmitForProcessing<TradingLocation>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/trading-locations/{tradingLocationId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpdateTradingLocation([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId, TradingLocationModel patchModel)
+        public async Task<ActionResult<ApiContract.EntityResponse_TradingLocation>> UpdateTradingLocation([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId, ApiContract.UpdateTradingLocation updateTradingLocation)
         {
-            var patch = TradingLocationModelToPatch(patchModel, legalEntityId);
+            var patch = ApiContractTradingLocation_ToModelTradingLocationMap.Update(updateTradingLocation, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
@@ -149,48 +155,16 @@ namespace Api.Controllers
                 Name = EntityName.TradingLocation,
                 Draft = patch,
                 CustomerId = customerId,
-                DraftVersion = patchModel.TargetVersion
+                DraftVersion = (decimal)updateTradingLocation.Target_draft_version
             };
 
-            return await Process<TradingLocation>(envelop);
-        }
-
-        private static TradingLocation TradingLocationModelToPatch(TradingLocationModel patchModel, string legalEntityId)
-        {
-            var tradingLocation = new TradingLocation
+            var result = await SubmitForProcessing<TradingLocation>(envelop);
+            if (result == MessageEnvelop.NONE)
             {
-                LegalEntityId = legalEntityId,
-                Name = patchModel.Name,
-                Website = patchModel.Website,
-                // Labels = patchModel.Label
-            };
-
-            if (patchModel.Contacts != null)
-            {
-                tradingLocation.Contacts = [.. patchModel.Contacts.Select(a => new ContactReference() { ContactId = a.ContactId, ContactType = Enum.Parse<ContactType>(a.ContactType, true) })];
+                return NotFound();
             }
 
-            if (patchModel.Address != null)
-            {
-                tradingLocation.Address = new Address()
-                {
-                    Code = patchModel.Address.Code,
-                    Country = patchModel.Address.Country,
-                    Line1 = patchModel.Address.Line1,
-                    Line2 = patchModel.Address.Line2,
-                    Line3 = patchModel.Address.Line3,
-                    Locality = patchModel.Address.Locality,
-                    Name = patchModel.Address.Name,
-                    Region = patchModel.Address.Region
-                };
-            }
-
-            if (patchModel.Descriptors != null)
-            {
-                //tradingLocation.MetaData = [.. patchModel.MetaData.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
-            }
-
-            return tradingLocation;
+            return await GetTradingLocationById(customerId, legalEntityId, tradingLocationId);
         }
     }
 }

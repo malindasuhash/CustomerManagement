@@ -8,6 +8,7 @@
         Technical,
         Developer,
         User,
-        Manager
+        Manager,
+        Support
     }
 }
