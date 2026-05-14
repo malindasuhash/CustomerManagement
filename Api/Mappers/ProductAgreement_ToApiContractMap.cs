@@ -12,7 +12,7 @@ namespace Api.Mappers
             var contract = new ApiContract.ProductAgreement()
             {
                 Billing_group_id = productAgreement.BillingGroupId,
-                Legal_entity_id = productAgreement.LegalEntityId,
+                // Legal_entity_id = productAgreement.LegalEntityId,
                 Rate_card_id = productAgreement.RateCardId,
                 Trading_location_id = productAgreement.TradingLocationId,
                 Display_name = productAgreement.DisplayName,

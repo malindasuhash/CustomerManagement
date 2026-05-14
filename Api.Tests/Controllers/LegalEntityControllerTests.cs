@@ -81,11 +81,11 @@ namespace Api.Tests.Controllers
         public async Task UpdateLegalEntity_WhenUpdating_ThenIssuesTheAppropriateCommand()
         {
             // Arrange
-            var patchModel = new LegalEntityModel()
+            var patchModel = new ApiContract.UpdateLegalEntity()
             {
-                BusinessEmail = "e@mail.com",
-                BusinessType = "sole trader",
-                TargetVersion = 10
+                Business_email = "e@mail.com",
+                Nature_of_business = "sole trader",
+                Target_draft_version = 10
             };
 
             // Act
@@ -147,15 +147,15 @@ namespace Api.Tests.Controllers
             Assert.Equal(1, model.SubmittedVersion);
         }
 
-        private static bool SameAfterMapped(LegalEntityModel legalEntityModel, MessageEnvelop messageEnvelop)
+        private static bool SameAfterMapped(ApiContract.UpdateLegalEntity legalEntityModel, MessageEnvelop messageEnvelop)
         {
             var legalEntityMapped = messageEnvelop.Draft as LegalEntity;
 
             return messageEnvelop.Name == EntityName.LegalEntity
                 && messageEnvelop.Change == ChangeType.Update
                 && messageEnvelop.DraftVersion == 10
-                && legalEntityMapped.BusinessEmail.Equals(legalEntityModel.BusinessEmail)
-                && legalEntityMapped.BusinessType.Equals(legalEntityModel.BusinessType);
+                && legalEntityMapped.BusinessEmail.Equals(legalEntityModel.Business_email)
+                && legalEntityMapped.BusinessType.Equals(legalEntityModel.Business_type);
         }
     }
 }

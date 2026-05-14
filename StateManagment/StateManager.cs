@@ -20,6 +20,8 @@ namespace StateManagment
         {
             var latestEntity = await dataStore.FindEntity<T>(envelop.SearchBy()); 
 
+            if (latestEntity == MessageEnvelop.NONE) { return TaskOutcome.NOT_FOUND; }
+
             return await ProcessUpdateAsync<T>(new OrchestrationEnvelop
             {
                 EntityId = envelop.EntityId,

@@ -1,5 +1,4 @@
-﻿using Api.ApiModels;
-using Api.Mappers;
+﻿using Api.Mappers;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
@@ -17,7 +16,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/contacts/{contactId}/touch")]
-        public async Task<ActionResult<StatusCodeResult>> TouchContact([FromRoute] string customerId, [FromRoute] string contactId)    
+        public async Task<StatusCodeResult> TouchContact([FromRoute] string customerId, [FromRoute] string contactId)    
         {
             var envelop = new MessageEnvelop()
             {
@@ -63,7 +62,7 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{customerId}/contacts/{contactId}")]
-        public async Task<ActionResult<EntityDocumentModel>> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
+        public async Task<StatusCodeResult> RemoveContact([FromRoute] string customerId, [FromRoute] string contactId)
         {
             var envelop = new MessageEnvelop()
             {

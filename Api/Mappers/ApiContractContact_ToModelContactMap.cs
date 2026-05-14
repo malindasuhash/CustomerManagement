@@ -31,6 +31,15 @@ namespace Api.Mappers
                 }
                 modelContact.MetaData = [.. metaDataList];
             }
+            if (apiContractContact.System_data != null)
+            {
+                var systemDataList = new List<SystemDataModel>();
+                foreach (var data in apiContractContact.System_data)
+                {
+                    systemDataList.Add(new SystemDataModel { Key = data.Key, Value = data.Value });
+                }
+                modelContact.SystemData = [.. systemDataList];
+            }
             return modelContact;
         }
 
