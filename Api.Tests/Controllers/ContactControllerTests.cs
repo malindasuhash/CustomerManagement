@@ -82,11 +82,11 @@ namespace Api.Tests.Controllers
         public async Task UpdateContact_WhenUpdating_ThenIssuesTheAppropriateCommand()
         {
             // Arrange
-            var patchModel = new ContactModel()
+            var patchModel = new ApiContract.UpdateContact()
             {
                 Email = "e@mail.com",
-                Label = "label",
-                TargetVersion = 20
+                Labels = ["label"],
+                Target_draft_version = 20
             };
 
             // Act
@@ -96,7 +96,7 @@ namespace Api.Tests.Controllers
             await changeProcessor.Received(1).ProcessChangeAsync<Contact>(Arg.Is<MessageEnvelop>(m => SameAfterMapped(patchModel, m)));
         }
 
-        private static bool SameAfterMapped(ContactModel contactModel, MessageEnvelop messageEnvelop)
+        private static bool SameAfterMapped(ApiContract.UpdateContact contactModel, MessageEnvelop messageEnvelop)
         {
             var contactMapped = messageEnvelop.Draft as Contact;
 

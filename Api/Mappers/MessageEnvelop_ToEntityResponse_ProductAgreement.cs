@@ -1,5 +1,4 @@
-﻿using Api.ApiModels;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using StateManagment.Models;
 
 namespace Api.Mappers

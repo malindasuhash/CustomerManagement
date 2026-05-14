@@ -88,12 +88,12 @@ namespace Api.Tests.Controllers
         public async Task UpdateProductAgreement_WhenUpdating_ThenIssuesTheAppropriateCommand()
         {
             // Arrange
-            var patchModel = new ProductAgreementModel()
+            var patchModel = new ApiContract.UpdateProductAgreement()
             {
-                DisplayName = "displayName1",
-                ProductType = "ProductType1",
-                Label = "Label",
-                TargetVersion = 10
+                Display_name = "displayName1",
+                // pro = "ProductType1",
+                Labels = ["Label"],
+                Target_draft_version = 10
             };
 
             // Act
@@ -103,16 +103,16 @@ namespace Api.Tests.Controllers
             await changeProcessor.Received(1).ProcessChangeAsync<ProductAgreement>(Arg.Is<MessageEnvelop>(m => SameAfterMapped(patchModel, m)));
         }
 
-        private static bool SameAfterMapped(ProductAgreementModel productAgreementModel, MessageEnvelop messageEnvelop)
+        private static bool SameAfterMapped(ApiContract.UpdateProductAgreement productAgreementModel, MessageEnvelop messageEnvelop)
         {
             var productAgreementMapped = messageEnvelop.Draft as ProductAgreement;
 
             return messageEnvelop.Name == EntityName.ProductAgreement
                 && messageEnvelop.Change == ChangeType.Update
                 && messageEnvelop.DraftVersion == 10
-                && productAgreementMapped.DisplayName.Equals(productAgreementModel.DisplayName)
+                && productAgreementMapped.DisplayName.Equals(productAgreementModel.Display_name)
                 && productAgreementMapped.ProductType.Equals(productAgreementMapped.ProductType)
-                && productAgreementMapped.Label.Equals(productAgreementModel.Label);
+                && productAgreementMapped.Labels.Equals(productAgreementModel.Labels);
         }
 
         private static bool LegalEntityIdCheck(MessageEnvelop envelop, string legalEntityId)

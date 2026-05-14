@@ -1,5 +1,4 @@
-﻿using Api.ApiModels;
-using StateManagment.Models;
+﻿using StateManagment.Models;
 
 namespace Api.Mappers
 {

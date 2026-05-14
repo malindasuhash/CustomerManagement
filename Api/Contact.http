@@ -8,13 +8,12 @@ Accept: application/json
 POST {{Api_HostAddress}}/customers/Cus123/contacts
 Content-Type: application/json
 {
-  "firstName": "Watford",
-  "lastName": "Hays",
+  "name": "Technical contact",
   "email": "a@b.com",
-  "label": "Bla",
+  "label": ["Bla1", "Bla2"],
   "telephone": "tel",
-  "altTelephone": "89384",
-  "postalAddress": {
+  "telephone_code": "87893",
+  "postal_address": {
       "code": "89",
       "name": "M",
       "line1": "Line 111",
@@ -24,14 +23,14 @@ Content-Type: application/json
       "country": "country 1",
       "locality": "GB"
     },
-  "telephoneCode": "893",
-  "altTelephoneCode": "892",
-  "descriptors": [ 
-    {
-      "key": "K1",
-      "value": "V1"
-    }
-  ]
+  "alt_telephone_code": "893",
+  "alt_telephone": "892",
+  "meta_data": {
+    "interesting": "Info"
+  },
+  "system_data": {
+    "this_does_not": "look right"
+  }
 }
 ###
 

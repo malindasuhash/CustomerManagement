@@ -1,6 +1,6 @@
 ﻿using StateManagment.Entity;
 
-namespace Api.ApiModels
+namespace Api.Mappers
 {
     public class BillingGroup_ToApiContractMap
     {

@@ -1,25 +1,8 @@
 ﻿using StateManagment.Entity;
 using StateManagment.Models;
 
-namespace Api.ApiModels
+namespace Api.Mappers
 {
-    public class BankAccountModel
-    {
-        public string[] BankAccountHolderNames { get; set; }
-        public string AccountNumber { get; set; }
-        public string BankCity { get; set; }
-        public string BankCountry { get; set; }
-        public string BankName { get; set; }
-        public bool BillingDefault { get; set; }
-        public string Iban { get; set; }
-        public string Name { get; set; }
-        public string SortCode { get; set; }
-        public string Swift { get; set; }
-        public MetaData[] MetaData { get; set; } = [];
-        public string[] Labels { get; set; }
-        public int TargetVersion { get; set; }
-    }
-
     public class Address_ToModelAddressMap
     {
         public static Address Convert(ApiContract.Address address)
@@ -346,40 +329,12 @@ namespace Api.ApiModels
         }
     }
 
-    public class MessageEnvelop_ToEntityResponse_Contact
-    {
-        public static ApiContract.EntityResponse_Contact Convert(MessageEnvelop messageEnvelop)
-        {
-            return new ApiContract.EntityResponse_Contact()
-            {
-                Customer = messageEnvelop.CustomerId,
-                Id = messageEnvelop.EntityId,
-                Draft = Contact_ToApiContractMap.Convert(messageEnvelop.Draft),
-                Draft_version = (long)messageEnvelop.DraftVersion,
-                Submitted = Contact_ToApiContractMap.Convert(messageEnvelop.Submitted),
-                Submitted_version = (long)messageEnvelop.SubmittedVersion,
-                Applied = Contact_ToApiContractMap.Convert(messageEnvelop.Applied),
-                Applied_version = (long)messageEnvelop.AppliedVersion,
-                Created = messageEnvelop.CreatedTimestamp.ToString(),
-                Created_by = messageEnvelop.CreatedUser,
-                Updated = messageEnvelop.UpdateTimestamp.ToString(),
-                Updated_by = messageEnvelop.UpdateUser,
-                State = EntityState_ToApiStateMap.Convert(messageEnvelop.State),
-                Feedback = messageEnvelop.Feedback != null ? messageEnvelop.Feedback.Select(f => new ApiContract.EntityStateResult
-                {
-                    Kind = FeedbackType_ToApiEntityStateKindMap.Convert(f.Type),
-                    Message = f.Message,
-                    Context = f.Context,
-                    Details = f.Details
-                }).ToArray() : null
-            };
-        }
-    }
-
     public class Contact_ToApiContractMap
     {
         public static ApiContract.Contact Convert(Contact contactStateModel)
         {
+            if (contactStateModel == null) { return null; }
+
             var responseContact = new ApiContract.Contact()
             {
                 Name = contactStateModel.Name,
@@ -468,20 +423,20 @@ namespace Api.ApiModels
 
     public class FeedbackType_ToApiEntityStateKindMap
     {
-        public static ApiContract.EntityStateResultKind Convert(StateManagment.Models.FeedbackType feedbackType)
+        public static ApiContract.EntityStateResultKind Convert(FeedbackType feedbackType)
         {
             return feedbackType switch
             {
-                StateManagment.Models.FeedbackType.DocumentRequired => ApiContract.EntityStateResultKind.DocumentRequired,
-                StateManagment.Models.FeedbackType.WaitingForExternalRiskChecks => ApiContract.EntityStateResultKind.WaitingForExternalRiskChecks,
-                StateManagment.Models.FeedbackType.LegalEntityMissing => ApiContract.EntityStateResultKind.LegalEntityMissing,
-                StateManagment.Models.FeedbackType.WaitingForProductSelection => ApiContract.EntityStateResultKind.WaitingForProductSelection,
-                StateManagment.Models.FeedbackType.MissingRequiredInformation => ApiContract.EntityStateResultKind.MissingRequiredInformation,
-                StateManagment.Models.FeedbackType.InternalError => ApiContract.EntityStateResultKind.InternalError,
-                StateManagment.Models.FeedbackType.WaitingForContractSignatureOrAcceptance => ApiContract.EntityStateResultKind.WaitingForContractSignatureOrAcceptance,
-                StateManagment.Models.FeedbackType.UserActionRequired => ApiContract.EntityStateResultKind.UserActionRequired,
-                StateManagment.Models.FeedbackType.WaitingForLegalEntityApproval => ApiContract.EntityStateResultKind.WaitingForLegalEntityApproval,
-                StateManagment.Models.FeedbackType.WaitingForConfiguration => ApiContract.EntityStateResultKind.WaitingForConfiguration,
+                FeedbackType.DocumentRequired => ApiContract.EntityStateResultKind.DocumentRequired,
+                FeedbackType.WaitingForExternalRiskChecks => ApiContract.EntityStateResultKind.WaitingForExternalRiskChecks,
+                FeedbackType.LegalEntityMissing => ApiContract.EntityStateResultKind.LegalEntityMissing,
+                FeedbackType.WaitingForProductSelection => ApiContract.EntityStateResultKind.WaitingForProductSelection,
+                FeedbackType.MissingRequiredInformation => ApiContract.EntityStateResultKind.MissingRequiredInformation,
+                FeedbackType.InternalError => ApiContract.EntityStateResultKind.InternalError,
+                FeedbackType.WaitingForContractSignatureOrAcceptance => ApiContract.EntityStateResultKind.WaitingForContractSignatureOrAcceptance,
+                FeedbackType.UserActionRequired => ApiContract.EntityStateResultKind.UserActionRequired,
+                FeedbackType.WaitingForLegalEntityApproval => ApiContract.EntityStateResultKind.WaitingForLegalEntityApproval,
+                FeedbackType.WaitingForConfiguration => ApiContract.EntityStateResultKind.WaitingForConfiguration,
 
                 _ => throw new ArgumentOutOfRangeException(nameof(feedbackType), $"Not expected feedback type value: {feedbackType}")
             };
@@ -490,17 +445,17 @@ namespace Api.ApiModels
 
     public class EntityState_ToApiStateMap
     {
-        public static ApiContract.EntityState Convert(StateManagment.Models.EntityState entityState)
+        public static ApiContract.EntityState Convert(EntityState entityState)
         {
             return entityState switch
             {
-                StateManagment.Models.EntityState.NEW => ApiContract.EntityState.New,
-                StateManagment.Models.EntityState.EVALUATING => ApiContract.EntityState.Evaluating,
-                StateManagment.Models.EntityState.EVALUATION_RESTARTING => ApiContract.EntityState.EvaluationRestarting,
-                StateManagment.Models.EntityState.ATTENTION_REQUIRED => ApiContract.EntityState.AttentionRequired,
-                StateManagment.Models.EntityState.IN_REVIEW => ApiContract.EntityState.InReview,
-                StateManagment.Models.EntityState.IN_PROGRESS => ApiContract.EntityState.InProgress,
-                StateManagment.Models.EntityState.SYNCHRONISED => ApiContract.EntityState.Synchronised,
+                EntityState.NEW => ApiContract.EntityState.New,
+                EntityState.EVALUATING => ApiContract.EntityState.Evaluating,
+                EntityState.EVALUATION_RESTARTING => ApiContract.EntityState.EvaluationRestarting,
+                EntityState.ATTENTION_REQUIRED => ApiContract.EntityState.AttentionRequired,
+                EntityState.IN_REVIEW => ApiContract.EntityState.InReview,
+                EntityState.IN_PROGRESS => ApiContract.EntityState.InProgress,
+                EntityState.SYNCHRONISED => ApiContract.EntityState.Synchronised,
 
                 _ => throw new ArgumentOutOfRangeException(nameof(entityState), $"Not expected entity state value: {entityState}")
             };

@@ -101,7 +101,7 @@ namespace Api.Controllers
                 return NotFound();
             }
 
-            return MessageEnvelop_ToEntityResponse_Contact.Convert(result);
+            return await GetContactById(customerId, envelop.EntityId);
         }
 
         [HttpGet("{customerId}/contacts/{contactId}")]
@@ -117,60 +117,26 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/contacts/{contactId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ContactModel patch)
+        public async Task<ActionResult<ApiContract.EntityResponse_Contact>> UpateContact([FromRoute] string customerId, [FromRoute] string contactId, [FromBody] ApiContract.UpdateContact patch)
         {
-            var patchModel = ContactToPatch(patch);
+            Contact patchContact = ApiContractContact_ToModelContactMap.Update(patch);
             var envelop = new MessageEnvelop
             {
                 EntityId = contactId,
                 Change = ChangeType.Update,
                 Name = EntityName.Contact,
-                Draft = patchModel,
+                Draft = patchContact,
                 CustomerId = customerId,
-                DraftVersion = patch.TargetVersion
+                DraftVersion = (decimal)patch.Target_draft_version
             };
 
-            return await Process<Contact>(envelop);
-        }
-
-        private static Contact ContactToPatch(ContactModel patchModel)
-        {
-            // There must be a better way to map from a api model to a domain model.
-            // Number of other properties are ignored for now. Keen to get the concept 
-            // operational.
-            var contact = new Contact
+            var result = await SubmitForProcessing<Contact>(envelop);
+            if (result == MessageEnvelop.NONE)
             {
-                //FirstName = patchModel.FirstName,
-                //LastName = patchModel.LastName,
-                AltTelephone = patchModel.AltTelephone,
-                AltTelephoneCode = patchModel.AltTelephoneCode,
-                Email = patchModel.Email,
-                //Label = patchModel.Label,
-                Telephone = patchModel.Telephone,
-                TelephoneCode = patchModel.TelephoneCode
-            };
-
-            if (patchModel.Descriptors != null)
-            {
-                //contact.MetaData = [.. patchModel.MetaData.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
+                return NotFound();
             }
 
-            if (patchModel.PostalAddress != null)
-            {
-                contact.PostalAddress = new Address()
-                {
-                    Code = patchModel.PostalAddress.Code,
-                    Country = patchModel.PostalAddress.Country,
-                    Line1 = patchModel.PostalAddress.Line1,
-                    Line2 = patchModel.PostalAddress.Line2,
-                    Line3 = patchModel.PostalAddress.Line3,
-                    Locality = patchModel.PostalAddress.Locality,
-                    Name = patchModel.PostalAddress.Name,
-                    Region = patchModel.PostalAddress.Region
-                };
-            }
-
-            return contact;
+            return await GetContactById(customerId, contactId);
         }
     }
 }

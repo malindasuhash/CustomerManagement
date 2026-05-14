@@ -1,6 +1,4 @@
-﻿using Api.ApiModels;
-
-namespace Api.Mappers
+﻿namespace Api.Mappers
 {
     internal class TradingLocation_ToApiContractMap
     {
