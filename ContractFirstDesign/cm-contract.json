@@ -4300,6 +4300,7 @@
       "SubmitActionRequest": {
         "type": "object",
         "description": "Submit request payload for an entity.",
+        "additionalProperties": false,
         "required": [ "target_draft_version" ],
         "properties": {
           "target_draft_version": {
@@ -4316,6 +4317,7 @@
       "SubmitActionResponse": {
         "type": "object",
         "description": "Response returned after a billing group submission is accepted.",
+        "additionalProperties": false,
         "required": [ "entity_id", "submitted_version" ],
         "properties": {
           "entity_id": {
@@ -4458,6 +4460,7 @@
       },
       "Contact": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "alt_telephone": {
             "type": [ "string", "null" ],
@@ -4606,33 +4609,27 @@
           "account_holder_names": {
             "type": [ "array", "null" ],
             "items": { "type": "string" },
-            "description": "List of names of the account holders for the account",
-            "default": "MR A C HOLDER"
+            "description": "List of names of the account holders for the account"
           },
           "account_number": {
             "type": [ "string", "null" ],
-            "description": "The account number of the bank account",
-            "default": "12345678"
+            "description": "The account number of the bank account"
           },
           "bank_city": {
             "type": [ "string", "null" ],
-            "description": "City of the branch of the bank at which the account is held",
-            "default": "London"
+            "description": "City of the branch of the bank at which the account is held"
           },
           "bank_country": {
             "type": [ "string", "null" ],
-            "description": "Country of the bank at which the account is held",
-            "default": "GB"
+            "description": "Country of the bank at which the account is held"
           },
           "bank_name": {
             "type": [ "string", "null" ],
-            "description": "Name of the bank at which the account is held",
-            "default": "NatWest"
+            "description": "Name of the bank at which the account is held"
           },
           "billing_default": {
             "type": [ "boolean", "null" ],
-            "description": "Indicator for assigning this bank account as the default bank account for billing, there must be at least one default bank account at all times. If not specified, false is assumed.",
-            "default": false
+            "description": "Indicator for assigning this bank account as the default bank account for billing, there must be at least one default bank account at all times. If not specified, false is assumed."
           },
           "iban": {
             "type": [ "string", "null" ],
@@ -4645,8 +4642,7 @@
           },
           "sort_code": {
             "type": [ "string", "null" ],
-            "description": "Sort code of the account",
-            "default": "12-34-56"
+            "description": "Sort code of the account"
           },
           "swift": {
             "type": [ "string", "null" ],
@@ -4708,8 +4704,54 @@
           }
         }
       },
+      "UpdateBillingGroup": {
+        "type": "object",
+        "description": "Provides the details for updating an existing billing group",
+        "additionalProperties": false,
+        "properties": {
+          "billing_bank_account_id": {
+            "type": "string",
+            "description": "Bank account to be used for billing"
+          },
+          "description": {
+            "type": [ "string", "null" ],
+            "description": "Description for the billing group"
+          },
+          "legal_entity_id": {
+            "type": "string",
+            "description": "Legal entity to which billing is directed"
+          },
+          "name": {
+            "type": [ "string", "null" ],
+            "description": "Name used to identify the billing group"
+          },
+          "statement_narrative": {
+            "type": ["string", "null"],
+            "description": "Name appears on the bank transaction"
+          },
+          "direct_debit_reference": {
+            "type": ["string", "null"],
+            "description": "Direct debit reference"
+          },
+          "target_draft_version": {
+            "type": ["integer", "null"],
+            "format": "int64",
+            "description": "Version that the caller expects to update. Caller must populate this field."
+          },
+          "meta_data": {
+            "$ref": "#/components/schemas/MetaData"
+          },
+          "labels": {
+            "$ref": "#/components/schemas/Labels"
+          },
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
+          }
+        }
+      },
       "CreateContact": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Provides the details to be used to create a new contact.",
         "properties": {
           "alt_telephone": {
@@ -4758,6 +4800,7 @@
       },
       "UpdateContact": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Provides the details to be used to create a new contact.",
         "properties": {
           "alt_telephone": {
@@ -4828,6 +4871,7 @@
       "CreateLegalEntity": {
         "type": "object",
         "description": "Provides the details to be used to create a new legal entity in a customer.",
+        "additionalProperties": false,
         "required": [ "business_email" ],
         "properties": {
           "business_contacts": {
@@ -4981,6 +5025,7 @@
       },
        "UpdateLegalEntity": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Provides the details to be used to update an existing legal entity in a customer.",
         "required": [ "business_email" ],
         "properties": {
@@ -5142,8 +5187,13 @@
       "CreateProductAgreement": {
         "type": "object",
         "description": "Provides the details required to create a new product agreement.",
+        "additionalProperties": false,
         "required": [ "product_id", "product_details", "rate_card_id" ],
         "properties": {
+          "product_id": {
+            "type": "string",
+            "description": "Unique identifier for the product agreement.  This field is immutable."
+          },
           "product_catalogue_id": {
             "type": [ "string", "null" ],
             "description": "Product catalogue identifier - as defined in the product catalogue."
@@ -5187,7 +5237,7 @@
       "UpdateProductAgreement": {
         "type": "object",
         "description": "Provides the details required to update an existing product agreement.",
-        "required": [ "product_id", "product_details", "rate_card_id" ],
+        "required": [ "product_id", "features", "configuration", "rate_card_id" ],
         "properties": {
            "product_id": {
             "type": "string",
@@ -5497,6 +5547,7 @@
       },
       "EntityResponse_BillingGroup": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "id", "customer", "draft", "draft_version", "created", "created_by", "updated", "updated_by", "submitted_version", "applied_version", "state" ],
         "properties": {
           "customer": {
@@ -5559,6 +5610,7 @@
       },
       "EntityResponse_Contact": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "id", "customer", "draft", "draft_version", "created", "created_by", "updated", "updated_by", "submitted_version", "applied_version", "state" ],
         "properties": {
           "customer": {
@@ -5622,6 +5674,7 @@
       },
       "EntityResponse_LegalEntity": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "id", "customer", "draft", "draft_version", "created", "created_by", "updated", "updated_by", "submitted_version", "applied_version", "state" ],
         "properties": {
           "customer": {
@@ -5666,6 +5719,7 @@
       },
       "EntityResponse_ProductAgreement": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "id", "customer", "draft", "draft_version", "created", "created_by", "updated", "updated_by", "submitted_version", "applied_version", "state" ],
         "properties": {
           "customer": {
@@ -5708,6 +5762,7 @@
       "EntityResponse_TradingLocation": {
         "type": "object",
         "required": [ "id", "customer", "draft", "draft_version", "created", "created_by", "updated", "updated_by", "submitted_version", "applied_version", "state" ],
+        "additionalProperties": false,
         "properties": {
           "customer": {
             "type": "string",
@@ -6091,37 +6146,50 @@
       },
       "ProductAgreement": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "product_id", "product_details", "rate_card_id", "legal_entity_id" ],
-        "properties": {
-          "product_id": { "type": [ "string", "null" ] },
-          "display_name": { "type": [ "string", "null" ] },
-          "product_details": {
-            "oneOf": [
-                {
-                  "$ref": "#/components/schemas/Product.Payit.SingleDomesticPayment"
-                },
-                {
-                  "$ref": "#/components/schemas/Product.Payit.SingleInternationalPayment"
-                },
-                {
-                  "$ref": "#/components/schemas/Product.Payit.CommercialVRP"
-                },
-                {
-                  "$ref": "#/components/schemas/Product.Payit.SweepingVRP"
-                }
-            ]
+         "properties": {
+          "product_id": {
+            "type": ["string", "null"],
+            "description": "Related Product Id"
           },
-          "legal_entity_id": { "type": "string" },
-          "billing_group_id": { "type": [ "string", "null" ] },
-          "trading_location_id": { "type": [ "string", "null" ] },
-          "rate_card_id": { "type": "string" },
+          "product_catalogue_id": {
+            "type": [ "string", "null" ],
+            "description": "Product catalogue identifier - as defined in the product catalogue."
+          },
+          "display_name": {
+            "type": [ "string", "null" ],
+            "description": "Display name for the product"
+          },
+          "features": {
+            "type": "object",
+            "description": "Details of the product.  The schema of this object will vary based on the product type.  The product type is determined based on the product catalogue"
+          },
+          "configuration": {
+            "type": "object",
+            "description": "Configuration details for the product agreement.  The schema of this object will vary based on the product type.  The product type is determined based on the product catalogue"
+          },
+          "rate_card_id": {
+            "type": "string",
+            "description": "Rate card identifier"
+          },
+          "billing_group_id": {
+            "type": [ "string", "null" ],
+            "description": "Billing group identifier for the product agreement"
+          },
+          "trading_location_id": {
+            "type": [ "string", "null" ],
+            "description": "Trading location identifier for the product agreement"
+          },
           "meta_data": {
             "$ref": "#/components/schemas/MetaData"
           },
           "labels": {
             "$ref": "#/components/schemas/Labels"
           },
-          "system_data": {  "$ref": "#/components/schemas/SystemData" }
+          "system_data": {
+            "$ref": "#/components/schemas/SystemData"
+          }
         }
       },
       "RegisteredAddress": {
@@ -6178,6 +6246,7 @@
       "TradingLocation": {
         "type": "object",
         "required": [ "name", "legal_entity_id", "contacts" ],
+        "additionalProperties": false,
         "properties": {
           "address": {
             "oneOf": [
@@ -6203,6 +6272,7 @@
       },
       "TradingLocationContact": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "contact_type", "contact_id" ],
         "properties": {
           "contact_id": { "type": "string" },
@@ -6230,6 +6300,7 @@
         "enum": [ "Registered", "NotRegistered", "RegistrationPending" ]
       },
       "KeyValuePair": {
+        "additionalProperties": false,
         "properties": {
           "key": {"type": ["string", "null"]},
           "value": {"type": ["string", "null"]}
@@ -6286,6 +6357,7 @@
       "BusinessRelationship": {
         "type": [ "object", "null" ],
         "description": "Details of the end of the business relationship with the customer, if applicable",
+        "additionalProperties": false,
         "properties": {
           "end_date": {
             "type": [ "string", "null" ],
@@ -6352,6 +6424,7 @@
 
       "EntityResponse_Customer": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "id", "created", "created_by", "updated", "updated_by" ],
         "properties": {
           "customer_id": {
