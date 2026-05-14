@@ -65,7 +65,7 @@ namespace Api.Controllers
 
             return new ApiContract.SubmitActionResponse()
             {
-                Entity_id = legalEntityId,
+                Entity_id = productAgreementId,
                 Submitted_version = (long)result.SubmittedVersion
             };
         }
@@ -129,9 +129,9 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpdateProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId, [FromBody] ProductAgreementModel patch)
+        public async Task<ActionResult<ApiContract.EntityResponse_ProductAgreement>> UpdateProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId, [FromBody] ApiContract.UpdateProductAgreement patch)
         {
-            var patchModel = ProductAgreementToPatch(patch, legalEntityId);
+            var patchModel = ApiContractProductAgreement_ToModelProductAgreementMap.Update(patch, legalEntityId);
 
             var envelop = new MessageEnvelop
             {
@@ -140,40 +140,16 @@ namespace Api.Controllers
                 Name = EntityName.ProductAgreement,
                 Draft = patchModel,
                 CustomerId = customerId,
-                DraftVersion = patch.TargetVersion
+                DraftVersion = (decimal)patch.Target_draft_version
             };
 
-            return await Process<ProductAgreement>(envelop);
-        }
-
-        private static ProductAgreement ProductAgreementToPatch(ProductAgreementModel patchModel, string legalEntityId)
-        {
-            var productAgreement = new ProductAgreement
+            var result = await SubmitForProcessing<ProductAgreement>(envelop);
+            if (result == MessageEnvelop.NONE)
             {
-                LegalEntityId = legalEntityId,
-                ProductType = patchModel.ProductType,
-                DisplayName = patchModel.DisplayName,
-                RateCardId = patchModel.RateCardId,
-                Label = patchModel.Label
-                
-            };
-
-            if (patchModel.Configuration != null)
-            {
-                productAgreement.Configuration = [.. patchModel.Configuration.Select(a => new ProductConfiguration() { Key = a.Key, Value = a.Value })];
+                return NotFound();
             }
 
-            if (patchModel.Features != null)
-            {
-                productAgreement.Features = [.. patchModel.Features.Select(a => new ProductFeature() { Key = a.Key, Value = a.Value })];
-            }
-
-            if (patchModel.Descriptors != null)
-            {
-                // productAgreement.MetaData = [.. patchModel.MetaData.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
-            }
-
-            return productAgreement;
+            return await GetProductAgreementById(customerId, legalEntityId, productAgreementId);
         }
     }
 }

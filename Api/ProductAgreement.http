@@ -1,6 +1,6 @@
 @Api_HostAddress = https://localhost:7296/api/v1
 
-GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a
+GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/7f7cdc9e-8e73-4ead-823f-69097d980e47
 Accept: application/json
 
 ###
@@ -8,51 +8,43 @@ Accept: application/json
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements
 Content-Type: application/json
 {
-  "legalEntityId": "LE123456",
-  "displayName": "Product name 1",
-  "productType": "Hardware",
-  "rateCardId": "R88374832",
-  "label": "Important product",
-  "features": [ 
-    {
-    "key": "MOTO",
-    "value": "Available"
-    }
-  ],
-  "configuration": [
-    {
-      "key": "paymentCallbackUrl",
-      "value": "https://tempurl.com/payment"
-    },
-    {
-      "key": "refundCallbackUrl",
-      "value": "https://tempurl.com/refund"
-    }
-  ],
-  "descriptors": [
-    {
-      "key": "SomeImportantKey",
-      "value": "SomeImportantValue"
-    }
-  ]
+  "product_catalogue_id": "886823",
+  "display_name": "Product name 1",
+  "product_type": "Hardware",
+  "rate_card_id": "R88374832",
+  "trading_location_id": "8378423",
+  "features": {
+    "moto": "enable"
+  },
+  "configuration": {
+    "paymentCallbackUrl": "https://tempurl.com/payment",
+    "refundCallbackUrl": "https://tempurl.com/refund"
+  },
+  "label": ["Important product"],
+  "meta_data": {
+     "SomeImportantKey": "SomeImportantValue"
+  },
+  "system_data": {
+    "There_is": "lots of data"
+  }
 }
 ###
 
-PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a
+PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/7f7cdc9e-8e73-4ead-823f-69097d980e47
 Content-Type: application/json
 {
-  "displayName": "display Updated 4",
-  "targetVersion": 1
+  "display_name": "display Updated 4",
+  "target_draft_version": 1
 }
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a/submit
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/7f7cdc9e-8e73-4ead-823f-69097d980e47/submit
 Content-Type: application/json
 {
-  "targetVersion": 2
+  "target_draft_version": 2
 }
 ###
 
