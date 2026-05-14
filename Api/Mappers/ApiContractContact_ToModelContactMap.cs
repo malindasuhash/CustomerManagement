@@ -1,6 +1,7 @@
-﻿using StateManagment.Entity;
+﻿using Api.ApiModels;
+using StateManagment.Entity;
 
-namespace Api.ApiModels
+namespace Api.Mappers
 {
     public class ApiContractContact_ToModelContactMap
     {

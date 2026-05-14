@@ -8,17 +8,22 @@ Accept: application/json
 POST {{Api_HostAddress}}/customers/Cus123/billing-groups
 Content-Type: application/json
 {
-  "billingBankAccountId": "A1234",
+  "billing_bank_account_id": "A1234",
   "description": "Bank Description",
-  "legalEntityId": "9938982",
+  "legal_entity_id": "9938982",
   "name": "Company billing",
   "label": "Secondary billing account",
-  "descriptors": [
+  "statement_narrative": "Statement narrative - abc",
+  "direct_debit_reference": "Direct debit reference 1",
+  "labels": ["Label1", "Label2"],
+  "meta_data":
     {
-      "key": "SomeKey",
-      "value": "SomeValue"
+      "some": "key"
+    },
+    "system_data":
+    {
+      "internal_note": "This is an internal note"
     }
-  ]
 }
 ###
 

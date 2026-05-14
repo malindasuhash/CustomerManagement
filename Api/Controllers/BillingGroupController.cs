@@ -1,4 +1,5 @@
 ﻿using Api.ApiModels;
+using Api.Mappers;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
@@ -116,9 +117,9 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/billing-groups/{billingGroupId}")]
-        public async Task<ActionResult<EntityDocumentModel>> UpateBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] BillingGroupModel patch)
+        public async Task<ActionResult<ApiContract.EntityResponse_BillingGroup>> UpateBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] ApiContract.BillingGroup patch)
         {
-            var patchModel = BillingGroupToPatch(patch);
+            var patchModel = ApiContractBillingGroup_ToModelBillingGroupMap.Update(patch);
 
             var envelop = new MessageEnvelop
             {
@@ -127,53 +128,16 @@ namespace Api.Controllers
                 Name = EntityName.BillingGroup,
                 Draft = patchModel,
                 CustomerId = customerId,
-                DraftVersion = patch.TargetVersion
+                DraftVersion = 0 // TODO: Define a new property in ApiContract.UpdateBillingGroup
             };
 
-            return await Process<BillingGroup>(envelop);
-        }
-
-        private static BillingGroup BillingGroupToPatch(BillingGroupModel patchModel)
-        {
-            var billingGroup = new BillingGroup
+            var result = await SubmitForProcessing<BillingGroup>(envelop);
+            if (result == MessageEnvelop.NONE)
             {
-                BillingBankAccountId = patchModel.BillingBankAccountId,
-                // Labels = patchModel.Labels,
-                Name = patchModel.Name,
-                LegalEntityId = patchModel.LegalEntityId,
-                Description = patchModel.Description
-            };
-
-            if (patchModel.Descriptors != null)
-            {
-                // billingGroup.MetaData = [.. patchModel.MetaData.Select(a => new MetaDataModel() { Key = a.Key, Value = a.Value })];
+                return NotFound();
             }
 
-            return billingGroup;
-        }
-
-        private BillingGroup NewBillingGroup(ApiContract.CreateBillingGroup billingGroup)
-        {
-            return new BillingGroup
-            {
-                BillingBankAccountId = billingGroup.Billing_bank_account_id,
-                Labels = billingGroup.Labels.ToArray(),
-                Name = billingGroup.Name,
-                LegalEntityId = billingGroup.Legal_entity_id,
-                Description = billingGroup.Description
-            };
-        }
-
-        private ApiContract.BillingGroup BillingGroupModelToContract(BillingGroupModel billingGroupModel)
-        {
-            return new ApiContract.BillingGroup
-            {
-                Billing_bank_account_id = billingGroupModel.BillingBankAccountId,
-                //Labels = billingGroupModel.Labels,
-                Name = billingGroupModel.Name,
-                Legal_entity_id = billingGroupModel.LegalEntityId,
-                Description = billingGroupModel.Description
-            };
+            return await GetBillingGroupById(customerId, billingGroupId);
         }
     }
 }

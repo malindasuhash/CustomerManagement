@@ -42,43 +42,7 @@ namespace Api.ApiModels
         }
     }
 
-    public class ApiContractBillingGroup_ToModelBillingGroupMap
-    {
-        public static BillingGroup Convert(ApiContract.CreateBillingGroup apiContractBillingGroup)
-        {
-            var modelBillingGroup = new BillingGroup()
-            {
-                Name = apiContractBillingGroup.Name,
-                Description = apiContractBillingGroup.Description,
-                LegalEntityId = apiContractBillingGroup.Legal_entity_id
-            };
-            if (apiContractBillingGroup.Labels != null)
-            {
-                modelBillingGroup.Labels = [.. apiContractBillingGroup.Labels];
-            }
-            if (apiContractBillingGroup.Meta_data != null)
-            {
-                var metaDataList = new List<MetaDataModel>();
-                foreach (var data in apiContractBillingGroup.Meta_data)
-                {
-                    metaDataList.Add(new MetaDataModel { Key = data.Key, Value = data.Value });
-                }
-                modelBillingGroup.MetaData = [.. metaDataList];
-            }
-            if (apiContractBillingGroup.System_data != null)
-            {
-                var systemDataList = new List<SystemDataModel>();
-                foreach (var data in apiContractBillingGroup.System_data)
-                {
-                    systemDataList.Add(new SystemDataModel { Key = data.Key, Value = data.Value });
-                }
-                modelBillingGroup.SystemData = [.. systemDataList];
-            }
-            return modelBillingGroup;
-        }
-    }
 
-    
 
     public class MessageEnvelop_ToEntityResponseLegalEntityMap
     {
@@ -214,376 +178,332 @@ namespace Api.ApiModels
             }
             return personsWithControl.Select(pwc => new ApiContract.PersonWithControl
             {
-                
+
             }).ToArray();
         }
     }
 
     public class PartnersWithInterest_ToApiContractMap
+    {
+        public static ApiContract.PartnerWithInterest[] Convert(PartnersWithInterest[] partnersWithInterest)
         {
-            public static ApiContract.PartnerWithInterest[] Convert(PartnersWithInterest[] partnersWithInterest)
+            if (partnersWithInterest == null)
             {
-                if (partnersWithInterest == null)
-                {
-                    return null;
-                }
-                return partnersWithInterest.Select(pwi => new ApiContract.PartnerWithInterest
-                {
-                    Attribution_type = Attribution_ToApiContractMap.Convert(pwi.Attributions),
-                    Legal_entity_id = pwi.LegalEntityId,
-
-                }).ToArray();
+                return null;
             }
-        }
-
-        public class Attribution_ToApiContractMap
-        {
-            public static ApiContract.AttributionType[] Convert(Attribution[] attributions)
+            return partnersWithInterest.Select(pwi => new ApiContract.PartnerWithInterest
             {
-                if (attributions == null)
-                {
-                    return null;
-                }
+                Attribution_type = Attribution_ToApiContractMap.Convert(pwi.Attributions),
+                Legal_entity_id = pwi.LegalEntityId,
 
-                return attributions.Select(a => a switch
-                {
-                    Attribution.Introducer => ApiContract.AttributionType.Introducer,
-                    Attribution.Affiliate => ApiContract.AttributionType.Affiliate,
-                    Attribution.Reseller => ApiContract.AttributionType.Reseller,
-                    _ => ApiContract.AttributionType.Other
-                }).ToArray();
-            }
-
-        }
-
-        public class LegalEntitiesWithControl_ToApiContractMap
-        {
-            public static ApiContract.LegalEntityWithControl[] Convert(LegalEntityWithControl[] legalEntityWithControls)
-            {
-                if (legalEntityWithControls == null)
-                {
-                    return null;
-                }
-                return legalEntityWithControls.Select(lec => new ApiContract.LegalEntityWithControl
-                {
-                    Control_types = lec.ControlTypes.Select(ct => ControlType_ToApiContractMap.Convert(ct)).ToArray(),
-                    Legal_entity_id = lec.LegalEntityId,
-                    Date_from = DateTime.MinValue,
-                    Date_to = DateTime.MaxValue,
-                    Ownership_percentage = 10
-                }).ToArray();
-            }
-        }
-
-        public class ControlType_ToApiContractMap
-        {
-            public static ApiContract.LegalEntityControlType Convert(ControlType controlType)
-            {
-                return controlType switch
-                {
-                    ControlType.Shareholder => ApiContract.LegalEntityControlType.Shareholder,
-                    ControlType.ParentCompany => ApiContract.LegalEntityControlType.Shareholder,
-                    _ => throw new ArgumentOutOfRangeException(nameof(controlType), $"Not expected control type value: {controlType}")
-                };
-            }
-        }
-
-        public class LegalEntityStatus_ToApiContractMap
-        {
-            public static ApiContract.LegalEntityStatus Convert(LegalEntityStatus legalEntityStatus)
-            {
-                return legalEntityStatus switch
-                {
-                    LegalEntityStatus.Active => ApiContract.LegalEntityStatus.Active,
-                    LegalEntityStatus.Inactive => ApiContract.LegalEntityStatus.Inactive,
-                    LegalEntityStatus.Suspended => ApiContract.LegalEntityStatus.Terminated,
-                    _ => throw new ArgumentOutOfRangeException(nameof(legalEntityStatus), $"Not expected legal entity status value: {legalEntityStatus}")
-                };
-            }
-        }
-
-        public class GoodsOwnership_ToApiContractMap
-        {
-            public static ApiContract.GoodsOwnership Convert(GoodsOwnership goodsOwnership)
-            {
-                return goodsOwnership switch
-                {
-                    GoodsOwnership.Owned => ApiContract.GoodsOwnership.Owned,
-                    GoodsOwnership.Leased => ApiContract.GoodsOwnership.Leased,
-                    GoodsOwnership.Other => ApiContract.GoodsOwnership.Other,
-                    GoodsOwnership.ThirdParty => ApiContract.GoodsOwnership.ThirdParty,
-                    _ => throw new ArgumentOutOfRangeException(nameof(goodsOwnership), $"Not expected goods ownership value: {goodsOwnership}")
-                };
-            }
-        }
-
-        public class EndOfBusinessRelationship_ToApiContractMap
-        {
-            public static ApiContract.BusinessRelationship Convert(EndOfBusinessRelationship endOfBusinessRelationship)
-            {
-                if (endOfBusinessRelationship == null)
-                {
-                    return null;
-                }
-                return new ApiContract.BusinessRelationship
-                {
-                    End_date = endOfBusinessRelationship.EndDate.ToShortDateString(),
-                    Reason = endOfBusinessRelationship.Reason
-                };
-            }
-        }
-
-        public class BusinessContacts_ToApiContractMap
-        {
-            public static ApiContract.BusinessContact[] Convert(BusinessContact[] businessContacts)
-            {
-                if (businessContacts == null)
-                {
-                    return null;
-                }
-                return businessContacts.Select(bc => new ApiContract.BusinessContact
-                {
-                    Contact_type = ContactType_ToApiContractMap.Convert(bc.ContactType),
-                    Contact_id = bc.ContactId
-                }).ToArray();
-            }
-        }
-
-        public class ContactType_ToApiContractMap
-        {
-            public static ApiContract.BusinessContactType Convert(ContactType contactType)
-            {
-                return contactType switch
-                {
-                    ContactType.Financial => ApiContract.BusinessContactType.Financial,
-                    ContactType.Technical => ApiContract.BusinessContactType.Financial,
-                    ContactType.Developer => ApiContract.BusinessContactType.Developer,
-                    ContactType.User => ApiContract.BusinessContactType.User,
-                    _ => throw new ArgumentOutOfRangeException(nameof(contactType), $"Not expected contact type value: {contactType}")
-                };
-            }
-        }
-
-        public class RegisteredAddresses_ToApiContractMap
-        {
-            public static ApiContract.RegisteredAddress[] Convert(RegisteredAddress[] registeredAddresses)
-            {
-                if (registeredAddresses == null)
-                {
-                    return null;
-                }
-                return registeredAddresses.Select(ra => new ApiContract.RegisteredAddress
-                {
-                    Current = ra.Current,
-                    Date_from = ra.DateFrom,
-                    Date_to = ra.DateTo,
-                    Address = Address_ToApiContractMap.Convert(ra.Address)
-                }).ToArray();
-            }
-        }
-
-        public class MessageEnvelop_ToEntityResponse_Contact
-        {
-            public static ApiContract.EntityResponse_Contact Convert(MessageEnvelop messageEnvelop)
-            {
-                return new ApiContract.EntityResponse_Contact()
-                {
-                    Customer = messageEnvelop.CustomerId,
-                    Id = messageEnvelop.EntityId,
-                    Draft = Contact_ToApiContractMap.Convert(messageEnvelop.Draft),
-                    Draft_version = (long)messageEnvelop.DraftVersion,
-                    Submitted = Contact_ToApiContractMap.Convert(messageEnvelop.Submitted),
-                    Submitted_version = (long)messageEnvelop.SubmittedVersion,
-                    Applied = Contact_ToApiContractMap.Convert(messageEnvelop.Applied),
-                    Applied_version = (long)messageEnvelop.AppliedVersion,
-                    Created = messageEnvelop.CreatedTimestamp.ToString(),
-                    Created_by = messageEnvelop.CreatedUser,
-                    Updated = messageEnvelop.UpdateTimestamp.ToString(),
-                    Updated_by = messageEnvelop.UpdateUser,
-                    State = EntityState_ToApiStateMap.Convert(messageEnvelop.State),
-                    Feedback = messageEnvelop.Feedback != null ? messageEnvelop.Feedback.Select(f => new ApiContract.EntityStateResult
-                    {
-                        Kind = FeedbackType_ToApiEntityStateKindMap.Convert(f.Type),
-                        Message = f.Message,
-                        Context = f.Context,
-                        Details = f.Details
-                    }).ToArray() : null
-                };
-            }
-        }
-
-        public class Contact_ToApiContractMap
-        {
-            public static ApiContract.Contact Convert(Contact contactStateModel)
-            {
-                var responseContact = new ApiContract.Contact()
-                {
-                    Name = contactStateModel.Name,
-                    Email = contactStateModel.Email,
-                    Alt_telephone = contactStateModel.AltTelephone,
-                    Alt_telephone_code = contactStateModel.AltTelephoneCode,
-                    Telephone = contactStateModel.Telephone,
-                    Telephone_code = contactStateModel.TelephoneCode,
-                    Postal_address = Address_ToApiContractMap.Convert(contactStateModel.PostalAddress),
-                };
-
-                if (contactStateModel.Labels != null)
-                {
-                    var labels = new ApiContract.Labels();
-                    foreach (var label in contactStateModel.Labels)
-                    {
-                        labels.Add(label);
-                    }
-                    responseContact.Labels = labels;
-                }
-                if (contactStateModel.MetaData != null)
-                {
-                    var metaData = new ApiContract.MetaData();
-                    foreach (var data in contactStateModel.MetaData)
-                    {
-                        metaData.Add(data.Key, data.Value);
-                    }
-                    responseContact.Meta_data = metaData;
-                }
-                return responseContact;
-            }
-        }
-
-        public class Address_ToApiContractMap
-        {
-            public static ApiContract.Address Convert(Address addressStateModel)
-            {
-                if (addressStateModel == null)
-                {
-                    return null;
-                }
-
-                return new ApiContract.Address()
-                {
-                    Line1 = addressStateModel.Line1,
-                    Line2 = addressStateModel.Line2,
-                    Line3 = addressStateModel.Line3,
-                    Region = addressStateModel.Region,
-                    Locality = addressStateModel.Locality,
-                    Code = addressStateModel.Code,
-                    Country = addressStateModel.Country,
-                    City = addressStateModel.City
-                };
-            }
-        }
-
-        public class MessageEnvelop_ToEntityResponse_BillingGroup
-        {
-            public static ApiContract.EntityResponse_BillingGroup Convert(MessageEnvelop messageEnvelop)
-            {
-                return new ApiContract.EntityResponse_BillingGroup()
-                {
-                    Customer = messageEnvelop.CustomerId,
-                    Id = messageEnvelop.EntityId,
-                    Draft = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Draft),
-                    Draft_version = (long)messageEnvelop.DraftVersion,
-                    Submitted = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Submitted),
-                    Submitted_version = (long)messageEnvelop.SubmittedVersion,
-                    Applied = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Applied),
-                    Applied_version = (long)messageEnvelop.AppliedVersion,
-                    Created = messageEnvelop.CreatedTimestamp.ToString(),
-                    Created_by = messageEnvelop.CreatedUser,
-                    Updated = messageEnvelop.UpdateTimestamp.ToString(),
-                    Updated_by = messageEnvelop.UpdateUser,
-                    State = EntityState_ToApiStateMap.Convert(messageEnvelop.State),
-                    Feedback = messageEnvelop.Feedback != null ? messageEnvelop.Feedback.Select(f => new ApiContract.EntityStateResult
-                    {
-                        Kind = FeedbackType_ToApiEntityStateKindMap.Convert(f.Type),
-                        Message = f.Message,
-                        Context = f.Context,
-                        Details = f.Details
-                    }).ToArray() : null
-                };
-            }
-        }
-
-        public class BillingGroup_ToApiContractMap
-        {
-            public static ApiContract.BillingGroup Convert(BillingGroup billingGroupStateModel)
-            {
-                var responseBillingGroup = new ApiContract.BillingGroup()
-                {
-                    Name = billingGroupStateModel.Name,
-                    Description = billingGroupStateModel.Description,
-                };
-
-                if (billingGroupStateModel.MetaData != null)
-                {
-                    var metaData = new ApiContract.MetaData();
-                    foreach (var data in billingGroupStateModel.MetaData)
-                    {
-                        metaData.Add(data.Key, data.Value);
-                    }
-                    responseBillingGroup.Meta_data = metaData;
-                }
-
-                if (billingGroupStateModel.Labels != null)
-                {
-                    var labels = new ApiContract.Labels();
-                    foreach (var label in billingGroupStateModel.Labels)
-                    {
-                        labels.Add(label);
-                    }
-                    responseBillingGroup.Labels = labels;
-                }
-
-                if (billingGroupStateModel.SystemData != null)
-                {
-                    var systemData = new ApiContract.SystemData();
-                    foreach (var data in billingGroupStateModel.SystemData)
-                    {
-                        systemData.Add(data.Key, data.Value);
-                    }
-                    responseBillingGroup.System_data = systemData;
-                }
-
-                return responseBillingGroup;
-            }
-        }
-
-        public class FeedbackType_ToApiEntityStateKindMap
-        {
-            public static ApiContract.EntityStateResultKind Convert(StateManagment.Models.FeedbackType feedbackType)
-            {
-                return feedbackType switch
-                {
-                    StateManagment.Models.FeedbackType.DocumentRequired => ApiContract.EntityStateResultKind.DocumentRequired,
-                    StateManagment.Models.FeedbackType.WaitingForExternalRiskChecks => ApiContract.EntityStateResultKind.WaitingForExternalRiskChecks,
-                    StateManagment.Models.FeedbackType.LegalEntityMissing => ApiContract.EntityStateResultKind.LegalEntityMissing,
-                    StateManagment.Models.FeedbackType.WaitingForProductSelection => ApiContract.EntityStateResultKind.WaitingForProductSelection,
-                    StateManagment.Models.FeedbackType.MissingRequiredInformation => ApiContract.EntityStateResultKind.MissingRequiredInformation,
-                    StateManagment.Models.FeedbackType.InternalError => ApiContract.EntityStateResultKind.InternalError,
-                    StateManagment.Models.FeedbackType.WaitingForContractSignatureOrAcceptance => ApiContract.EntityStateResultKind.WaitingForContractSignatureOrAcceptance,
-                    StateManagment.Models.FeedbackType.UserActionRequired => ApiContract.EntityStateResultKind.UserActionRequired,
-                    StateManagment.Models.FeedbackType.WaitingForLegalEntityApproval => ApiContract.EntityStateResultKind.WaitingForLegalEntityApproval,
-                    StateManagment.Models.FeedbackType.WaitingForConfiguration => ApiContract.EntityStateResultKind.WaitingForConfiguration,
-
-                    _ => throw new ArgumentOutOfRangeException(nameof(feedbackType), $"Not expected feedback type value: {feedbackType}")
-                };
-            }
-        }
-
-        public class EntityState_ToApiStateMap
-        {
-            public static ApiContract.EntityState Convert(StateManagment.Models.EntityState entityState)
-            {
-                return entityState switch
-                {
-                    StateManagment.Models.EntityState.NEW => ApiContract.EntityState.New,
-                    StateManagment.Models.EntityState.EVALUATING => ApiContract.EntityState.Evaluating,
-                    StateManagment.Models.EntityState.EVALUATION_RESTARTING => ApiContract.EntityState.EvaluationRestarting,
-                    StateManagment.Models.EntityState.ATTENTION_REQUIRED => ApiContract.EntityState.AttentionRequired,
-                    StateManagment.Models.EntityState.IN_REVIEW => ApiContract.EntityState.InReview,
-                    StateManagment.Models.EntityState.IN_PROGRESS => ApiContract.EntityState.InProgress,
-                    StateManagment.Models.EntityState.SYNCHRONISED => ApiContract.EntityState.Synchronised,
-
-                    _ => throw new ArgumentOutOfRangeException(nameof(entityState), $"Not expected entity state value: {entityState}")
-                };
-            }
+            }).ToArray();
         }
     }
+
+    public class Attribution_ToApiContractMap
+    {
+        public static ApiContract.AttributionType[] Convert(Attribution[] attributions)
+        {
+            if (attributions == null)
+            {
+                return null;
+            }
+
+            return attributions.Select(a => a switch
+            {
+                Attribution.Introducer => ApiContract.AttributionType.Introducer,
+                Attribution.Affiliate => ApiContract.AttributionType.Affiliate,
+                Attribution.Reseller => ApiContract.AttributionType.Reseller,
+                _ => ApiContract.AttributionType.Other
+            }).ToArray();
+        }
+
+    }
+
+    public class LegalEntitiesWithControl_ToApiContractMap
+    {
+        public static ApiContract.LegalEntityWithControl[] Convert(LegalEntityWithControl[] legalEntityWithControls)
+        {
+            if (legalEntityWithControls == null)
+            {
+                return null;
+            }
+            return legalEntityWithControls.Select(lec => new ApiContract.LegalEntityWithControl
+            {
+                Control_types = lec.ControlTypes.Select(ct => ControlType_ToApiContractMap.Convert(ct)).ToArray(),
+                Legal_entity_id = lec.LegalEntityId,
+                Date_from = DateTime.MinValue,
+                Date_to = DateTime.MaxValue,
+                Ownership_percentage = 10
+            }).ToArray();
+        }
+    }
+
+    public class ControlType_ToApiContractMap
+    {
+        public static ApiContract.LegalEntityControlType Convert(ControlType controlType)
+        {
+            return controlType switch
+            {
+                ControlType.Shareholder => ApiContract.LegalEntityControlType.Shareholder,
+                ControlType.ParentCompany => ApiContract.LegalEntityControlType.Shareholder,
+                _ => throw new ArgumentOutOfRangeException(nameof(controlType), $"Not expected control type value: {controlType}")
+            };
+        }
+    }
+
+    public class LegalEntityStatus_ToApiContractMap
+    {
+        public static ApiContract.LegalEntityStatus Convert(LegalEntityStatus legalEntityStatus)
+        {
+            return legalEntityStatus switch
+            {
+                LegalEntityStatus.Active => ApiContract.LegalEntityStatus.Active,
+                LegalEntityStatus.Inactive => ApiContract.LegalEntityStatus.Inactive,
+                LegalEntityStatus.Suspended => ApiContract.LegalEntityStatus.Terminated,
+                _ => throw new ArgumentOutOfRangeException(nameof(legalEntityStatus), $"Not expected legal entity status value: {legalEntityStatus}")
+            };
+        }
+    }
+
+    public class GoodsOwnership_ToApiContractMap
+    {
+        public static ApiContract.GoodsOwnership Convert(GoodsOwnership goodsOwnership)
+        {
+            return goodsOwnership switch
+            {
+                GoodsOwnership.Owned => ApiContract.GoodsOwnership.Owned,
+                GoodsOwnership.Leased => ApiContract.GoodsOwnership.Leased,
+                GoodsOwnership.Other => ApiContract.GoodsOwnership.Other,
+                GoodsOwnership.ThirdParty => ApiContract.GoodsOwnership.ThirdParty,
+                _ => throw new ArgumentOutOfRangeException(nameof(goodsOwnership), $"Not expected goods ownership value: {goodsOwnership}")
+            };
+        }
+    }
+
+    public class EndOfBusinessRelationship_ToApiContractMap
+    {
+        public static ApiContract.BusinessRelationship Convert(EndOfBusinessRelationship endOfBusinessRelationship)
+        {
+            if (endOfBusinessRelationship == null)
+            {
+                return null;
+            }
+            return new ApiContract.BusinessRelationship
+            {
+                End_date = endOfBusinessRelationship.EndDate.ToShortDateString(),
+                Reason = endOfBusinessRelationship.Reason
+            };
+        }
+    }
+
+    public class BusinessContacts_ToApiContractMap
+    {
+        public static ApiContract.BusinessContact[] Convert(BusinessContact[] businessContacts)
+        {
+            if (businessContacts == null)
+            {
+                return null;
+            }
+            return businessContacts.Select(bc => new ApiContract.BusinessContact
+            {
+                Contact_type = ContactType_ToApiContractMap.Convert(bc.ContactType),
+                Contact_id = bc.ContactId
+            }).ToArray();
+        }
+    }
+
+    public class ContactType_ToApiContractMap
+    {
+        public static ApiContract.BusinessContactType Convert(ContactType contactType)
+        {
+            return contactType switch
+            {
+                ContactType.Financial => ApiContract.BusinessContactType.Financial,
+                ContactType.Technical => ApiContract.BusinessContactType.Financial,
+                ContactType.Developer => ApiContract.BusinessContactType.Developer,
+                ContactType.User => ApiContract.BusinessContactType.User,
+                _ => throw new ArgumentOutOfRangeException(nameof(contactType), $"Not expected contact type value: {contactType}")
+            };
+        }
+    }
+
+    public class RegisteredAddresses_ToApiContractMap
+    {
+        public static ApiContract.RegisteredAddress[] Convert(RegisteredAddress[] registeredAddresses)
+        {
+            if (registeredAddresses == null)
+            {
+                return null;
+            }
+            return registeredAddresses.Select(ra => new ApiContract.RegisteredAddress
+            {
+                Current = ra.Current,
+                Date_from = ra.DateFrom,
+                Date_to = ra.DateTo,
+                Address = Address_ToApiContractMap.Convert(ra.Address)
+            }).ToArray();
+        }
+    }
+
+    public class MessageEnvelop_ToEntityResponse_Contact
+    {
+        public static ApiContract.EntityResponse_Contact Convert(MessageEnvelop messageEnvelop)
+        {
+            return new ApiContract.EntityResponse_Contact()
+            {
+                Customer = messageEnvelop.CustomerId,
+                Id = messageEnvelop.EntityId,
+                Draft = Contact_ToApiContractMap.Convert(messageEnvelop.Draft),
+                Draft_version = (long)messageEnvelop.DraftVersion,
+                Submitted = Contact_ToApiContractMap.Convert(messageEnvelop.Submitted),
+                Submitted_version = (long)messageEnvelop.SubmittedVersion,
+                Applied = Contact_ToApiContractMap.Convert(messageEnvelop.Applied),
+                Applied_version = (long)messageEnvelop.AppliedVersion,
+                Created = messageEnvelop.CreatedTimestamp.ToString(),
+                Created_by = messageEnvelop.CreatedUser,
+                Updated = messageEnvelop.UpdateTimestamp.ToString(),
+                Updated_by = messageEnvelop.UpdateUser,
+                State = EntityState_ToApiStateMap.Convert(messageEnvelop.State),
+                Feedback = messageEnvelop.Feedback != null ? messageEnvelop.Feedback.Select(f => new ApiContract.EntityStateResult
+                {
+                    Kind = FeedbackType_ToApiEntityStateKindMap.Convert(f.Type),
+                    Message = f.Message,
+                    Context = f.Context,
+                    Details = f.Details
+                }).ToArray() : null
+            };
+        }
+    }
+
+    public class Contact_ToApiContractMap
+    {
+        public static ApiContract.Contact Convert(Contact contactStateModel)
+        {
+            var responseContact = new ApiContract.Contact()
+            {
+                Name = contactStateModel.Name,
+                Email = contactStateModel.Email,
+                Alt_telephone = contactStateModel.AltTelephone,
+                Alt_telephone_code = contactStateModel.AltTelephoneCode,
+                Telephone = contactStateModel.Telephone,
+                Telephone_code = contactStateModel.TelephoneCode,
+                Postal_address = Address_ToApiContractMap.Convert(contactStateModel.PostalAddress),
+            };
+
+            if (contactStateModel.Labels != null)
+            {
+                var labels = new ApiContract.Labels();
+                foreach (var label in contactStateModel.Labels)
+                {
+                    labels.Add(label);
+                }
+                responseContact.Labels = labels;
+            }
+            if (contactStateModel.MetaData != null)
+            {
+                var metaData = new ApiContract.MetaData();
+                foreach (var data in contactStateModel.MetaData)
+                {
+                    metaData.Add(data.Key, data.Value);
+                }
+                responseContact.Meta_data = metaData;
+            }
+            return responseContact;
+        }
+    }
+
+    public class Address_ToApiContractMap
+    {
+        public static ApiContract.Address Convert(Address addressStateModel)
+        {
+            if (addressStateModel == null)
+            {
+                return null;
+            }
+
+            return new ApiContract.Address()
+            {
+                Line1 = addressStateModel.Line1,
+                Line2 = addressStateModel.Line2,
+                Line3 = addressStateModel.Line3,
+                Region = addressStateModel.Region,
+                Locality = addressStateModel.Locality,
+                Code = addressStateModel.Code,
+                Country = addressStateModel.Country,
+                City = addressStateModel.City
+            };
+        }
+    }
+
+    public class MessageEnvelop_ToEntityResponse_BillingGroup
+    {
+        public static ApiContract.EntityResponse_BillingGroup Convert(MessageEnvelop messageEnvelop)
+        {
+            return new ApiContract.EntityResponse_BillingGroup()
+            {
+                Customer = messageEnvelop.CustomerId,
+                Id = messageEnvelop.EntityId,
+                Draft = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Draft),
+                Draft_version = (long)messageEnvelop.DraftVersion,
+                Submitted = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Submitted),
+                Submitted_version = (long)messageEnvelop.SubmittedVersion,
+                Applied = BillingGroup_ToApiContractMap.Convert(messageEnvelop.Applied),
+                Applied_version = (long)messageEnvelop.AppliedVersion,
+                Created = messageEnvelop.CreatedTimestamp.ToString(),
+                Created_by = messageEnvelop.CreatedUser,
+                Updated = messageEnvelop.UpdateTimestamp.ToString(),
+                Updated_by = messageEnvelop.UpdateUser,
+                State = EntityState_ToApiStateMap.Convert(messageEnvelop.State),
+                Feedback = messageEnvelop.Feedback != null ? messageEnvelop.Feedback.Select(f => new ApiContract.EntityStateResult
+                {
+                    Kind = FeedbackType_ToApiEntityStateKindMap.Convert(f.Type),
+                    Message = f.Message,
+                    Context = f.Context,
+                    Details = f.Details
+                }).ToArray() : null
+            };
+        }
+    }
+
+    public class FeedbackType_ToApiEntityStateKindMap
+    {
+        public static ApiContract.EntityStateResultKind Convert(StateManagment.Models.FeedbackType feedbackType)
+        {
+            return feedbackType switch
+            {
+                StateManagment.Models.FeedbackType.DocumentRequired => ApiContract.EntityStateResultKind.DocumentRequired,
+                StateManagment.Models.FeedbackType.WaitingForExternalRiskChecks => ApiContract.EntityStateResultKind.WaitingForExternalRiskChecks,
+                StateManagment.Models.FeedbackType.LegalEntityMissing => ApiContract.EntityStateResultKind.LegalEntityMissing,
+                StateManagment.Models.FeedbackType.WaitingForProductSelection => ApiContract.EntityStateResultKind.WaitingForProductSelection,
+                StateManagment.Models.FeedbackType.MissingRequiredInformation => ApiContract.EntityStateResultKind.MissingRequiredInformation,
+                StateManagment.Models.FeedbackType.InternalError => ApiContract.EntityStateResultKind.InternalError,
+                StateManagment.Models.FeedbackType.WaitingForContractSignatureOrAcceptance => ApiContract.EntityStateResultKind.WaitingForContractSignatureOrAcceptance,
+                StateManagment.Models.FeedbackType.UserActionRequired => ApiContract.EntityStateResultKind.UserActionRequired,
+                StateManagment.Models.FeedbackType.WaitingForLegalEntityApproval => ApiContract.EntityStateResultKind.WaitingForLegalEntityApproval,
+                StateManagment.Models.FeedbackType.WaitingForConfiguration => ApiContract.EntityStateResultKind.WaitingForConfiguration,
+
+                _ => throw new ArgumentOutOfRangeException(nameof(feedbackType), $"Not expected feedback type value: {feedbackType}")
+            };
+        }
+    }
+
+    public class EntityState_ToApiStateMap
+    {
+        public static ApiContract.EntityState Convert(StateManagment.Models.EntityState entityState)
+        {
+            return entityState switch
+            {
+                StateManagment.Models.EntityState.NEW => ApiContract.EntityState.New,
+                StateManagment.Models.EntityState.EVALUATING => ApiContract.EntityState.Evaluating,
+                StateManagment.Models.EntityState.EVALUATION_RESTARTING => ApiContract.EntityState.EvaluationRestarting,
+                StateManagment.Models.EntityState.ATTENTION_REQUIRED => ApiContract.EntityState.AttentionRequired,
+                StateManagment.Models.EntityState.IN_REVIEW => ApiContract.EntityState.InReview,
+                StateManagment.Models.EntityState.IN_PROGRESS => ApiContract.EntityState.InProgress,
+                StateManagment.Models.EntityState.SYNCHRONISED => ApiContract.EntityState.Synchronised,
+
+                _ => throw new ArgumentOutOfRangeException(nameof(entityState), $"Not expected entity state value: {entityState}")
+            };
+        }
+    }
+}

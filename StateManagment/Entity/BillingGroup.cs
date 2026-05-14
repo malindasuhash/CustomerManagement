@@ -11,6 +11,8 @@ namespace StateManagment.Entity
         public string BillingBankAccountId { get; set; }
         public string Description { get; set; }
         public string LegalEntityId { get; set; }
+        public string StatementNarrative { get; set; }
+        public string DirectDebitReference { get; set; }
         public string Name { get; set; }
         public MetaDataModel[] MetaData { get; set; } = [];
         public string[] Labels { get; set; }
