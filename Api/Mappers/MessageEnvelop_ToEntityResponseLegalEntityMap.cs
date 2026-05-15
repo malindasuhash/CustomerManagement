@@ -33,7 +33,31 @@ namespace Api.Mappers
 
         internal static StateManagment.Entity.LegalEntity Convert(ApiContract.UpdateLegalEntity patch)
         {
-            throw new NotImplementedException();
+            var legalEntity = new StateManagment.Entity.LegalEntity()
+            {
+                BusinessEmail = patch.Business_email,
+                CardTurnoverPerAnnum = patch.Turnover_per_annum,
+                CharityRegistration = patch.Charity_registration,
+                CompanyRegistration = patch.Company_registration,
+                CountryOfAuthority = patch.Country_of_authority,
+                DateBusinessStarted = patch.Date_business_created == null ? (DateTime?)null : DateTime.Parse(patch.Date_business_created),
+                DateTradingStarted = patch.Date_trading_started == null ? (DateTime?)null : DateTime.Parse(patch.Date_trading_started),
+                GoodsOwnership = ApiContractGoodsOwnership_ToModelGoodsOwnershipType.Convert(patch.Goods_ownership),
+                MaximumTransactionValue = patch.Maximum_transaction_value,
+                Name = patch.Name,
+                StandardIndustryClassification = patch.Standard_industry_classification,
+                TradingIndustryClassification = patch.Trading_industry_classification,
+                TradingName = patch.Trading_name,
+                BusinessContacts = ApiContractBusinessContacts_ToModelBusinessContactsType.Convert(patch.Business_contacts),
+                BusinessIdentification = patch.Business_identification,
+                BusinessType = ApiContractBusinessType_ToModelBusinessTypeMap.Convert(patch.Business_type),
+                //EndOfBusinessRelationship = ApiContractEndOfBusinessRelationship_ToModelEndOfBusinessRelationshipMap.Convert(patch.en),
+                LegalEntitiesWithControl = ApiContractLegalEntitiesWithControl_ToModelLegalEntitiesWithControlMap.Convert(patch.Legal_entity_with_control),
+                MerchantCategoryCode = patch.Merchant_category_code,
+                PartnersWithInterest = ApiContractPartnersWithInterest_ToModelPartnersWithInterestMap.Convert(patch.Partners_with_interest),
+            };
+
+            return legalEntity;
         }
     }
 }

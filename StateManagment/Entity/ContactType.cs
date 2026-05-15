@@ -9,6 +9,7 @@
         Developer,
         User,
         Manager,
-        Support
+        Support,
+        Customer,
     }
 }
