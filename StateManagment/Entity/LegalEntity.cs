@@ -7,6 +7,7 @@
         public BusinessType BusinessType { get; set; }
         public string BusinessEmail { get; set; }
         public BusinessContact[] BusinessContacts { get; set; }
+        public string OperatingAs { get; set; }
         public GoodsOwnership GoodsOwnership { get; set; }
         public int? CardTurnoverPerAnnum { get; set; }
         public int? TurnoverPerAnnum { get; set; }

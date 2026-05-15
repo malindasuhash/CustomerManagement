@@ -63,7 +63,7 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{customerId}/billing-groups/{billingGroupId}")]
-        public async Task<ActionResult<EntityDocumentModel>> RemoveBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
+        public async Task<StatusCodeResult> RemoveBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
         {
             var envelop = new MessageEnvelop()
             {

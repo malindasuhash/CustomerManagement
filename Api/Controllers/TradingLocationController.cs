@@ -16,21 +16,6 @@ namespace Api.Controllers
         {
         }
 
-        [HttpGet("trading-locations/find-by-contact")]
-        public async Task<ActionResult<List<EntityDocumentModel>>> FindTradingLocationsByContact([FromQuery] string customerId, [FromQuery] string contactId)
-        {
-            if (string.IsNullOrWhiteSpace(customerId) || string.IsNullOrWhiteSpace(contactId))
-            {
-                return BadRequest("customerId and contactId are required query parameters.");
-            }
-
-            var envelopes = await customerDatabase.GetTradingLocationsBy(customerId, contactId);
-
-            var results = envelopes?.Select(e => Translate(e)).ToList() ?? new List<EntityDocumentModel>();
-
-            return Ok(results);
-        }
-
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/trading-locations")]
         public async Task<ActionResult<ApiContract.EntityResponse_TradingLocation>> CreateTradingLocation(string customerId, string legalEntityId, [FromBody] ApiContract.CreateTradingLocation tradingLocation)
         {
@@ -66,7 +51,7 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/trading-locations/{tradingLocationId}")]
-        public async Task<ActionResult<EntityDocumentModel>> RemoveTradingLocation([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId)
+        public async Task<StatusCodeResult> RemoveTradingLocation([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId)
         {
             var envelop = new MessageEnvelop()
             {
@@ -120,7 +105,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/trading-locations/{tradingLocationId}/touch")]
-        public async Task<ActionResult<EntityDocumentModel>> TouchTradingLocation([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId)
+        public async Task<StatusCodeResult> TouchTradingLocation([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string tradingLocationId)
         {
             var envelop = new MessageEnvelop()
             {

@@ -2,12 +2,9 @@
 using Api.Mappers;
 using Api.Services;
 using Asp.Versioning;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using StateManagment.Entity;
 using StateManagment.Models;
-using System.Net.Http;
 
 namespace Api.Controllers
 {
@@ -25,21 +22,6 @@ namespace Api.Controllers
             this.linkGenerator = linkGenerator;
             this.httpClientFactory = httpClientFactory;
             this.httpContextAccessor = httpContextAccessor;
-        }
-
-        [HttpGet("legal-entities/find-by-contact")]
-        public async Task<ActionResult<List<EntityDocumentModel>>> FindLegalEntitiesByContact([FromQuery] string customerId, [FromQuery] string contactId)
-        {
-            if (string.IsNullOrWhiteSpace(customerId) || string.IsNullOrWhiteSpace(contactId))
-            {
-                return BadRequest("customerId and contactId are required query parameters.");
-            }
-
-            var envelopes = await customerDatabase.GetLegalEntitiesBy(customerId, contactId);
-
-            var results = envelopes?.Select(e => Translate(e)).ToList() ?? new List<EntityDocumentModel>();
-
-            return Ok(results);
         }
 
         [HttpGet("{customerId}/legal-entities/{entityId}/changes")]
@@ -160,7 +142,7 @@ namespace Api.Controllers
             var envelop = new MessageEnvelop
             {
                 Change = ChangeType.Create,
-                Name = EntityName.BankAccount,
+                Name = EntityName.LegalEntity,
                 Draft = domainLegalEntity,
                 CustomerId = customerId
             };
@@ -207,6 +189,12 @@ namespace Api.Controllers
                 CustomerId = customerId,
                 DraftVersion = (decimal)patch.Target_draft_version
             };
+
+            var result = await SubmitForProcessing<LegalEntity>(envelop);
+            if (result == MessageEnvelop.NONE)
+            {
+                return NotFound();
+            }
 
             return await GetLegalEntityById(customerId, entityId);
         }

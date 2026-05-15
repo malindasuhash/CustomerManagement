@@ -49,7 +49,7 @@ namespace Api.Mappers
                 VatRegistrationStatus.Registered => ApiContract.VatRegistrationStatus.Registered,
                 VatRegistrationStatus.NotRegistered => ApiContract.VatRegistrationStatus.NotRegistered,
                 VatRegistrationStatus.Pending => ApiContract.VatRegistrationStatus.RegistrationPending,
-                _ => throw new ArgumentOutOfRangeException(nameof(vatRegistrationStatus), $"Not expected VAT registration status value: {vatRegistrationStatus}")
+                _ => ApiContract.VatRegistrationStatus.RegistrationPending
             };
         }
     }
@@ -58,6 +58,10 @@ namespace Api.Mappers
     {
         public static ApiContract.LegalEntity Convert(LegalEntity legalEntityStateModel)
         {
+            if (legalEntityStateModel == null)
+            {
+                return null;
+            }
             var responseLegalEntity = new ApiContract.LegalEntity()
             {
                 Name = legalEntityStateModel.Name,
@@ -70,7 +74,7 @@ namespace Api.Mappers
                 Vat_registration_status = VatRegistrationStatus_ToApiContractMap.Convert(legalEntityStateModel.VatRegistrationStatus),
                 Country_of_authority = legalEntityStateModel.CountryOfAuthority,
                 Company_registration = legalEntityStateModel.CompanyRegistration,
-                Operating_as = legalEntityStateModel.TradingName, // TODO: confirm if this is correct mapping as there is also TradingName property in legal entity model
+                Operating_as = legalEntityStateModel.OperatingAs,
                 Maximum_transaction_value = legalEntityStateModel.MaximumTransactionValue,
                 Merchant_category_code = legalEntityStateModel.MerchantCategoryCode,
                 Standard_industry_classification = legalEntityStateModel.StandardIndustryClassification,
@@ -116,21 +120,6 @@ namespace Api.Mappers
                 responseLegalEntity.System_data = systemData;
             }
             return responseLegalEntity;
-        }
-    }
-
-    public class PersonsWithControl_ToApiContractMap
-    {
-        public static ApiContract.PersonWithControl[] Convert(PersonWithControl[] personsWithControl)
-        {
-            if (personsWithControl == null)
-            {
-                return null;
-            }
-            return personsWithControl.Select(pwc => new ApiContract.PersonWithControl
-            {
-
-            }).ToArray();
         }
     }
 
@@ -181,7 +170,7 @@ namespace Api.Mappers
             }
             return legalEntityWithControls.Select(lec => new ApiContract.LegalEntityWithControl
             {
-                Control_types = lec.ControlTypes.Select(ct => ControlType_ToApiContractMap.Convert(ct)).ToArray(),
+                Control_types = lec.ControlTypes.Select(ct => LegalEntityControlType_ToApiContractMap.Convert(ct)).ToArray(),
                 Legal_entity_id = lec.LegalEntityId,
                 Date_from = DateTime.MinValue,
                 Date_to = DateTime.MaxValue,
@@ -190,7 +179,7 @@ namespace Api.Mappers
         }
     }
 
-    public class ControlType_ToApiContractMap
+    public class LegalEntityControlType_ToApiContractMap
     {
         public static ApiContract.LegalEntityControlType Convert(ControlType controlType)
         {
@@ -290,7 +279,7 @@ namespace Api.Mappers
             return registeredAddresses.Select(ra => new ApiContract.RegisteredAddress
             {
                 Current = ra.Current,
-                Date_from = ra.DateFrom,
+                Date_from = ra.DateFrom.Value,
                 Date_to = ra.DateTo,
                 Address = Address_ToApiContractMap.Convert(ra.Address)
             }).ToArray();

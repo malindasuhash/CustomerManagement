@@ -86,7 +86,7 @@ namespace Api.Tests.Controllers
             {
                 Description = "description",
                 Labels = ["label"],
-               // TargetVersion = 20
+               // TargetDraftVersion = 20
             };
 
             // Act

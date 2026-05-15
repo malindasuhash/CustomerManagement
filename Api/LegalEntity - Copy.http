@@ -1,6 +1,6 @@
 @Api_HostAddress = https://localhost:7296/api/v1
 
-GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/d2686948-90bb-40b8-b468-103fb3f53c11
+GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17
 Accept: application/json
 
 ###
@@ -12,7 +12,7 @@ Content-Type: application/json
   "trading_name": "Trading as Amaxing Ltd",
   "operating_as": "Amaxing Ltd",
   "nature_of_business": "Retail",
-  "business_type": "Company",
+  "business_type": "SoleTrader",
   "business_email": "e@m.com",
   "business_contacts": [
     {
@@ -28,7 +28,7 @@ Content-Type: application/json
   "national_insurance_number": "SC10920J",
   "business_identification": "BI12345",
   "vat_registration": "VAR12324",
-  "vat_registration_status": "Registered",
+  "vat_registration_status": "Pending",
   "date_business_created": "2023-02-14",
   "date_trading_started": "2023-03-01",
   "legal_entity_with_control": [
@@ -56,7 +56,7 @@ Content-Type: application/json
         "last_name": "Form",
         "middle_name": "Not Middle",
         "nationality": "IL",
-        "addresses": [{
+        "address": {
            "code": "AB1 2CD",
             "country": "GB",
             "line1": "Line 1",
@@ -65,7 +65,7 @@ Content-Type: application/json
             "locality": "locality 44",
             "name": "House name",
             "region": "Suffolk"
-        }],
+        },
         "person_identification": "CIN12323"
       }
     }
@@ -110,26 +110,26 @@ Content-Type: application/json
 }
 ###
 
-PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/d2686948-90bb-40b8-b468-103fb3f53c11
+PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17
 Content-Type: application/json
 {
-  "trading_name": "Updated 4",
-  "business_email": "Updated 8",
-  "target_draft_version": 1
+  "tradingName": "Updated 4",
+  "businessEmail": "Updated 8",
+  "targetVersion": 2
 }
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/legal-entities/d2686948-90bb-40b8-b468-103fb3f53c11/submit
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17/submit
 Content-Type: application/json
 {
-  "target_draft_version": 2
+  "targetVersion": 3
 }
 ###
 
-POST {{Api_HostAddress}}/customers/Cus123/legal-entities/d2686948-90bb-40b8-b468-103fb3f53c11/touch
+POST {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17/touch
 ###
 
 GET {{Api_HostAddress}}/customers/legal-entities/find-by-contact?customerId=Cus123&ContactId=447c14ec-f184-44bf-84b2-61c1a61ee3da

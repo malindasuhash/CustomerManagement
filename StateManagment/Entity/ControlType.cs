@@ -4,6 +4,9 @@
     {
         None,
         Shareholder,
-        ParentCompany
+        ParentCompany,
+        Director,
+        BankInstructionSignatory,
+        ContractSignatory
     }
 }

@@ -95,58 +95,6 @@ namespace Api.Tests.Controllers
             await changeProcessor.Received(1).ProcessChangeAsync<LegalEntity>(Arg.Is<MessageEnvelop>(m => SameAfterMapped(patchModel, m)));
         }
 
-        [Fact]
-        public async Task FindLegalEntitiesByContact_WhenMissingParameters_ReturnsBadRequestAndDoesNotCallDatabase()
-        {
-            // Act
-            var result = await legalEntityController.FindLegalEntitiesByContact(null, null);
-
-            // Assert
-            var bad = Assert.IsType<BadRequestObjectResult>(result.Result);
-            Assert.Equal("customerId and contactId are required query parameters.", bad.Value);
-            await customerDatabase.DidNotReceiveWithAnyArgs().GetLegalEntitiesBy(default, default);
-        }
-
-        [Fact]
-        public async Task FindLegalEntitiesByContact_WhenFound_ReturnsMappedEntityDocumentModels()
-        {
-            // Arrange
-            const string contactId = "ContactId1";
-            var envelopes = new List<MessageEnvelop>()
-                {
-                    new MessageEnvelop()
-                    {
-                        CustomerId = CustomerId,
-                        EntityId = LegalEntityId,
-                        DraftVersion = 2,
-                        SubmittedVersion = 1,
-                        AppliedVersion = 0,
-                        Draft = new LegalEntity() { Name = "LE1" },
-                        Submitted = new LegalEntity() { Name = "LE1-sub" },
-                        Applied = null,
-                        State = EntityState.NEW
-                    }
-                };
-
-            customerDatabase.GetLegalEntitiesBy(CustomerId, contactId).Returns(envelopes);
-
-            // Act
-            var actionResult = await legalEntityController.FindLegalEntitiesByContact(CustomerId, contactId);
-
-            // Assert DB call
-            await customerDatabase.Received(1).GetLegalEntitiesBy(CustomerId, contactId);
-
-            // Assert response
-            var ok = Assert.IsType<OkObjectResult>(actionResult.Result);
-            var models = Assert.IsType<List<EntityDocumentModel>>(ok.Value);
-            Assert.Single(models);
-            var model = models.First();
-            Assert.Equal(CustomerId, model.CustomerId);
-            Assert.Equal(LegalEntityId, model.EntityId);
-            Assert.Equal(2, model.DraftVersion);
-            Assert.Equal(1, model.SubmittedVersion);
-        }
-
         private static bool SameAfterMapped(ApiContract.UpdateLegalEntity legalEntityModel, MessageEnvelop messageEnvelop)
         {
             var legalEntityMapped = messageEnvelop.Draft as LegalEntity;

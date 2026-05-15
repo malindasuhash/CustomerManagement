@@ -37,7 +37,7 @@ namespace Api.Services
                 try
                 {
                     var url = $"{host}{link.Link}";
-                    var body = new SubmitEntityModel { TargetVersion = link.DraftVersion };
+                    var body = new SubmitEntityModel { TargetDraftVersion = link.DraftVersion };
                     var response = await httpClient.PostAsJsonAsync(url, body);
 
                     result.Result = response.IsSuccessStatusCode ? "Submitted" : "Failed";

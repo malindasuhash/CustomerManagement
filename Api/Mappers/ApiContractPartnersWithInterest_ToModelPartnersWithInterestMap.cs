@@ -14,11 +14,11 @@ namespace Api.Mappers
             var converted_partners_with_interest = new List<PartnersWithInterest>();
             foreach (var partner_with_interest in partners_with_interest)
             {
-                //var partner_with_interest_model = new PartnerWithInterest()
-                //{
-                //    Legal_entity_id = partner_with_interest.Legal_entity_id,
-                //    Attribution_type = partner_with_interest.Attribution_type,
-                //};
+                var partner_with_interest_model = new PartnersWithInterest()
+                {
+                    LegalEntityId = partner_with_interest.Legal_entity_id,
+                    Attributions = ApiContractAttributionTypes_ToModelAttributionTypeMap.Convert(partner_with_interest.Attribution_type),
+                };
 
             }
 

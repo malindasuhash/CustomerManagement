@@ -55,7 +55,26 @@ namespace Api.Mappers
                 LegalEntitiesWithControl = ApiContractLegalEntitiesWithControl_ToModelLegalEntitiesWithControlMap.Convert(patch.Legal_entity_with_control),
                 MerchantCategoryCode = patch.Merchant_category_code,
                 PartnersWithInterest = ApiContractPartnersWithInterest_ToModelPartnersWithInterestMap.Convert(patch.Partners_with_interest),
+                PersonsWithControl = ApiContractPersonsWithControl_ToModelPersonsWithControlMap.Convert(patch.Persons_with_control),
+                RegisteredAddresses = ApiContractRegisteredAddresses_ToModelRegisteredAddressesMap.Convert(patch.Registered_addresses),
+                TurnoverPerAnnum = patch.Turnover_per_annum,
+                VatRegistration = patch.Vat_registration,
+                VatRegistrationStatus = ApiContractVatRegistrationStatus_ToModelVatRegistrationStatusMap.Convert(patch.Vat_registration_status),
+                // Status = patch.
             };
+
+            if (patch.Labels != null)
+            {
+                legalEntity.Labels = [.. patch.Labels];
+            }
+            if (patch.Meta_data != null)
+            {
+                legalEntity.MetaData = patch.Meta_data.Select(md => new StateManagment.Entity.MetaDataModel() { Key = md.Key, Value = md.Value }).ToArray();
+            }
+            if (patch.System_data != null)
+            {
+                legalEntity.SystemData = patch.System_data.Select(sd => new StateManagment.Entity.SystemDataModel() { Key = sd.Key, Value = sd.Value }).ToArray();
+            }
 
             return legalEntity;
         }

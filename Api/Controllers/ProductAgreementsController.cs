@@ -17,7 +17,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}/touch")]
-        public async Task<ActionResult<EntityDocumentModel>> TouchProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId)
+        public async Task<StatusCodeResult> TouchProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId)
         {
             var envelop = new MessageEnvelop()
             {
@@ -71,7 +71,7 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}")]
-        public async Task<ActionResult<EntityDocumentModel>> RemoveProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId)
+        public async Task<StatusCodeResult> RemoveProductAgreement([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string productAgreementId)
         {
             var envelop = new MessageEnvelop()
             {
