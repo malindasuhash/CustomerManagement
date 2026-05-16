@@ -52,7 +52,7 @@ namespace Api.Mappers
                 BusinessIdentification = patch.Business_identification,
                 BusinessType = ApiContractBusinessType_ToModelBusinessTypeMap.Convert(patch.Business_type),
                 //EndOfBusinessRelationship = ApiContractEndOfBusinessRelationship_ToModelEndOfBusinessRelationshipMap.Convert(patch.en),
-                LegalEntitiesWithControl = ApiContractLegalEntitiesWithControl_ToModelLegalEntitiesWithControlMap.Convert(patch.Legal_entity_with_control),
+                LegalEntitiesWithControl = ApiContractLegalEntitiesWithControl_ToModelLegalEntitiesWithControlMap.Convert(patch.Legal_entities_with_control),
                 MerchantCategoryCode = patch.Merchant_category_code,
                 PartnersWithInterest = ApiContractPartnersWithInterest_ToModelPartnersWithInterestMap.Convert(patch.Partners_with_interest),
                 PersonsWithControl = ApiContractPersonsWithControl_ToModelPersonsWithControlMap.Convert(patch.Persons_with_control),

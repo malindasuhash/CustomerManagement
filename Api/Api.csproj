@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <OpenApiReference Include="C:\Repo\CustomerManagement\ContractFirstDesign\cm-contract.json" Namespace="ApiContract" ClassName="ApiDto" CodeGenerator="NSwagCSharp" Options="/GenerateClientClasses:false /GenerateClientInterfaces:false /GenerateDtoTypes:true /OperationGenerationMode:SingleClientFromOperationId" />
+    <OpenApiReference Include="..\ContractFirstDesign\cm-contract.json" Namespace="ApiContract" ClassName="ApiDto" CodeGenerator="NSwagCSharp" Options="/GenerateClientClasses:false /GenerateClientInterfaces:false /GenerateDtoTypes:true /OperationGenerationMode:SingleClientFromOperationId" />
   </ItemGroup>
 
 </Project>
