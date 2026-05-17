@@ -22,7 +22,7 @@ namespace Api.Tests.Controllers
             changeProcessor = Substitute.For<IChangeProcessor>();
             customerDatabase = Substitute.For<ICustomerDatabase>();
             customerDatabase.FindEntity<BankAccount>(Arg.Any<LookupPredicate>()).Returns(new MessageEnvelop() { CustomerId = CustomerId });
-            bankAccountController = new BankAccountController(changeProcessor, customerDatabase);
+            bankAccountController = new BankAccountController(changeProcessor, customerDatabase, null);
         }
 
         [Fact]
