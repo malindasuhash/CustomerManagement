@@ -47,6 +47,10 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+// Correlation context services
+builder.Services.AddSingleton<ICorrelationContextAccessor, CorrelationContextAccessor>();
+builder.Services.AddTransient<Api.Correlation.CorrelationPropagationHandler>();
+builder.Services.AddHttpClient("with-correlation").AddHttpMessageHandler<Api.Correlation.CorrelationPropagationHandler>();
 
 builder.Services.AddOpenApi();
 
@@ -59,6 +63,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Correlation headers middleware should run early to validate and set the context
+app.UseMiddleware<Api.Correlation.CorrelationHeadersMiddleware>();
 
 app.UseAuthorization();
 
