@@ -2,11 +2,15 @@
 
 GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/e79cf88e-07d3-42cd-b313-cc4ff18492a5
 Accept: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "account_holder_names": ["Bank Account holder name 1"],
   "account_number": "9938982",
@@ -33,6 +37,8 @@ Content-Type: application/json
 
 PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/e79cf88e-07d3-42cd-b313-cc4ff18492a5
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "name": "Description Updated 4",
   "iban": "LK",
@@ -41,10 +47,14 @@ Content-Type: application/json
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/e79cf88e-07d3-42cd-b313-cc4ff18492a5
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/e79cf88e-07d3-42cd-b313-cc4ff18492a5/submit
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "target_draft_version": 2,
   "reason": "Risk checks complete"
@@ -52,4 +62,6 @@ Content-Type: application/json
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/bank-accounts/66d8be80-9df8-4fa6-b2df-004fa8ba8a24/touch
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###

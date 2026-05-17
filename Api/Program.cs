@@ -14,7 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure Microsoft.Extensions.Logging providers
 builder.Logging.ClearProviders();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
-builder.Logging.AddConsole();
+// Include logging scopes so the correlation headers added with BeginScope are included in all log messages
+builder.Logging.AddConsole(options => options.IncludeScopes = true);
+//builder.Logging.
 builder.Logging.AddDebug();
 
 // Add services to the container.

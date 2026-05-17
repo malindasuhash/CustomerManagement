@@ -93,6 +93,15 @@ namespace StateManagment
                         await orchestrator.PostApplyAsync(operationalEntity.EntityId, operationalEntity.Name);
                         break;
 
+                    case EntityState.IN_PROGRESS when operationalEntity.Status == RuntimeStatus.CHANGE_EXTERNAL:
+                        await changeHandler.ChangeStatusTo<T>(operationalEntity.SearchBy(), EntityState.IN_PROGRESS_EXTERNAL, operationalEntity.Feedbacks, operationalEntity.OrchestrationData);
+                        break;
+
+                    case EntityState.IN_PROGRESS_EXTERNAL when operationalEntity.Status == RuntimeStatus.CHANGE_EXTERNAL_COMPLETED:
+                        await changeHandler.ChangeStatusTo<T>(operationalEntity.SearchBy(), EntityState.SYNCHRONISED, operationalEntity.Feedbacks, operationalEntity.OrchestrationData);
+                        await orchestrator.PostApplyAsync(operationalEntity.EntityId, operationalEntity.Name);
+                        break;
+
                     default:
                         return TaskOutcome.TRANSITION_NOT_SUPPORTED;
                 }

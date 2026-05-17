@@ -114,11 +114,15 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
+            _logger.LogInformation($"Submitting to create BankAccount with CustomerId={customerId}, LegalEntityId={legalEntityId}");
+
             var result = await SubmitForProcessing<BankAccount>(envelop);
             if (result == MessageEnvelop.NONE)
             {
                 return NotFound();
             }
+
+            _logger.LogInformation($"BankAccount created BankAccountId={result.EntityId}");
 
             return await GetBankAccountById(customerId, legalEntityId, result.EntityId);
         }
