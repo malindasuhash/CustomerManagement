@@ -2,11 +2,15 @@
 
 GET  {{Api_HostAddress}}/customers/Cus123/billing-groups/f657d315-b2b7-4f03-966b-194524afcd50
 Accept: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/billing-groups
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "billing_bank_account_id": "A1234",
   "description": "Bank Description",
@@ -29,6 +33,8 @@ Content-Type: application/json
 
 PATCH {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "description": "Description Updated 4",
   "name": "Name Updated 8",
@@ -37,14 +43,20 @@ Content-Type: application/json
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4/submit
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "targetVersion": 2
 }
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/billing-groups/ae4113d0-33d0-4fcb-86e2-1ed43749d3a4/touch
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###

@@ -5,16 +5,15 @@
 - System data store/concept for other systems to store information without triggering orchestration.
 
 # UNDER DEV
-- Complete sample implementation of validation for Contact
-- Adding supporting APIs needed by Contact orchestration.
-
+- Basic implementation of authorisation and authentication with some permissions.
 
 # PENDING
 - Concept of operation data store as an event stream storage.
 - Runtime to host Contact orchestration.
-- Authorisation and scopes for making certain changes.
 
 # DONE
+- Header client and correlation id for tracking requests across services.
+- Upgraded to new API Contract.
 - Model generation via NSawg and initial project scaffolding.
 - Removed stub implementation of data changed publisher and replaced with pub/sub.
 - Removed in-memory locking and replaced with MongoDB based locking.

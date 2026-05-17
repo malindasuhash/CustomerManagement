@@ -2,11 +2,15 @@
 
 GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/d2686948-90bb-40b8-b468-103fb3f53c11
 Accept: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "name": "Amaxing",
   "trading_name": "Trading as Amaxing Ltd",
@@ -112,6 +116,8 @@ Content-Type: application/json
 
 PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/d2686948-90bb-40b8-b468-103fb3f53c11
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "trading_name": "Updated 4",
   "business_email": "Updated 8",
@@ -120,17 +126,25 @@ Content-Type: application/json
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/67a2a0a9-7633-43a0-8c63-a74c50216a17
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/d2686948-90bb-40b8-b468-103fb3f53c11/submit
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "target_draft_version": 2
 }
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/d2686948-90bb-40b8-b468-103fb3f53c11/touch
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###
 
 GET {{Api_HostAddress}}/customers/legal-entities/find-by-contact?customerId=Cus123&ContactId=447c14ec-f184-44bf-84b2-61c1a61ee3da
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###

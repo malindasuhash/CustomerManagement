@@ -2,11 +2,15 @@
 
 GET  {{Api_HostAddress}}/customers/Cus123/contacts/b8891815-4dac-49fa-9e2d-770694278ce8
 Accept: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/contacts
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "name": "Technical contact",
   "email": "a@b.com",
@@ -36,22 +40,29 @@ Content-Type: application/json
 
 PATCH {{Api_HostAddress}}/customers/Cus123/contacts/a9e8b9e8-1fff-4591-ad8b-f27537d50956
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
-  "firstName": "Updated 4",
-  "lastName": "Updated 8",
-  "targetVersion": 1
+  "name": "Updated 4",
+  "target_draft_version": 1
 }
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/contacts/a9e8b9e8-1fff-4591-ad8b-f27537d50956
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/contacts/dcc06ef9-b8b3-4889-ac08-cfc028e9314b/submit
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
-  "targetVersion": 1
+  "target_draft_version": 1
 }
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/contacts/b8891815-4dac-49fa-9e2d-770694278ce8/touch
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###

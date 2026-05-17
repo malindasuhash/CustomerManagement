@@ -2,11 +2,15 @@
 
 GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/7f7cdc9e-8e73-4ead-823f-69097d980e47
 Accept: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "product_catalogue_id": "886823",
   "display_name": "Product name 1",
@@ -32,6 +36,8 @@ Content-Type: application/json
 
 PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/7f7cdc9e-8e73-4ead-823f-69097d980e47
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "display_name": "display Updated 4",
   "target_draft_version": 1
@@ -39,14 +45,20 @@ Content-Type: application/json
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/7f7cdc9e-8e73-4ead-823f-69097d980e47/submit
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "target_draft_version": 2
 }
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/product-agreements/0d877f58-2e58-4762-abc7-9c87c5ea723a/touch
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###

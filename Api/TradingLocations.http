@@ -2,11 +2,15 @@
 
 GET  {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/ddf4fde3-bc61-4ed7-8684-1546f6c3018c
 Accept: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "address":  {
       "code": "89",
@@ -40,6 +44,8 @@ Content-Type: application/json
 
 PATCH {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/ddf4fde3-bc61-4ed7-8684-1546f6c3018c
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "name": "Description Updated 5",
   "target_draft_version": 1
@@ -47,10 +53,14 @@ Content-Type: application/json
 ###
 
 DELETE {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/a04c109a-ab3b-407d-beec-1f9c85d2bb08
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/ddf4fde3-bc61-4ed7-8684-1546f6c3018c/submit
 Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 {
   "reason": "Just like it",
   "target_draft_version": 2
@@ -58,4 +68,6 @@ Content-Type: application/json
 ###
 
 POST {{Api_HostAddress}}/customers/Cus123/legal-entities/LE123456/trading-locations/ddf4fde3-bc61-4ed7-8684-1546f6c3018c/touch
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 ###

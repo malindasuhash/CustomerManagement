@@ -2,14 +2,20 @@
 
 GET  {{Api_HostAddress}}/customers/Cus123/changes
 Accept: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 
 ###
 GET  {{Api_HostAddress}}/customers/Cus123/changes?legalEntityId=LE123456
 Accept: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 
 ###
 
 POST  {{Api_HostAddress}}/customers/Cus123/submit-changes?legalEntityId=LE123456
 Accept: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: Portal
 
 ###
