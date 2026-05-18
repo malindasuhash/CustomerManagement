@@ -82,11 +82,11 @@ namespace Api.Tests.Controllers
         public async Task UpdateBillingGroup_WhenUpdating_ThenIssuesTheAppropriateCommand()
         {
             // Arrange
-            var patchModel = new ApiContract.BillingGroup()
+            var patchModel = new ApiContract.UpdateBillingGroup()
             {
                 Description = "description",
                 Labels = ["label"],
-               // TargetDraftVersion = 20
+                Target_draft_version = 20
             };
 
             // Act
@@ -96,7 +96,7 @@ namespace Api.Tests.Controllers
             await changeProcessor.Received(1).ProcessChangeAsync<BillingGroup>(Arg.Is<MessageEnvelop>(m => SameAfterMapped(patchModel, m)));
         }
 
-        private static bool SameAfterMapped(ApiContract.BillingGroup billingGroupModel, MessageEnvelop messageEnvelop)
+        private static bool SameAfterMapped(ApiContract.UpdateBillingGroup billingGroupModel, MessageEnvelop messageEnvelop)
         {
             var billingGroupMapped = messageEnvelop.Draft as BillingGroup;
 

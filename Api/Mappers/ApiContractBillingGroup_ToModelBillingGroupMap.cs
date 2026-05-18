@@ -40,7 +40,7 @@ namespace Api.Mappers
             return modelBillingGroup;
         }
 
-        internal static BillingGroup Update(ApiContract.BillingGroup patch)
+        internal static BillingGroup Update(ApiContract.UpdateBillingGroup patch)
         {
             if (patch == null)
             {

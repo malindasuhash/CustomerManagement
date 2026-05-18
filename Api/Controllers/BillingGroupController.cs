@@ -17,7 +17,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/touch")]
-        public async Task<ActionResult<StatusCodeResult>> TouchBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
+        public async Task<StatusCodeResult> TouchBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
         {
             var envelop = new MessageEnvelop()
             {
@@ -117,7 +117,7 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/billing-groups/{billingGroupId}")]
-        public async Task<ActionResult<ApiContract.EntityResponse_BillingGroup>> UpateBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] ApiContract.BillingGroup patch)
+        public async Task<ActionResult<ApiContract.EntityResponse_BillingGroup>> UpateBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] ApiContract.UpdateBillingGroup patch)
         {
             var patchModel = ApiContractBillingGroup_ToModelBillingGroupMap.Update(patch);
 
@@ -128,7 +128,7 @@ namespace Api.Controllers
                 Name = EntityName.BillingGroup,
                 Draft = patchModel,
                 CustomerId = customerId,
-                DraftVersion = 0 // TODO: Define a new property in ApiContract.UpdateBillingGroup
+                DraftVersion = (decimal) patch.Target_draft_version
             };
 
             var result = await SubmitForProcessing<BillingGroup>(envelop);

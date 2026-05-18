@@ -33,8 +33,9 @@ namespace Api.Correlation
                     });
 
                 context.Response.ContentType = "application/problem+json";
-                await context.Response.WriteAsJsonAsync(errorCorrelationId);
-                return;
+                var json = System.Text.Json.JsonSerializer.Serialize(errorCorrelationId);
+                await context.Response.WriteAsync(json);
+                return; 
             }
 
             if (!context.Request.Headers.TryGetValue(ClientHeader, out var clientValues) || string.IsNullOrWhiteSpace(clientValues))
@@ -46,8 +47,9 @@ namespace Api.Correlation
                     });
 
                 context.Response.ContentType = "application/problem+json";
-                await context.Response.WriteAsJsonAsync(errorClientId);
-                return;
+                var json = System.Text.Json.JsonSerializer.Serialize(errorClientId);
+                await context.Response.WriteAsync(json);
+                return; 
             }
 
             if (!Guid.TryParse(correlationValues.ToString(), out var correlationId))
@@ -59,7 +61,8 @@ namespace Api.Correlation
                     });
 
                 context.Response.ContentType = "application/problem+json";
-                await context.Response.WriteAsJsonAsync(errorGuid);
+                var json = System.Text.Json.JsonSerializer.Serialize(errorGuid);
+                await context.Response.WriteAsync(json);
             }
 
             var clientId = clientValues.ToString();

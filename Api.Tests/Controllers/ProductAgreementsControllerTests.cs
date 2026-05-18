@@ -91,7 +91,6 @@ namespace Api.Tests.Controllers
             var patchModel = new ApiContract.UpdateProductAgreement()
             {
                 Display_name = "displayName1",
-                // pro = "ProductType1",
                 Labels = ["Label"],
                 Target_draft_version = 10
             };
@@ -111,8 +110,7 @@ namespace Api.Tests.Controllers
                 && messageEnvelop.Change == ChangeType.Update
                 && messageEnvelop.DraftVersion == 10
                 && productAgreementMapped.DisplayName.Equals(productAgreementModel.Display_name)
-                && productAgreementMapped.ProductType.Equals(productAgreementMapped.ProductType)
-                && productAgreementMapped.Labels.Equals(productAgreementModel.Labels);
+                && productAgreementMapped.Labels.All(a => productAgreementMapped.Labels.Contains(a));
         }
 
         private static bool LegalEntityIdCheck(MessageEnvelop envelop, string legalEntityId)

@@ -85,6 +85,8 @@ namespace Api.Tests.Controllers
             {
                 Business_email = "e@mail.com",
                 Nature_of_business = "sole trader",
+                Business_type = ApiContract.BusinessType.Company,
+                Name = "Test",
                 Target_draft_version = 10
             };
 
@@ -103,7 +105,7 @@ namespace Api.Tests.Controllers
                 && messageEnvelop.Change == ChangeType.Update
                 && messageEnvelop.DraftVersion == 10
                 && legalEntityMapped.BusinessEmail.Equals(legalEntityModel.Business_email)
-                && legalEntityMapped.BusinessType.Equals(legalEntityModel.Business_type);
+                && legalEntityMapped.Name.Equals(legalEntityModel.Name);
         }
     }
 }
