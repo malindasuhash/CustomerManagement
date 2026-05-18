@@ -57,7 +57,7 @@ namespace Api.Mappers
         {
             var modelBankAccount = new BankAccount()
             {
-                BankAccountHolderNames = [.. apiContractBankAccount.Account_holder_names],
+                BankAccountHolderNames = apiContractBankAccount.Account_holder_names != null ? [.. apiContractBankAccount.Account_holder_names] : null,
                 AccountNumber = apiContractBankAccount.Account_number,
                 BankCity = apiContractBankAccount.Bank_city,
                 BankCountry = apiContractBankAccount.Bank_country,

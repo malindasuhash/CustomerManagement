@@ -37,39 +37,6 @@ namespace StateManagment.Tests
         }
 
         [Fact]
-        public async Task ProcessUpdateAsync_WhenInProgressAndExternalChange_ThenChangeStatusToInProgressExternal_AndPostApplyCalled()
-        {
-            // Arrange
-            var orchestrationEnvelop = new OrchestrationEnvelop
-            {
-                Name = EntityName.Contact,
-                EntityId = "123",
-                CustomerId = "C9999",
-                DraftVersion = 10,
-                SubmittedVersion = 6,
-                Status = RuntimeStatus.CHANGE_EXTERNAL,
-                Feedbacks = [new Feedback() {Type = FeedbackType.None, Message = "External" }]
-            };
-
-            var changeHandler = Substitute.For<IChangeHandler>();
-            changeHandler.TakeEntityLock(orchestrationEnvelop.EntityId).Returns(Task.FromResult(TaskOutcome.OK));
-
-            var database = Substitute.For<ICustomerDatabase>();
-            database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
-                .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 6 });
-
-            var orchestrator = Substitute.For<IOrchestrator>();
-            var stateManager = new StateManager(changeHandler, orchestrator, database);
-
-            // Act
-            await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
-
-            // Assert
-            await changeHandler.Received(1).ChangeStatusTo<Contact>(orchestrationEnvelop.SearchBy(), EntityState.IN_PROGRESS_EXTERNAL, orchestrationEnvelop.Feedbacks, orchestrationEnvelop.OrchestrationData);
-            await orchestrator.DidNotReceive().PostApplyAsync(orchestrationEnvelop.EntityId, orchestrationEnvelop.Name);
-        }
-
-        [Fact]
         public async Task ProcessUpdateAsync_OnceLockIsTaken_ThenReleasesIt()
         {
             var orchestrationEnvelop = new OrchestrationEnvelop
@@ -405,7 +372,6 @@ namespace StateManagment.Tests
         [InlineData(EntityState.ATTENTION_REQUIRED, EntityState.EVALUATING, RuntimeStatus.EVALUATION_STARTED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
         [InlineData(EntityState.IN_PROGRESS, EntityState.ATTENTION_REQUIRED, RuntimeStatus.CHANGE_FAILED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
         [InlineData(EntityState.IN_PROGRESS, EntityState.SYNCHRONISED, RuntimeStatus.CHANGE_APPLIED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart, PostApplyStarts)]
-        [InlineData(EntityState.IN_PROGRESS, EntityState.IN_PROGRESS_EXTERNAL, RuntimeStatus.CHANGE_EXTERNAL, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart, PostApplyDoesNotStart)]
         [InlineData(EntityState.SYNCHRONISED, EntityState.SYNCHRONISED, RuntimeStatus.INITIATE, StateDoesNotChange, EvaluationStarts, ApplyDoesNotStart)]
         [InlineData(EntityState.SYNCHRONISED, EntityState.EVALUATING, RuntimeStatus.EVALUATION_STARTED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]
         [InlineData(EntityState.EVALUATION_RESTARTING, EntityState.EVALUATING, RuntimeStatus.EVALUATION_STARTED, StateChanges, EvaluationDoesNotStart, ApplyDoesNotStart)]

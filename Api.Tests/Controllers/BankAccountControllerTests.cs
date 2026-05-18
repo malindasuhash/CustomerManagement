@@ -1,5 +1,6 @@
 ﻿using Api.ApiModels;
 using Api.Controllers;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -22,7 +23,7 @@ namespace Api.Tests.Controllers
             changeProcessor = Substitute.For<IChangeProcessor>();
             customerDatabase = Substitute.For<ICustomerDatabase>();
             customerDatabase.FindEntity<BankAccount>(Arg.Any<LookupPredicate>()).Returns(new MessageEnvelop() { CustomerId = CustomerId });
-            bankAccountController = new BankAccountController(changeProcessor, customerDatabase, null);
+            bankAccountController = new BankAccountController(changeProcessor, customerDatabase, Substitute.For<ILogger<BankAccountController>>());
         }
 
         [Fact]
@@ -87,7 +88,8 @@ namespace Api.Tests.Controllers
                 Name = "BankName",
                 Labels = ["Label"],
                 Bank_country = "Country",
-                Target_draft_version = 10
+                Target_draft_version = 10,
+                Bank_name = "Test"
             };
 
             // Act
@@ -106,7 +108,7 @@ namespace Api.Tests.Controllers
                 && messageEnvelop.DraftVersion == 10
                 && bankAccountMapped.Iban.Equals(bankAccount.Iban)
                 && bankAccountMapped.BankName.Equals(bankAccountMapped.BankName)
-                && bankAccountMapped.Labels.Equals(bankAccount.Labels)
+                && bankAccountMapped.Labels.All(action => bankAccount.Labels.Contains(action))
                 && bankAccountMapped.BankCountry.Equals(bankAccount.Bank_country);
         }
 
