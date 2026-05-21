@@ -6368,147 +6368,6 @@
   },
   "components": {
     "schemas": {
-
-      "Product.Payit.SingleDomesticPayment": {
-        "type": "object",
-        "description": "Payit Single Domestic Payment features",
-        "properties": {
-            "Features": {
-                "type": "object",
-                "properties": {
-                    "FundSettledAdvice": {
-                        "type": "boolean",
-                        "description": "Indicates if fund settled advice is enabled"
-                    },
-                    "UnsolicitedPaymentIdentification": {
-                        "type": "boolean",
-                        "description": "Indicates if unsolicited payment identification is enabled"
-                    }
-                }
-            },
-            "Configuration": {
-                "$ref": "#/components/schemas/Product.Payit.PaymentCommon.Configuration"
-            }
-        }
-      },
-
-      "Product.Payit.PaymentCommon.Configuration": {
-      "type": ["object", "null"],
-        "properties": {
-          "StatusUpdateUrl": {
-            "type": "string",
-            "description": "URL to which payment status updates will be sent"
-          },
-          "ClientRedirectUrl": {
-            "type": "string",
-            "description": "URL to which the client will be redirected after completing the payment"
-          },
-          "IntegrationType": {
-            "type": "string",
-            "description": "Integration type for the international payment (ie., 'Embedded', 'SDK', 'Plugin')"
-          }
-        }
-      },
-
-      "Product.Payit.SingleInternationalPayment": {
-        "type": "object",
-        "description": "Payit Single International Payment features",
-        "properties": {
-          "Features": {
-            "type": "object",
-            "properties": {
-              "FundSettledAdvice": {
-                "type": "boolean",
-                "description": "Indicates if fund settled advice is enabled"
-              },
-              "UnsolicitedPaymentIdentification": {
-                "type": "boolean",
-                "description": "Indicates if unsolicited payment identification is enabled"
-              }
-            }
-          },
-          "Configuration": {
-            "$ref": "#/components/schemas/Product.Payit.PaymentCommon.Configuration"
-          }
-        }
-      },
-
-      "Product.Payit.CommercialVRP": {
-        "type": "object",
-        "description": "Payit Commercial VRM Payment features",
-        "properties": {
-          "Features": {
-            "type": "object",
-            "properties": {
-              "FundSettledAdvice": {
-                "type": "boolean",
-                "description": "Indicates if fund settled advice is enabled"
-              },
-              "UnsolicitedPaymentIdentification": {
-                "type": "boolean",
-                "description": "Indicates if unsolicited payment identification is enabled"
-              },
-              "Wave": {
-                "type": "string",
-                "enum": ["Wave1", "Wave2"],
-                "description": "TODO  "
-              }
-            }
-          },
-          "Configuration": {
-            "$ref": "#/components/schemas/Product.Payit.PaymentCommon.Configuration"
-          }
-        }
-      },
-
-
-      "Product.Payit.SweepingVRP": {
-        "type": "object",
-        "description": "Payit Sweeping VRM Payment product configuration",
-        "properties": {
-          "Features": {
-            "type": "object",
-            "properties": {
-              "FundSettledAdvice": {
-                "type": "boolean",
-                "description": "Indicates if fund settled advice is enabled"
-              },
-              "UnsolicitedPaymentIdentification": {
-                "type": "boolean",
-                "description": "Indicates if unsolicited payment identification is enabled"
-              },
-              "Wave": {
-                "type": "string",
-                "enum": ["Wave1", "Wave2"],
-                "description": "TODO  "
-              }
-            }
-          },
-          "Configuration": {
-            "$ref": "#/components/schemas/Product.Payit.PaymentCommon.Configuration"
-          }
-        }
-      },
-
-      "ProductDetails": {
-        "type": "object",
-        "description": "Product features and configuration",
-        "oneOf": [
-                {
-                  "$ref": "#/components/schemas/Product.Payit.SingleDomesticPayment"
-                },
-                {
-                  "$ref": "#/components/schemas/Product.Payit.SingleInternationalPayment"
-                },
-                {
-                  "$ref": "#/components/schemas/Product.Payit.CommercialVRP"
-                },
-                {
-                  "$ref": "#/components/schemas/Product.Payit.SweepingVRP"
-                }
-        ]
-      },
-
       "Address": {
         "type": "object",
         "description": "Postal address",
@@ -6696,6 +6555,7 @@
       "ChangeSummary": {
         "type": "object",
         "description": "Summary of changes between the draft and submitted versions of an entity.",
+        "additionalProperties": false,
         "properties": {
           "count": {
             "type": "integer",
@@ -6713,6 +6573,7 @@
       "ChangeLink": {
         "type": "object",
         "description": "Link to details about a specific change identified between the draft and submitted versions of an entity.",
+        "additionalProperties": false,
         "properties": {
           "name": {
             "type": "string",
@@ -6745,6 +6606,7 @@
 
       "ChangeSummarySubmitResult": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Result of a submission attempt when changes are identified between the draft and submitted versions of an entity.",
         "properties": {
           "count": {
@@ -6762,6 +6624,7 @@
 
       "ChangeLinkSummaryResult": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Link to details about a specific change identified between the draft and submitted versions of an entity.",
         "properties": {
           "name": {
@@ -6872,6 +6735,7 @@
       },
       "ContactSubmitRequest": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Submit request payload for a contact.",
         "required": [ "draft_version" ],
         "properties": {
@@ -6888,6 +6752,7 @@
       },
       "ContactSubmitResponse": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Response returned after a contact submission is accepted.",
         "required": [ "entity_id", "submitted_version" ],
         "properties": {
@@ -6904,6 +6769,7 @@
       },
       "CreateBankAccount": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "name" ],
         "properties": {
           "account_holder_names": {
@@ -6968,6 +6834,7 @@
       },
       "UpdateBankAccount": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "target_version" ],
         "properties": {
           "account_holder_names": {
@@ -7612,6 +7479,7 @@
       "UpdateProductAgreement": {
         "type": "object",
         "description": "Provides the details required to update an existing product agreement.",
+        "additionalProperties": false,
         "required": [ "product_id", "features", "configuration", "rate_card_id" ],
         "properties": {
            "product_id": {
@@ -7665,6 +7533,7 @@
 
       "CreateTradingLocation": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Provides the details to create a new trading entity",
         "required": [ "name", "contacts" ],
         "properties": {
@@ -7704,6 +7573,7 @@
       },
       "UpdateTradingLocation": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Provides the details to update an existing trading location",
         "required": [ "name", "contacts" ],
         "properties": {
@@ -8178,10 +8048,12 @@
       },
       "EntityState": {
         "type": "string",
-        "enum": [ "New", "Evaluating", "EvaluationRestarting", "InReview", "InProgress", "Synchronised", "AttentionRequired" ]
+        "additionalProperties": false,
+        "enum": [ "NEW", "EVALUATING", "EVALUATION_RESTARTING", "IN_REVIEW", "IN_PROGRESS", "IN_PROGRESS_EXTERNAL", "SYNCHRONISED", "ATTENTION_REQUIRED" ]
       },
       "EntityStateResult": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "kind", "context", "message", "details" ],
         "properties": {
           "context": { "type": "string" },
@@ -8211,6 +8083,7 @@
       },
       "EntityStatusQueryRequest": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Request for query of legal entity status values",
         "required": [ "id_list" ],
         "properties": {
@@ -8223,6 +8096,7 @@
       },
       "EntityStatusQueryResponse": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Response for query of legal entity status values",
         "required": [ "status_responses" ],
         "properties": {
@@ -8234,6 +8108,7 @@
       },
       "EntityStatusResponse": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "id", "status" ],
         "properties": {
           "id": {
@@ -8360,10 +8235,12 @@
       },
       "LegalEntityControlType": {
         "type": "string",
+        "additionalProperties": false,
         "enum": [ "Shareholder", "ParentCompany" ]
       },
       "LegalEntityStatus": {
         "type": "string",
+        "additionalProperties": false,
         "enum": [ "New", "Inactive", "Cancelled", "Declined", "Active", "Suspended/Hold", "Terminated", "Closed" ]
       },
       "LegalEntityWithControl": {
@@ -8581,6 +8458,7 @@
       },
       "RegisteredAddress": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "current", "date_from", "address" ],
         "properties": {
           "address": { "$ref": "#/components/schemas/Address" },
@@ -8604,6 +8482,7 @@
       },
       "Rfc7807": {
         "type": "object",
+        "additionalProperties": false,
         "required": [ "type", "title", "status", "detail", "instance" ],
         "properties": {
           "detail": { "type": "string" },
@@ -8707,7 +8586,7 @@
             "type": "string",
             "description": "ID of the legal entity the partner has interest in"
           },
-           "meta_data": {
+           "additional_details": {
             "$ref": "#/components/schemas/MetaData"
           }
         }
