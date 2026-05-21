@@ -1,4 +1,5 @@
-﻿using StateManagment.Entity;
+﻿using Microsoft.Extensions.Logging;
+using StateManagment.Entity;
 using StateManagment.Models;
 
 namespace StateManagment
@@ -7,10 +8,12 @@ namespace StateManagment
     {
         private readonly IChangeHandler changeHandler;
         private readonly IStateManager stateManager;
+        private readonly ILogger<ChangeHandler> logger;
 
-        public ChangeProcessor(IChangeHandler changeHandler, IStateManager stateManager)
+        public ChangeProcessor(IChangeHandler changeHandler, IStateManager stateManager, ILogger<ChangeHandler> logger)
         {
             this.stateManager = stateManager;
+            this.logger = logger;
             this.changeHandler = changeHandler;
         }
 
@@ -20,6 +23,8 @@ namespace StateManagment
         /// </summary>
         public async Task<TaskOutcome> ProcessChangeAsync<T>(MessageEnvelop envelop) where T : IEntity
         {
+            logger.LogInformation($"Processing change for Action='{envelop.Change}' EntityName='{envelop.Name}' CustomerId='{envelop.CustomerId}' EntityId='{envelop.EntityId}'");
+
             if (envelop.Change == ChangeType.Touch)
             {
                 return await stateManager.Evaluate<T>(envelop);
@@ -65,9 +70,14 @@ namespace StateManagment
 
             if (envelop.Change == ChangeType.Update)
             {
+                logger.LogInformation($"Attempting to merge draft for CustomerId='{envelop.CustomerId}', EntityName='{envelop.Name}' EntityId='{envelop.EntityId}'");
                 var outcome = await changeHandler.TryMergeDraft<T>(envelop);
 
-                if (outcome != TaskOutcome.OK) { return outcome; }
+                if (outcome != TaskOutcome.OK)
+                {
+                    logger.LogWarning($"Failed to merge draft for CustomerId='{envelop.CustomerId}', EntityName='{envelop.Name}' EntityId='{envelop.EntityId}' Outcome='{outcome.Reason}'. May need to retry.");
+                    return outcome;
+                }
 
                 if (envelop.IsSubmitted)
                 {
@@ -79,6 +89,7 @@ namespace StateManagment
                         var submitOutcome = await changeHandler.TryLockSubmitted<T>(envelop);
                         if (submitOutcome != TaskOutcome.OK)
                         {
+                            logger.LogWarning($"Failed to lock submitted version for update for CustomerId='{envelop.CustomerId}', EntityName='{envelop.Name}' EntityId='{envelop.EntityId}' Outcome='{submitOutcome.Reason}'. May need to retry.");
                             return submitOutcome;
                         }
 
@@ -90,6 +101,8 @@ namespace StateManagment
 
                 return outcome;
             }
+
+            logger.LogWarning($"Unsupported change type= '{envelop.Change}' for CustomerId='{envelop.CustomerId}', EntityName='{envelop.Name}' EntityId='{envelop.EntityId}'");
 
             return TaskOutcome.CHANGE_NOT_SUPPORTED;
         }

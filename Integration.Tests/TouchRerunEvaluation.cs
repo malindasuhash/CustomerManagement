@@ -1,5 +1,7 @@
 ﻿using Infrastructure;
 using InMemory;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using StateManagment;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -19,7 +21,7 @@ namespace Integration.Tests
             var orchestrator = new BasicOrchestrator();
             var stateManager = new StateManager(changeHandler, orchestrator, database);
 
-            var changeProcessor = new ChangeProcessor(changeHandler, stateManager);
+            var changeProcessor = new ChangeProcessor(changeHandler, stateManager, Substitute.For<ILogger<ChangeHandler>>());
             var customerId = "customer1";
 
             // Create new Contact

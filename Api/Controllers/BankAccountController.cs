@@ -1,5 +1,4 @@
 ﻿using Api.Mappers;
-using Microsoft.Extensions.Logging;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Entity;
@@ -12,17 +11,17 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class BankAccountController : EntityManagementController
     {
-        private readonly ILogger<BankAccountController> _logger;
+        private readonly ILogger<BankAccountController> logger;
 
         public BankAccountController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase, ILogger<BankAccountController> logger) : base(changeProcessor, customerDatabase)
         {
-            _logger = logger;
+            this.logger = logger;
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/touch")]
         public async Task<StatusCodeResult> TouchBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            _logger.LogInformation("TouchBankAccount called for CustomerId={CustomerId}, LegalEntityId={LegalEntityId}, BankAccountId={BankAccountId}", customerId, legalEntityId, bankAccountId);
+            logger.LogInformation($"TouchBankAccount called for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}");
 
             var envelop = new MessageEnvelop()
             {
@@ -41,13 +40,15 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation($"TouchBankAccount for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}, completed successfully");
+
             return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}/submit")]
         public async Task<ActionResult<ApiContract.SubmitActionResponse>> SubmitBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] ApiContract.SubmitActionRequest submitActionRequest)
         {
-            _logger.LogInformation("SubmitBankAccount called for CustomerId={CustomerId}, LegalEntityId={LegalEntityId}, BankAccountId={BankAccountId}, TargetDraftVersion={TargetDraft}", customerId, legalEntityId, bankAccountId, submitActionRequest?.Target_draft_version);
+            logger.LogInformation("SubmitBankAccount called for CustomerId={CustomerId}, LegalEntityId={LegalEntityId}, BankAccountId={BankAccountId}, TargetDraftVersion={TargetDraft}", customerId, legalEntityId, bankAccountId, submitActionRequest?.Target_draft_version);
             var envelop = new MessageEnvelop()
             {
                 Change = ChangeType.Submit,
@@ -68,6 +69,8 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation($"SubmitBankAccount for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}, completed successfully");
+
             return new ApiContract.SubmitActionResponse()
             {
                 Entity_id = bankAccountId,
@@ -78,7 +81,8 @@ namespace Api.Controllers
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
         public async Task<StatusCodeResult> RemoveBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            _logger.LogInformation("RemoveBankAccount called for CustomerId={CustomerId}, LegalEntityId={LegalEntityId}, BankAccountId={BankAccountId}", customerId, legalEntityId, bankAccountId);
+            logger.LogInformation($"RemoveBankAccount called for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}");
+
             var envelop = new MessageEnvelop()
             {
                 Change = ChangeType.Delete,
@@ -97,13 +101,16 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation($"RemoveBankAccount for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId} completed successfully");
+
             return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts")]
         public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> CreateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ApiContract.CreateBankAccount apiBankAccountRequest)
         {
-            _logger.LogInformation("CreateBankAccount called for CustomerId={CustomerId}, LegalEntityId={LegalEntityId}", customerId, legalEntityId);
+            logger.LogInformation($"CreateBankAccount called for CustomerId={customerId}, LegalEntityId={legalEntityId}");
+
             var bankAccount = ApiContractBankAccount_ToModelBankAccountMap.Convert(apiBankAccountRequest, legalEntityId);
 
             var envelop = new MessageEnvelop
@@ -114,7 +121,7 @@ namespace Api.Controllers
                 CustomerId = customerId
             };
 
-            _logger.LogInformation($"Submitting to create BankAccount with CustomerId={customerId}, LegalEntityId={legalEntityId}");
+            logger.LogInformation($"Submitting to create BankAccount with CustomerId={customerId}, LegalEntityId={legalEntityId}");
 
             var result = await SubmitForProcessing<BankAccount>(envelop);
             if (result == MessageEnvelop.NONE)
@@ -122,7 +129,7 @@ namespace Api.Controllers
                 return NotFound();
             }
 
-            _logger.LogInformation($"BankAccount created BankAccountId={result.EntityId}");
+            logger.LogInformation($"CreateBankAccount for CustomerId={customerId}, LegalEntityId={legalEntityId} completed successfully. BankAccountId='{result.EntityId}'");
 
             return await GetBankAccountById(customerId, legalEntityId, result.EntityId);
         }
@@ -130,7 +137,7 @@ namespace Api.Controllers
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
         public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> GetBankAccountById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
         {
-            _logger.LogInformation("GetBankAccountById called for CustomerId={CustomerId}, LegalEntityId={LegalEntityId}, BankAccountId={BankAccountId}", customerId, legalEntityId, bankAccountId);
+            logger.LogInformation($"GetBankAccountById called for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}");
             var entityDocument = await customerDatabase.FindEntity<BankAccount>(LookupPredicate.Create(bankAccountId, customerId, legalEntityId));
 
             return MessageEnvelop_ToEntityResponse_BankAccount.Convert(entityDocument);
@@ -139,7 +146,8 @@ namespace Api.Controllers
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
         public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> UpdateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] ApiContract.UpdateBankAccount updateModelRequest)
         {
-            _logger.LogInformation("UpdateBankAccount called for CustomerId={CustomerId}, LegalEntityId={LegalEntityId}, BankAccountId={BankAccountId}, TargetDraftVersion={TargetDraft}", customerId, legalEntityId, bankAccountId, updateModelRequest?.Target_draft_version);
+            logger.LogInformation($"UpdateBankAccount called for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}, TargetDraftVersion={updateModelRequest.Target_draft_version}");
+
             var patchBankAccount = ApiContractBankAccount_ToModelBankAccountMap.Update(updateModelRequest, legalEntityId);
 
             var envelop = new MessageEnvelop
@@ -157,6 +165,8 @@ namespace Api.Controllers
             {
                 return NotFound();
             }
+
+            logger.LogInformation($"UpdateBankAccount for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}, TargetDraftVersion={updateModelRequest.Target_draft_version} completed successfully");
 
             return await GetBankAccountById(customerId, legalEntityId, bankAccountId);
         }
