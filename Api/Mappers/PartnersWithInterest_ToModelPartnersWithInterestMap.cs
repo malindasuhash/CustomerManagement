@@ -21,10 +21,10 @@ namespace Api.Mappers
                     Attributions = ApiContractAttributionType_ToApiContractAttributionTypeMap.Convert(partner.Attribution_type),
                 };
 
-                if (partner.Meta_data != null)
+                if (partner.Additional_details != null)
                 {
                     var metaDataList = new List<MetaDataModel>();
-                    foreach (var data in partner.Meta_data)
+                    foreach (var data in partner.Additional_details)
                     {
                         metaDataList.Add(new MetaDataModel() { Key = data.Key, Value = data.Value });
                     }

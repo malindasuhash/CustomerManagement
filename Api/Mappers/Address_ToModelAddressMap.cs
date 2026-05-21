@@ -415,13 +415,13 @@ namespace Api.Mappers
         {
             return entityState switch
             {
-                EntityState.NEW => ApiContract.EntityState.New,
-                EntityState.EVALUATING => ApiContract.EntityState.Evaluating,
-                EntityState.EVALUATION_RESTARTING => ApiContract.EntityState.EvaluationRestarting,
-                EntityState.ATTENTION_REQUIRED => ApiContract.EntityState.AttentionRequired,
-                EntityState.IN_REVIEW => ApiContract.EntityState.InReview,
-                EntityState.IN_PROGRESS => ApiContract.EntityState.InProgress,
-                EntityState.SYNCHRONISED => ApiContract.EntityState.Synchronised,
+                EntityState.NEW => ApiContract.EntityState.NEW,
+                EntityState.EVALUATING => ApiContract.EntityState.EVALUATING,
+                EntityState.EVALUATION_RESTARTING => ApiContract.EntityState.EVALUATION_RESTARTING,
+                EntityState.ATTENTION_REQUIRED => ApiContract.EntityState.ATTENTION_REQUIRED,
+                EntityState.IN_REVIEW => ApiContract.EntityState.IN_REVIEW,
+                EntityState.IN_PROGRESS => ApiContract.EntityState.IN_PROGRESS,
+                EntityState.SYNCHRONISED => ApiContract.EntityState.SYNCHRONISED,
 
                 _ => throw new ArgumentOutOfRangeException(nameof(entityState), $"Not expected entity state value: {entityState}")
             };
