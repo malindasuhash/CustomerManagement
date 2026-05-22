@@ -6,6 +6,7 @@
 
 # UNDER DEV
 - Basic implementation of authorisation and authentication with some permissions.
+- Add logging to areas that have been missed.
 
 # PENDING
 - Concept of operation data store as an event stream storage.

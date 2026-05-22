@@ -1,0 +1,17 @@
+{
+  "role_to_permissions": {
+    "Admin": [
+      "CreateUser",
+      "DeleteUser",
+      "UpdateUser",
+      "ViewUser"
+    ],
+    "Editor": [
+      "UpdateUser",
+      "ViewUser"
+    ],
+    "Viewer": [
+      "ViewUser"
+    ]
+  }
+}
