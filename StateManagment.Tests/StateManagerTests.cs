@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -8,6 +9,8 @@ namespace StateManagment.Tests
 {
     public class StateManagerTests
     {
+        private readonly ILogger<StateManager> logger = Substitute.For<ILogger<StateManager>>();
+        
         [Fact]
         public async Task ProcessUpdateAsync_WhenEntityLockCannotBeTaken_ThenReturnsCannotTakeLockResponse()
         {
@@ -26,7 +29,7 @@ namespace StateManagment.Tests
 
             var orchestrator = Substitute.For<IOrchestrator>();
 
-            var stateManager = new StateManager(changeHandler, orchestrator, Substitute.For<ICustomerDatabase>());
+            var stateManager = new StateManager(changeHandler, orchestrator, Substitute.For<ICustomerDatabase>(), logger);
 
             // Act
             var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -56,7 +59,7 @@ namespace StateManagment.Tests
             dataRetriever.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.None, DraftVersion = 5 });
 
-            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), dataRetriever);
+            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), dataRetriever, logger);
 
             // Act
             var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -90,7 +93,7 @@ namespace StateManagment.Tests
             database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = currentState, SubmittedVersion = 5 });
 
-            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
+            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database, logger);
 
             // Act
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -121,7 +124,7 @@ namespace StateManagment.Tests
                 .Returns(new EntityBasics { State = EntityState.NEW, SubmittedVersion = 6 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
-            var stateManager = new StateManager(changeHandler, orchestrator, database);
+            var stateManager = new StateManager(changeHandler, orchestrator, database, logger   );
 
             // Act
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -154,7 +157,7 @@ namespace StateManagment.Tests
                 .Returns(new EntityBasics { State = EntityState.None, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
-            var stateManager = new StateManager(changeHandler, orchestrator, database);
+            var stateManager = new StateManager(changeHandler, orchestrator, database, logger);
 
             // Act
             var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -187,7 +190,7 @@ namespace StateManagment.Tests
                 .Returns(new EntityBasics { State = EntityState.EVALUATING, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
-            var stateManager = new StateManager(changeHandler, orchestrator, database);
+            var stateManager = new StateManager(changeHandler, orchestrator, database, logger);
 
             // Act
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -221,7 +224,7 @@ namespace StateManagment.Tests
                 .Returns(new EntityBasics { State = EntityState.EVALUATING, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
-            var stateManager = new StateManager(changeHandler, orchestrator, database);
+            var stateManager = new StateManager(changeHandler, orchestrator, database, logger);
 
             // Act
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -254,7 +257,7 @@ namespace StateManagment.Tests
                 .Returns(new EntityBasics { State = EntityState.EVALUATING, SubmittedVersion = 5 });
 
             var orchestrator = Substitute.For<IOrchestrator>();
-            var stateManager = new StateManager(changeHandler, orchestrator, database);
+            var stateManager = new StateManager(changeHandler, orchestrator, database, logger);
 
             // Act
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -281,7 +284,7 @@ namespace StateManagment.Tests
             var database = Substitute.For<ICustomerDatabase>();
             database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 5 });
-            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
+            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database, logger);
 
             // Act
             var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -311,7 +314,7 @@ namespace StateManagment.Tests
 
             database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.IN_REVIEW, SubmittedVersion = 6 });
-            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
+            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database, logger);
 
             // Act
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -341,7 +344,7 @@ namespace StateManagment.Tests
 
             database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = EntityState.IN_PROGRESS, SubmittedVersion = 6 });
-            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database);
+            var stateManager = new StateManager(changeHandler, Substitute.For<IOrchestrator>(), database, logger);
 
             // Act
             await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -397,7 +400,7 @@ namespace StateManagment.Tests
 
             database.GetBasicInfo<Contact>(orchestrationEnvelop.SearchBy())
                 .Returns(new EntityBasics { State = currentState, SubmittedVersion = 6 });
-            var stateManager = new StateManager(changeHandler, orchestrator, database);
+            var stateManager = new StateManager(changeHandler, orchestrator, database, logger);
 
             // Act
             var result = await stateManager.ProcessUpdateAsync<Contact>(orchestrationEnvelop);
@@ -439,7 +442,7 @@ namespace StateManagment.Tests
             var predicate = envelop.SearchBy();
             database.FindEntity<Contact>(predicate).Returns(envelop);
 
-            var stateManager = new StateManager(changeHandler, orchestrator, database);
+            var stateManager = new StateManager(changeHandler, orchestrator, database, logger);
 
             // Act
             await stateManager.Evaluate<Contact>(envelop);

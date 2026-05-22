@@ -25,7 +25,7 @@ namespace Integration.Tests
             var changeHandler = new ChangeHandler(database, database, eventPublisher, auditManager);
 
             var orchestrator = new BasicOrchestrator();
-            var stateManager = new StateManager(changeHandler, orchestrator, database);
+            var stateManager = new StateManager(changeHandler, orchestrator, database, Substitute.For<ILogger<StateManager>>());
 
             var changeProcessor = new ChangeProcessor(changeHandler, stateManager, Substitute.For<ILogger<ChangeHandler>>());
             var customerId = "customer1";
