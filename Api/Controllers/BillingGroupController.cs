@@ -46,6 +46,7 @@ namespace Api.Controllers
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/submit")]
         public async Task<ActionResult<ApiContract.SubmitActionResponse>> SubmitBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] ApiContract.SubmitActionRequest submitActionRequest)
         {
+            logger.LogInformation("Submitting billing group with id {BillingGroupId} for customer {CustomerId}", billingGroupId, customerId);
             var envelop = new MessageEnvelop()
             {
                 Change = ChangeType.Submit,
@@ -62,6 +63,8 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation("Successfully submitted billing group with id {BillingGroupId} for customer {CustomerId}", billingGroupId, customerId);
+
             return new ApiContract.SubmitActionResponse()
             {
                 Entity_id = billingGroupId,
@@ -72,6 +75,7 @@ namespace Api.Controllers
         [HttpDelete("{customerId}/billing-groups/{billingGroupId}")]
         public async Task<StatusCodeResult> RemoveBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
         {
+            logger.LogInformation("Removing billing group with id {BillingGroupId} for customer {CustomerId}", billingGroupId, customerId);
             var envelop = new MessageEnvelop()
             {
                 Change = ChangeType.Delete,
@@ -86,12 +90,15 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation("Successfully removed billing group with id {BillingGroupId} for customer {CustomerId}", billingGroupId, customerId);
+
             return new NoContentResult();
         }
 
         [HttpPost("{customerId}/billing-groups")]
         public async Task<ActionResult<ApiContract.EntityResponse_BillingGroup>> CreateBillingGroup([FromRoute] string customerId, [FromBody] ApiContract.CreateBillingGroup billingGroup)
         {
+            logger.LogInformation("Creating billing group for customer {CustomerId}", customerId);
             var domainBillingGroup = ApiContractBillingGroup_ToModelBillingGroupMap.Convert(billingGroup);
 
             var envelop = new MessageEnvelop
@@ -108,17 +115,23 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation("Successfully created billing group with id {BillingGroupId} for customer {CustomerId}", result.EntityId, customerId);
+
             return MessageEnvelop_ToEntityResponse_BillingGroup.Convert(result);
         }
 
         [HttpGet("{customerId}/billing-groups/{billingGroupId}")]
         public async Task<ActionResult<ApiContract.EntityResponse_BillingGroup>> GetBillingGroupById(string customerId, string billingGroupId)
         {
+            logger.LogInformation("Getting billing group with id {BillingGroupId} for customer {CustomerId}", billingGroupId, customerId);
+
             var entityDocument = await customerDatabase.FindEntity<BillingGroup>(LookupPredicate.Create(billingGroupId, customerId));
             if (entityDocument == MessageEnvelop.NONE)
             {
                 return NotFound();
             }
+
+            logger.LogInformation("Successfully got billing group with id {BillingGroupId} for customer {CustomerId}", billingGroupId, customerId);
 
             return MessageEnvelop_ToEntityResponse_BillingGroup.Convert(entityDocument);
         }
@@ -126,6 +139,8 @@ namespace Api.Controllers
         [HttpPatch("{customerId}/billing-groups/{billingGroupId}")]
         public async Task<ActionResult<ApiContract.EntityResponse_BillingGroup>> UpateBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId, [FromBody] ApiContract.UpdateBillingGroup patch)
         {
+            logger.LogInformation("Updating billing group with id {BillingGroupId} for customer {CustomerId}", billingGroupId, customerId);
+
             var patchModel = ApiContractBillingGroup_ToModelBillingGroupMap.Update(patch);
 
             var envelop = new MessageEnvelop
@@ -143,6 +158,8 @@ namespace Api.Controllers
             {
                 return NotFound();
             }
+
+            logger.LogInformation("Successfully updated billing group with id {BillingGroupId} for customer {CustomerId} and {TargetVersion}", billingGroupId, customerId, patch.Target_draft_version);
 
             return await GetBillingGroupById(customerId, billingGroupId);
         }
