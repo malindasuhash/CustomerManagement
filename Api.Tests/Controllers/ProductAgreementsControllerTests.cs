@@ -1,5 +1,6 @@
 ﻿using Api.ApiModels;
 using Api.Controllers;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -27,7 +28,7 @@ namespace Api.Tests.Controllers
             changeProcessor = Substitute.For<IChangeProcessor>();
             customerDatabase = Substitute.For<ICustomerDatabase>();
             customerDatabase.FindEntity<ProductAgreement>(Arg.Any<LookupPredicate>()).Returns(new MessageEnvelop() { CustomerId = CustomerId });
-            productAgreementController = new ProductAgreementsController(changeProcessor, customerDatabase);
+            productAgreementController = new ProductAgreementsController(changeProcessor, customerDatabase, Substitute.For<ILogger<ProductAgreementsController>>());
         }
 
         [Fact]

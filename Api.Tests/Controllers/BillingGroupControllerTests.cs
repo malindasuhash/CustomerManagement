@@ -1,5 +1,6 @@
 ﻿using Api.ApiModels;
 using Api.Controllers;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -20,7 +21,7 @@ namespace Api.Tests.Controllers
             changeProcessor = Substitute.For<IChangeProcessor>();
             customerDatabase = Substitute.For<ICustomerDatabase>();
             customerDatabase.FindEntity<BankAccount>(Arg.Any<LookupPredicate>()).Returns(new MessageEnvelop() { CustomerId = CustomerId });
-            billingGroupController = new BillingGroupController(changeProcessor, customerDatabase);
+            billingGroupController = new BillingGroupController(changeProcessor, customerDatabase, Substitute.For<ILogger<BillingGroupController>>());
         }
 
         [Fact]

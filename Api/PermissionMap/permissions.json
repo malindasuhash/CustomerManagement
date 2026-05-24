@@ -13,5 +13,12 @@
     "Viewer": [
       "ViewUser"
     ]
+  },
+  "permissions": {
+    "bank_account": {
+      "touch": [
+        { "ucm.bank_account.touch": "Allows the user to trigger evaluation based on submitted bank account data." }
+      ]
+    }
   }
 }

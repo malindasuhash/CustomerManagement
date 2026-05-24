@@ -16,12 +16,14 @@ namespace Api.Controllers
         private readonly LinkGenerator linkGenerator;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ILogger<LegalEntityController> logger;
 
-        public LegalEntityController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase, LinkGenerator linkGenerator, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(changeProcessor, customerDatabase)
+        public LegalEntityController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase, LinkGenerator linkGenerator, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor, ILogger<LegalEntityController> logger) : base(changeProcessor, customerDatabase, logger)
         {
             this.linkGenerator = linkGenerator;
             this.httpClientFactory = httpClientFactory;
             this.httpContextAccessor = httpContextAccessor;
+            this.logger = logger;
         }
 
         [HttpGet("{customerId}/legal-entities/{entityId}/changes")]

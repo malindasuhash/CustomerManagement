@@ -13,7 +13,7 @@ namespace Api.Controllers
     {
         private readonly ILogger<BankAccountController> logger;
 
-        public BankAccountController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase, ILogger<BankAccountController> logger) : base(changeProcessor, customerDatabase)
+        public BankAccountController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase, ILogger<BankAccountController> logger) : base(changeProcessor, customerDatabase, logger)
         {
             this.logger = logger;
         }

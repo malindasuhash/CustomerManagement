@@ -1,6 +1,7 @@
 ﻿using Api.ApiModels;
 using Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -22,7 +23,7 @@ namespace Api.Tests.Controllers
             changeProcessor = Substitute.For<IChangeProcessor>();
             customerDatabase = Substitute.For<ICustomerDatabase>();
             customerDatabase.FindEntity<LegalEntity>(Arg.Any<LookupPredicate>()).Returns(new MessageEnvelop() { CustomerId = CustomerId });
-            legalEntityController = new LegalEntityController(changeProcessor, customerDatabase, null, null, null);
+            legalEntityController = new LegalEntityController(changeProcessor, customerDatabase, null, null, null, Substitute.For<ILogger<LegalEntityController>>());
         }
 
         [Fact]

@@ -1,6 +1,7 @@
 ﻿using Api.ApiModels;
 using Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -28,7 +29,7 @@ namespace Api.Tests.Controllers
             changeProcessor = Substitute.For<IChangeProcessor>();
             customerDatabase = Substitute.For<ICustomerDatabase>();
             customerDatabase.FindEntity<TradingLocation>(Arg.Any<LookupPredicate>()).Returns(new MessageEnvelop() { CustomerId = CustomerId });
-            tradingLocationController = new TradingLocationController(changeProcessor, customerDatabase);
+            tradingLocationController = new TradingLocationController(changeProcessor, customerDatabase, Substitute.For<ILogger<TradingLocationController>>());
         }
 
         [Fact]

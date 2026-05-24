@@ -12,8 +12,11 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class ProductAgreementsController : EntityManagementController
     {
-        public ProductAgreementsController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
+        private readonly ILogger<ProductAgreementsController> logger;
+
+        public ProductAgreementsController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase, ILogger<ProductAgreementsController> logger) : base(changeProcessor, customerDatabase, logger)
         {
+            this.logger = logger;
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/product-agreements/{productAgreementId}/touch")]

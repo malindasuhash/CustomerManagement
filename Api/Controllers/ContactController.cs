@@ -11,8 +11,11 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class ContactController : EntityManagementController
     {
-        public ContactController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
+        private readonly ILogger<ContactController> logger;
+
+        public ContactController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase, ILogger<ContactController> logger) : base(changeProcessor, customerDatabase, logger)
         {
+            this.logger = logger;
         }
 
         [HttpPost("{customerId}/contacts/{contactId}/touch")]

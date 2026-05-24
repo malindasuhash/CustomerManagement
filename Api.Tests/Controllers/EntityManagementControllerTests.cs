@@ -1,5 +1,6 @@
 ﻿using Api.Controllers;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StateManagment.Entity;
 using StateManagment.Models;
@@ -68,7 +69,7 @@ namespace Api.Tests.Controllers
     internal class EntityManagementControllerHelper : EntityManagementController
     {
         public EntityManagementControllerHelper(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase)
-            : base(changeProcessor, customerDatabase)
+            : base(changeProcessor, customerDatabase, Substitute.For<ILogger<EntityManagementController>>())
         {
         }
 

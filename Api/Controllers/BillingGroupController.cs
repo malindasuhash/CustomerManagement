@@ -12,13 +12,18 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class BillingGroupController : EntityManagementController
     {
-        public BillingGroupController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase) : base(changeProcessor, customerDatabase)
+        private readonly ILogger<BillingGroupController> logger;
+
+        public BillingGroupController(IChangeProcessor changeProcessor, ICustomerDatabase customerDatabase, ILogger<BillingGroupController> logger) : base(changeProcessor, customerDatabase, logger)
         {
+            this.logger = logger;
         }
 
         [HttpPost("{customerId}/billing-groups/{billingGroupId}/touch")]
         public async Task<StatusCodeResult> TouchBillingGroup([FromRoute] string customerId, [FromRoute] string billingGroupId)
         {
+            logger.LogInformation("Touching billing group with id {BillingGroupId} for customer {CustomerId}", billingGroupId, customerId);
+
             var envelop = new MessageEnvelop()
             {
                 CustomerId = customerId,
@@ -32,6 +37,8 @@ namespace Api.Controllers
             {
                 return NotFound();
             }
+
+            logger.LogInformation("Successfully touched billing group with id {BillingGroupId} for customer {CustomerId}", billingGroupId, customerId);
 
             return new NoContentResult();
         }
