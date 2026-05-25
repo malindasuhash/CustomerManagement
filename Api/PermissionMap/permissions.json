@@ -16,13 +16,15 @@
         { "ucm.bank_account.manage_meta_data": "Allows creation of system data related to bank accounts." }
       ],
       "view": [
-        { "ucm.bank_account.view_basic": "Allows viewing of bank account data." },
+        { "ucm.bank_account.view_basic": "Allows viewing of bank account data but account numbers are masked." },
+        { "ucm.bank_account.view_masked_data": "Allows viewing of bank account numbers, which are normally masked." },
         { "ucm.bank_account.view_system_data": "Allows viewing of system data related to a bank account." },
         { "ucm.bank_account.view_meta_data": "Allows viewing of meta data related to a bank account." },
         { "ucm.bank_account.view_soft_deleted_data": "Allows viewing of a soft deleted bank account." }
       ],
       "update": [
         { "ucm.bank_account.update_basic": "Allows updating of bank account data in draft." },
+        { "ucm.bank_account.manage_masked_data": "Allows management of bank account account numbers, which are normally masked." },
         { "ucm.bank_account.manage_system_data": "Allows management of system data related to bank accounts." },
         { "ucm.bank_account.manage_meta_data": "Allows management of system data related to bank accounts." },
         { "ucm.bank_account.manage_soft_deleted_data": "Allows managing of a soft deleted bank account." }
