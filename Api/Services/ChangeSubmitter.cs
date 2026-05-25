@@ -5,6 +5,8 @@ namespace Api.Services
 {
     public class ChangeSubmitter(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
     {
+        public const string SubmitAction = "Submitted";
+        public const string FailedAction = "Failed";
         public async Task<List<ChangeSubmitResult>> SubmitAll(ChangeLink[] changeLinks)
         {
             var results = new List<ChangeSubmitResult>();
@@ -29,7 +31,7 @@ namespace Api.Services
 
                 if (string.IsNullOrEmpty(link.Link))
                 {
-                    result.Result = "Failed";
+                    result.Result = FailedAction;
                     results.Add(result);
                     continue;
                 }
@@ -40,11 +42,11 @@ namespace Api.Services
                     var body = new ApiContract.SubmitActionRequest { Target_draft_version = (long)link.DraftVersion };
                     var response = await httpClient.PostAsJsonAsync(url, body);
 
-                    result.Result = response.IsSuccessStatusCode ? "Submitted" : "Failed";
+                    result.Result = response.IsSuccessStatusCode ? SubmitAction : FailedAction;
                 }
                 catch
                 {
-                    result.Result = "Failed";
+                    result.Result = FailedAction;
                 }
 
                 results.Add(result);

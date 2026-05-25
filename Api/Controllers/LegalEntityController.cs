@@ -29,7 +29,11 @@ namespace Api.Controllers
         [HttpGet("{customerId}/legal-entities/{entityId}/changes")]
         public async Task<ChangeSummary> GetChanges([FromRoute] string customerId, [FromQuery] string entityId)
         {
+            logger.LogInformation($"Getting changes for legal entity {entityId} of customer {customerId}");
+
             var pendingChanges = await GetLinks(customerId, entityId);
+
+            logger.LogInformation($"Found {pendingChanges.Length} pending changes for legal entity {entityId} of customer {customerId}");
 
             return new ChangeSummary()
             {
@@ -41,10 +45,14 @@ namespace Api.Controllers
         [HttpPost("{customerId}/legal-entities/{entityId}/changes")]
         public async Task<ChangeSummarySubmitResult> ChangeSubmitResults([FromRoute] string customerId, [FromQuery] string entityId)
         {
+            logger.LogInformation($"Submitting changes for legal entity {entityId} of customer {customerId}");
+
             var pendingChanges = await GetLinks(customerId, entityId);
             var changeSubmitter = new ChangeSubmitter(httpClientFactory, httpContextAccessor);
 
             var submitResults = await changeSubmitter.SubmitAll(pendingChanges);
+
+            logger.LogInformation($"Submitted {submitResults.Count} changes for legal entity {entityId} of customer {customerId} with {submitResults.Count(r => r.Result.Equals(ChangeSubmitter.SubmitAction))} successes and {submitResults.Count(r => !r.Result.Equals(ChangeSubmitter.FailedAction))} failures");
 
             return new ChangeSummarySubmitResult()
             {
@@ -56,10 +64,8 @@ namespace Api.Controllers
         [HttpPost("{customerId}/legal-entities/{entityId}/touch")]
         public async Task<StatusCodeResult> TouchLegalEntity([FromRoute] string customerId, [FromRoute] string entityId)
         {
-            // LEGAL_ENTITY_TOUCH
-            // LEGAL_ENTITY_READ
-            // SYSTEM_DATA_READ
-            // SOFTDELETE_DATA_READ
+            logger.LogInformation($"Touching legal entity {entityId} of customer {customerId}");
+
             var envelop = new MessageEnvelop()
             {
                 Change = ChangeType.Touch,
@@ -74,16 +80,15 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation($"Touched legal entity {entityId} of customer {customerId}");
+
             return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities/{entityId}/submit")]
         public async Task<ActionResult<ApiContract.SubmitActionResponse>> SubmitLegalEntity([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] ApiContract.SubmitActionRequest submitActionRequest)
         {
-            // LEGAL_ENTITY_SUBMIT
-            // LEGAL_ENTITY_READ
-            // SYSTEM_DATA_READ
-            // SOFTDELETE_DATA_READ
+            logger.LogInformation($"Submitting legal entity {entityId} of customer {customerId} with target draft version {submitActionRequest.Target_draft_version}");
             var envelop = new MessageEnvelop()
             {
                 Change = ChangeType.Submit,
@@ -100,6 +105,7 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation($"Submitted legal entity {entityId} of customer {customerId} with submitted version {result.SubmittedVersion}");
             return new ApiContract.SubmitActionResponse()
             {
                 Entity_id = result.EntityId,
@@ -110,10 +116,7 @@ namespace Api.Controllers
         [HttpDelete("{customerId}/legal-entities/{entityId}")]
         public async Task<StatusCodeResult> RemoveLegalEntity([FromRoute] string customerId, [FromRoute] string entityId)
         {
-            // LEGAL_ENTITY_REMOVE
-            // LEGAL_ENTITY_READ
-            // SYSTEM_DATA_READ
-            // SOFTDELETE_DATA_READ
+            logger.LogInformation($"Removing legal entity {entityId} of customer {customerId}");
             var envelop = new MessageEnvelop()
             {
                 Change = ChangeType.Delete,
@@ -128,16 +131,15 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation($"Removed legal entity {entityId} of customer {customerId}");
+
             return new NoContentResult();
         }
 
         [HttpPost("{customerId}/legal-entities")]
         public async Task<ActionResult<ApiContract.EntityResponse_LegalEntity>> CreateLegalEntity([FromRoute] string customerId, [FromBody] ApiContract.CreateLegalEntity legalEntity)
         {
-            // LEGAL_ENTITY_WRITE
-            // LEGAL_ENTITY_READ
-            // SYSTEM_DATA_READ
-            // SOFTDELETE_DATA_READ
+            logger.LogInformation($"Creating legal entity for customer {customerId} with name {legalEntity.Name}");
 
             var domainLegalEntity = ApiContractLegalEntity_ToModelLegalEntityMap.Convert(legalEntity);
 
@@ -155,31 +157,30 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation($"Created legal entity {result.EntityId} for customer {customerId} with name {legalEntity.Name}");
             return MessageEnvelop_ToEntityResponseLegalEntityMap.Convert(result);
         }
 
         [HttpGet("{customerId}/legal-entities/{entityId}")]
         public async Task<ActionResult<ApiContract.EntityResponse_LegalEntity>> GetLegalEntityById(string customerId, string entityId)
         {
-            // LEGAL_ENTITY_READ
-            // SYSTEM_DATA_READ
-            // SOFTDELETE_DATA_READ
+            logger.LogInformation($"Getting legal entity {entityId} for customer {customerId}");
+
             var entityDocument = await customerDatabase.FindEntity<LegalEntity>(LookupPredicate.Create(entityId, customerId));
             if (entityDocument == MessageEnvelop.NONE)
             {
                 return NotFound();
             }
 
+            logger.LogInformation($"Found legal entity {entityId} for customer {customerId}");
             return MessageEnvelop_ToEntityResponseLegalEntityMap.Convert(entityDocument);
         }
 
         [HttpPatch("{customerId}/legal-entities/{entityId}")]
         public async Task<ActionResult<ApiContract.EntityResponse_LegalEntity>> UpdateLegalEntity([FromRoute] string customerId, [FromRoute] string entityId, [FromBody] ApiContract.UpdateLegalEntity patch)
         {
-            // LEGAL_ENTITY_UPDATE
-            // LEGAL_ENTITY_READ
-            // SYSTEM_DATA_READ
-            // SOFTDELETE_DATA_READ
+            logger.LogInformation($"Updating legal entity {entityId} for customer {customerId} with target draft version {patch.Target_draft_version}");
+
             LegalEntity patchModel = MessageEnvelop_ToEntityResponseLegalEntityMap.Convert(patch);
 
             var envelop = new MessageEnvelop
@@ -198,6 +199,7 @@ namespace Api.Controllers
                 return NotFound();
             }
 
+            logger.LogInformation($"Updated legal entity {entityId} for customer {customerId} with target draft version {patch.Target_draft_version}");
             return await GetLegalEntityById(customerId, entityId);
         }
 
