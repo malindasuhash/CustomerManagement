@@ -285,5 +285,15 @@ namespace Infrastructure
 
             return results;
         }
+
+        public Task<TaskOutcome> CreateCustomer(CustomerProfile customerProfile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CustomerProfile?> GetCustomer(string customerId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

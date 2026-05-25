@@ -50,10 +50,10 @@ namespace Api.Tests.Controllers
         public async Task RemoveBankAccount_WhenInvoked_ThenUseAccurateCommand()
         {
             // Act
-            await bankAccountController.RemoveBankAccount(CustomerId, LegalEntityId, BankAccountId);
+            await bankAccountController.RemoveBankAccount(CustomerId, LegalEntityId, BankAccountId, true);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(p => p.EntityId.Equals(BankAccountId) && p.Change == ChangeType.Delete && p.Name == EntityName.BankAccount && p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId)));
+            await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(p => p.IsSubmitted && p.EntityId.Equals(BankAccountId) && p.Change == ChangeType.Delete && p.Name == EntityName.BankAccount && p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId)));
         }
 
         [Fact]
@@ -62,10 +62,10 @@ namespace Api.Tests.Controllers
             var bankAccount = new ApiContract.CreateBankAccount();
 
             // Act
-            await bankAccountController.CreateBankAccount(CustomerId, LegalEntityId, bankAccount);
+            await bankAccountController.CreateBankAccount(CustomerId, LegalEntityId, bankAccount, true);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(p => p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId)));
+            await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(p => p.IsSubmitted && p.CustomerId.Equals(CustomerId) && LegalEntityIdCheck(p, LegalEntityId)));
         }
 
         [Fact]
@@ -93,10 +93,10 @@ namespace Api.Tests.Controllers
             };
 
             // Act
-            await bankAccountController.UpdateBankAccount(CustomerId, LegalEntityId, BankAccountId, patchModel);
+            await bankAccountController.UpdateBankAccount(CustomerId, LegalEntityId, BankAccountId, patchModel, true);
 
             // Assert
-            await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(m => SameAfterMapped(patchModel, m)));
+            await changeProcessor.Received(1).ProcessChangeAsync<BankAccount>(Arg.Is<MessageEnvelop>(m => m.IsSubmitted && SameAfterMapped(patchModel, m)));
         }
 
         private static bool SameAfterMapped(ApiContract.UpdateBankAccount bankAccount, MessageEnvelop messageEnvelop)

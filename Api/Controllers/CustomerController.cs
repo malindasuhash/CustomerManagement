@@ -1,5 +1,4 @@
-﻿using Api.ApiModels;
-using Api.Services;
+﻿using Api.Mappers;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using StateManagment.Models;
@@ -12,49 +11,27 @@ namespace Api.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerDatabase customerDatabase;
-        private readonly LinkGenerator linkGenerator;
-        private readonly IHttpClientFactory httpClientFactory;
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ILogger<CustomerController> logger;
 
-        public CustomerController(ICustomerDatabase customerDatabase, LinkGenerator linkGenerator, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        public CustomerController(ICustomerDatabase customerDatabase, ILogger<CustomerController> logger)
         {
             this.customerDatabase = customerDatabase;
-            this.linkGenerator = linkGenerator;
-            this.httpClientFactory = httpClientFactory;
-            this.httpContextAccessor = httpContextAccessor;
+            this.logger = logger;
         }
 
-        [HttpGet("{customerId}/changes")]
-        public async Task<ChangeSummary> GetChanges([FromRoute] string customerId, [FromQuery] string? legalEntityId)
+        [HttpPost("{customer}/profile")]
+        public async Task<ApiContract.EntityResponse_Customer> CreateProfile(ApiContract.CreateCustomer customerProfile)
         {
-            var pendingChanges = await GetLinks(customerId, legalEntityId);
+            logger.LogInformation("Creating customer with Id {CustomerId}", customerProfile.Customer_id);
 
-            return new ChangeSummary()
-            {
-                total = pendingChanges.Length,
-                Changes = pendingChanges
-            };
-        }
+            var profile = ApiContractCreateCustomer_ToModelCustomerProfile.Convert(customerProfile);
+            
+            var result = await customerDatabase.CreateCustomer(profile);
 
-        [HttpPost("{customerId}/submit-changes")]
-        public async Task<ChangeSummarySubmitResult> ChangeSubmitResults([FromRoute] string customerId, [FromQuery] string? legalEntityId)
-        {
-            var pendingChanges = await GetLinks(customerId, legalEntityId);
-            var changeSubmitter = new ChangeSubmitter(httpClientFactory, httpContextAccessor);
+            var storedCustomer = await customerDatabase.GetCustomer(profile.CustomerId);
+            //var response = CustomerProfile_ToApiContractEntityResponseCustomer.Convert(result);
 
-            var submitResults = await changeSubmitter.SubmitAll(pendingChanges);
-
-            return new ChangeSummarySubmitResult()
-            {
-                total = submitResults.Count,
-                Changes = submitResults
-            };
-        }
-
-        private async Task<ChangeLink[]> GetLinks(string customerId, string? legalEntityId)
-        {
-            var pendingChanges = await customerDatabase.GetPendingChanges(customerId, legalEntityId);
-            return pendingChanges.Select(change => ChangeLink.Create(change, linkGenerator, customerId, legalEntityId)).ToArray();
+            return null;
         }
     }
 }

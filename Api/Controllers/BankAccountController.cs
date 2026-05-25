@@ -79,9 +79,13 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
-        public async Task<StatusCodeResult> RemoveBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
+        public async Task<StatusCodeResult> RemoveBankAccount(
+            [FromRoute] string customerId,
+            [FromRoute] string legalEntityId,
+            [FromRoute] string bankAccountId,
+            [FromQuery] bool submit = false)
         {
-            logger.LogInformation($"RemoveBankAccount called for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}");
+            logger.LogInformation($"RemoveBankAccount called for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}, Submit={submit}");
 
             var envelop = new MessageEnvelop()
             {
@@ -93,6 +97,7 @@ namespace Api.Controllers
                 {
                     LegalEntityId = legalEntityId
                 },
+                IsSubmitted = submit
             };
 
             var result = await SubmitForProcessing<BankAccount>(envelop);
@@ -107,7 +112,11 @@ namespace Api.Controllers
         }
 
         [HttpPost("{customerId}/legal-entities/{legalEntityId}/bank-accounts")]
-        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> CreateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromBody] ApiContract.CreateBankAccount apiBankAccountRequest)
+        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> CreateBankAccount(
+            [FromRoute] string customerId,
+            [FromRoute] string legalEntityId,
+            [FromBody] ApiContract.CreateBankAccount apiBankAccountRequest,
+            [FromQuery] bool submit = false)
         {
             logger.LogInformation($"CreateBankAccount called for CustomerId={customerId}, LegalEntityId={legalEntityId}");
 
@@ -118,7 +127,8 @@ namespace Api.Controllers
                 Change = ChangeType.Create,
                 Name = EntityName.BankAccount,
                 Draft = bankAccount,
-                CustomerId = customerId
+                CustomerId = customerId,
+                IsSubmitted = submit
             };
 
             logger.LogInformation($"Submitting to create BankAccount with CustomerId={customerId}, LegalEntityId={legalEntityId}");
@@ -135,7 +145,10 @@ namespace Api.Controllers
         }
 
         [HttpGet("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
-        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> GetBankAccountById(string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId)
+        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> GetBankAccountById(
+            [FromRoute] string customerId, 
+            [FromRoute] string legalEntityId, 
+            [FromRoute] string bankAccountId)
         {
             logger.LogInformation($"GetBankAccountById called for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}");
             var entityDocument = await customerDatabase.FindEntity<BankAccount>(LookupPredicate.Create(bankAccountId, customerId, legalEntityId));
@@ -144,7 +157,12 @@ namespace Api.Controllers
         }
 
         [HttpPatch("{customerId}/legal-entities/{legalEntityId}/bank-accounts/{bankAccountId}")]
-        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> UpdateBankAccount([FromRoute] string customerId, [FromRoute] string legalEntityId, [FromRoute] string bankAccountId, [FromBody] ApiContract.UpdateBankAccount updateModelRequest)
+        public async Task<ActionResult<ApiContract.EntityResponse_BankAccount>> UpdateBankAccount(
+            [FromRoute] string customerId, 
+            [FromRoute] string legalEntityId, 
+            [FromRoute] string bankAccountId, 
+            [FromBody] ApiContract.UpdateBankAccount updateModelRequest,
+            [FromQuery] bool submit = false)
         {
             logger.LogInformation($"UpdateBankAccount called for CustomerId={customerId}, LegalEntityId={legalEntityId}, BankAccountId={bankAccountId}, TargetDraftVersion={updateModelRequest.Target_draft_version}");
 
@@ -157,7 +175,8 @@ namespace Api.Controllers
                 Name = EntityName.BankAccount,
                 Draft = patchBankAccount,
                 CustomerId = customerId,
-                DraftVersion = (decimal)updateModelRequest.Target_draft_version
+                DraftVersion = (decimal)updateModelRequest.Target_draft_version,
+                IsSubmitted = submit
             };
 
             var result = await SubmitForProcessing<BankAccount>(envelop);

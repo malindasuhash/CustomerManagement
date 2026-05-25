@@ -15,5 +15,7 @@ namespace StateManagment.Models
         Task<List<EntityBasics>> GetPendingChanges(string customerId, string? legalEntityId = null);
         Task<List<MessageEnvelop>> GetLegalEntitiesBy(string customerId, string contactId);
         Task<List<MessageEnvelop>> GetTradingLocationsBy(string customerId, string contactId);
+        Task<TaskOutcome> CreateCustomer(CustomerProfile customerProfile);
+        Task<CustomerProfile?> GetCustomer(string customerId);
     }
 }
