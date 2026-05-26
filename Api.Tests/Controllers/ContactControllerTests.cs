@@ -1,5 +1,4 @@
-﻿using Api.ApiModels;
-using Api.Controllers;
+﻿using Api.Controllers;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StateManagment.Entity;

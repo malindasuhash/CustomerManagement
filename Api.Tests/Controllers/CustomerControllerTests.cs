@@ -1,5 +1,6 @@
 ﻿using Api.Controllers;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using StateManagment.Models;
@@ -57,6 +58,50 @@ namespace Api.Tests.Controllers
 
             // Assert
             await customerDatabase.Received(1).GetCustomer(CustomerId);
+        }
+
+        [Fact]
+        public async Task CreateProfile_WhenInvoked_ThenCreateProfileAndReturnsExpectedResult()
+        {
+            // Arrange
+            customerDatabase.CreateCustomer(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
+            customerDatabase.GetCustomer(Arg.Any<string>()).Returns(new CustomerProfile() { CustomerId = CustomerId, Name = CustomerName });
+
+            // Act
+            var customerProfile = new ApiContract.CreateCustomer()
+            {
+                Name = CustomerName,
+                Customer_id = CustomerId
+            };
+
+            // Act
+            var result = await customerController.CreateProfile(customerProfile);
+
+            // Assert
+            result.Value.Customer_id.Should().Be(CustomerId);
+            result.Value.Should().Be(CustomerName);
+        }
+
+        [Fact]
+        public async Task CreateProfile_WhenCustomerProfileCannotBeCreated_ThenReturns500Message()
+        {
+            // Arrange
+            customerDatabase.CreateCustomer(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.FAILED);
+
+            // Act
+            var customerProfile = new ApiContract.CreateCustomer()
+            {
+                Name = CustomerName,
+                Customer_id = CustomerId
+            };
+
+            // Act
+            var result = await customerController.CreateProfile(customerProfile);
+            var data = ((ObjectResult)result.Result);
+
+            // Assert
+            data.StatusCode.Should().Be(500);
+            data.Value.Should().NotBeNull();
         }
     }
 }
