@@ -103,5 +103,34 @@ namespace Api.Tests.Controllers
             data.StatusCode.Should().Be(500);
             data.Value.Should().NotBeNull();
         }
+
+        [Fact]
+        public async Task GetProfile_WhenCustomerIdIsSupplied_ThenReturnsCustomerProfile()
+        {
+            // Arrange
+            customerDatabase.GetCustomer(Arg.Any<string>()).Returns(new CustomerProfile() { CustomerId = CustomerId, Name = CustomerName });
+
+            // Act
+            var storedCustomer = await customerController.GetProfile(CustomerId);
+
+            // Assert
+            storedCustomer.Value.Customer_id.Should().Be(CustomerId);
+            storedCustomer.Value.Name.Should().Be(CustomerName);
+        }
+
+        [Fact]
+        public async Task GetProfile_WhenCustomerIdIsSupplied_ThenReturnsNotFound()
+        {
+            // Arrange
+            customerDatabase.GetCustomer(Arg.Any<string>()).Returns((CustomerProfile)null);
+
+            // Act
+            var storedCustomer = await customerController.GetProfile(CustomerId);
+            var rfc = storedCustomer.Result as NotFoundObjectResult;
+
+            // Assert
+            storedCustomer.Result.Should().BeOfType<NotFoundObjectResult>();
+            rfc.Value.Should().BeOfType<ApiContract.Rfc7807>();
+        }
     }
 }
