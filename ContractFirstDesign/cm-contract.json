@@ -3088,7 +3088,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/EntityResponse_BillingGroup"
+                    "$ref": "#/components/schemas/ChangeLink"
                   }
                 }
               }
@@ -3209,7 +3209,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/EntityResponse_BillingGroup"
+                    "$ref": "#/components/schemas/ChangeLinkSummaryResult"
                   }
                 }
               }
