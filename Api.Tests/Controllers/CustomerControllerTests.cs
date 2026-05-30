@@ -132,5 +132,29 @@ namespace Api.Tests.Controllers
             storedCustomer.Result.Should().BeOfType<NotFoundObjectResult>();
             rfc.Value.Should().BeOfType<ApiContract.Rfc7807>();
         }
+
+        [Fact]
+        public async Task UpdateProfile_WhenUpdating_ThenTakesLatestChangesAndAppliesThem()
+        {
+            // Arrange
+            customerDatabase.UpdateCustomer(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
+            customerDatabase.GetCustomer(CustomerId).Returns(new CustomerProfile() {  Name = CustomerName, CustomerId = CustomerId });
+
+            // Act
+            var result = await customerController.UpdateProfile(CustomerId, new ApiContract.UpdateCustomer()
+            {
+                Name = CustomerName,
+                Meta_data = new ApiContract.MetaData() 
+                {
+                    { "a", "b" }
+                }
+            });
+
+            // Assert
+            result.Value.Customer_id.Should().Be(CustomerId);
+            result.Value.Name.Should().Be(CustomerName);
+            await customerDatabase.Received(1).UpdateCustomer(Arg.Is<CustomerProfile>(a => a.MetaData.Any(b => b.Key.Equals("a"))));
+            await customerDatabase.Received(1).UpdateCustomer(Arg.Is<CustomerProfile>(a => a.MetaData.Any(b => b.Value.Equals("b"))));
+        }
     }
 }

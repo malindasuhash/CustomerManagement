@@ -27,4 +27,8 @@
     <OpenApiReference Include="..\ContractFirstDesign\cm-contract.json" Namespace="ApiContract" ClassName="ApiDto" CodeGenerator="NSwagCSharp" Options="/GenerateClientClasses:false /GenerateClientInterfaces:false /GenerateDtoTypes:true /OperationGenerationMode:SingleClientFromOperationId" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="StateManagment\Models\" />
+  </ItemGroup>
+
 </Project>

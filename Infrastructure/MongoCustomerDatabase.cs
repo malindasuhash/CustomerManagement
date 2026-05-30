@@ -295,5 +295,10 @@ namespace Infrastructure
         {
             throw new NotImplementedException();
         }
+
+        public Task<TaskOutcome> UpdateCustomer(CustomerProfile customerProfile)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -17,5 +17,6 @@ namespace StateManagment.Models
         Task<List<MessageEnvelop>> GetTradingLocationsBy(string customerId, string contactId);
         Task<TaskOutcome> CreateCustomer(CustomerProfile customerProfile);
         Task<CustomerProfile?> GetCustomer(string customerId);
+        Task<TaskOutcome> UpdateCustomer(CustomerProfile customerProfile);
     }
 }

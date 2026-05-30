@@ -19,8 +19,9 @@ namespace Api.Controllers
             this.logger = logger;
         }
 
-        [HttpPost("{customerId}/profile")]
-        public async Task<ActionResult<ApiContract.EntityResponse_Customer>> CreateProfile(ApiContract.CreateCustomer customerProfile)
+        [HttpPost("profile")]
+        public async Task<ActionResult<ApiContract.EntityResponse_Customer>> CreateProfile(
+            [FromBody] ApiContract.CreateCustomer customerProfile)
         {
             logger.LogInformation("Creating customer with Id {CustomerId}", customerProfile.Customer_id);
 
@@ -38,15 +39,12 @@ namespace Api.Controllers
                 });
             }
 
-            var storedCustomer = await customerDatabase.GetCustomer(profile.CustomerId);
-
-            var response = CustomerProfile_ToApiContractEntityResponseCustomer.Convert(storedCustomer);
-
-            return response;
+            return await GetProfile(profile.CustomerId);
         }
 
-        [HttpGet("{customerId}/profile")]
-        public async Task<ActionResult<ApiContract.EntityResponse_Customer>> GetProfile([FromRoute] string customerId)
+        [HttpGet("{customerId}")]
+        public async Task<ActionResult<ApiContract.EntityResponse_Customer>> GetProfile(
+            [FromRoute] string customerId)
         {
             logger.LogInformation("Getting customer profile for Id {CustomerId}", customerId);
 
@@ -65,6 +63,40 @@ namespace Api.Controllers
             var response = CustomerProfile_ToApiContractEntityResponseCustomer.Convert(storedCustomer);
 
             return response;
+        }
+
+        [HttpPatch("{customerId}")]
+        public async Task<ActionResult<ApiContract.EntityResponse_Customer>> UpdateProfile(
+            [FromRoute] string customerId, 
+            [FromBody] ApiContract.UpdateCustomer customerProfile)
+        {
+            logger.LogInformation("Updating customer with Id {CustomerId}", customerId);
+
+            var profile = ApiContractUpdateCustomer_ToModelCustomerProfile.Convert(customerId, customerProfile);
+
+            var result = await customerDatabase.UpdateCustomer(profile);
+            if (result == TaskOutcome.NOT_FOUND)
+            {
+                logger.LogWarning("Customer with Id {CustomerId} not found for update", customerId);
+                return NotFound(new ApiContract.Rfc7807
+                {
+                    Detail = $"Customer with Id {customerId} not found for update",
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "#CustomerProfileNotFound",
+                });
+            }
+            else if (result != TaskOutcome.OK)
+            {
+                logger.LogError("Failed to update customer with Id {CustomerId}. Reason: {Reason}", customerId, result.Reason);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ApiContract.Rfc7807
+                {
+                    Detail = $"Failed to update customer with Id {customerId}. Reason: {result.Reason}",
+                    Status = StatusCodes.Status500InternalServerError,
+                    Title = "#CustomerProfileUpdateFailed",
+                });
+            }
+
+            return await GetProfile(customerId);
         }
     }
 }
