@@ -8,7 +8,8 @@
         LegalEntity,
         BillingGroup,
         ProductAgreement,
-        TradingLocation
+        TradingLocation,
+        CustomerProfile
     }
 
     public enum EntityState

@@ -19,4 +19,12 @@ namespace StateManagment.Models
         Task<CustomerProfile?> GetCustomer(string customerId);
         Task<TaskOutcome> UpdateCustomer(CustomerProfile customerProfile);
     }
+
+    public interface ICustomerProfileRepository
+    {
+        Task<TaskOutcome> Create(CustomerProfile customerProfile);
+        Task<CustomerProfile?> Read(string customerId);
+        Task<TaskOutcome> Update(CustomerProfile customerProfile);
+        Task<TaskOutcome> Delete(string customerId);
+    }
 }

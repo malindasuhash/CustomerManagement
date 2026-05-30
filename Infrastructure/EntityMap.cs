@@ -2,7 +2,7 @@
 
 namespace Infrastructure
 {
-    internal partial class EntityCollectionConfig
+    public partial class EntityCollectionConfig
     {
         public struct EntityMap
         {

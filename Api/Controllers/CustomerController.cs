@@ -67,7 +67,7 @@ namespace Api.Controllers
 
         [HttpPatch("{customerId}")]
         public async Task<ActionResult<ApiContract.EntityResponse_Customer>> UpdateProfile(
-            [FromRoute] string customerId, 
+            [FromRoute] string customerId,
             [FromBody] ApiContract.UpdateCustomer customerProfile)
         {
             logger.LogInformation("Updating customer with Id {CustomerId}", customerId);
@@ -97,6 +97,12 @@ namespace Api.Controllers
             }
 
             return await GetProfile(customerId);
+        }
+
+        [HttpDelete("{customerId}")]
+        public async Task DeleteProfile([FromRoute] string customerId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

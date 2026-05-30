@@ -37,6 +37,11 @@ namespace Infrastructure
                 return EntityMap.Create(EntityName.TradingLocation, "trading-locations");
             }
 
+            if (typeof(T).IsAssignableFrom(typeof(CustomerProfile)))
+            {
+                return EntityMap.Create(EntityName.CustomerProfile, "customer-profiles");
+            }
+
             return EntityMap.None;
         }
     }
