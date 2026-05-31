@@ -13,20 +13,48 @@ namespace Infrastructure.Repositories
             var client = new MongoClient(Environment.GetEnvironmentVariable(Statics.MongoConnectionStringEnv));
             database = client.GetDatabase(Statics.DatabaseName);
             map = EntityCollectionConfig.Config<CustomerProfile>();
+
+            // Ensure unique index on CustomerId at repository construction time (one-time operation)
+            try
+            {
+                var customerProfiles = database.GetCollection<CustomerProfile>(map.Collection);
+                var indexKeys = Builders<CustomerProfile>.IndexKeys.Ascending(c => c.CustomerId);
+                var indexModel = new CreateIndexModel<CustomerProfile>(indexKeys, new CreateIndexOptions { Unique = true });
+                // CreateOne is synchronous and acceptable at startup; ignore errors to avoid blocking startup on index issues
+                customerProfiles.Indexes.CreateOne(indexModel);
+            }
+            catch
+            {
+                // ignore index creation failures
+            }
         }
 
         public async Task<TaskOutcome> Create(CustomerProfile customerProfile)
         {
             var customerProfiles = database.GetCollection<CustomerProfile>(map.Collection);
 
-            // Ensure unique index on CustomerId
-            var indexKeys = Builders<CustomerProfile>.IndexKeys.Ascending(c => c.CustomerId);
-            var indexModel = new CreateIndexModel<CustomerProfile>(indexKeys, new CreateIndexOptions { Unique = true });
-            customerProfiles.Indexes.CreateOne(indexModel);
+            // Index creation moved to constructor; proceed with insertion logic
+            if (customerProfile == null || string.IsNullOrWhiteSpace(customerProfile.CustomerId))
+            {
+                return TaskOutcome.FAILED;
+            }
+
+            // Check for existing CustomerId to avoid duplicate key error
+            var filter = Builders<CustomerProfile>.Filter.Eq(c => c.CustomerId, customerProfile.CustomerId);
+            var existing = await customerProfiles.Find(filter).FirstOrDefaultAsync().ConfigureAwait(false);
+            if (existing != null)
+            {
+                return TaskOutcome.FAILED;
+            }
+
+            // Ensure internal Id is set
+            if (string.IsNullOrWhiteSpace(customerProfile.Id))
+            {
+                customerProfile.Id = MongoDB.Bson.ObjectId.GenerateNewId().ToString();
+            }
 
             try
             {
-                // Insert; if duplicate CustomerId exists, driver will throw
                 await customerProfiles.InsertOneAsync(customerProfile).ConfigureAwait(false);
                 return TaskOutcome.OK;
             }
@@ -57,7 +85,7 @@ namespace Infrastructure.Repositories
 
         public async Task<CustomerProfile?> Read(string customerId)
         {
-            var customerProfiles = database.GetCollection<CustomerProfile>("CustomerProfiles");
+            var customerProfiles = database.GetCollection<CustomerProfile>(map.Collection);
 
             var filter = Builders<CustomerProfile>.Filter.Eq(c => c.CustomerId, customerId);
             var result = await customerProfiles.Find(filter).FirstOrDefaultAsync().ConfigureAwait(false);
@@ -67,7 +95,7 @@ namespace Infrastructure.Repositories
 
         public async Task<TaskOutcome> Update(CustomerProfile customerProfile)
         {
-            var customerProfiles = database.GetCollection<CustomerProfile>("CustomerProfiles");
+            var customerProfiles = database.GetCollection<CustomerProfile>(map.Collection);
 
             // Find existing to preserve internal Id if not supplied
             var filter = Builders<CustomerProfile>.Filter.Eq(c => c.CustomerId, customerProfile.CustomerId);
@@ -80,7 +108,30 @@ namespace Infrastructure.Repositories
             // Preserve internal Id
             customerProfile.Id = existing.Id;
 
-            var replaceResult = await customerProfiles.ReplaceOneAsync(filter, customerProfile).ConfigureAwait(false);
+            if (customerProfile.Name != null)
+            {
+                existing.Name = customerProfile.Name;
+            }
+
+            if (customerProfile.SystemData != null)
+            {
+                existing.SystemData = customerProfile.SystemData;
+            }
+
+            if (customerProfile.MetaData != null)
+            {
+                existing.MetaData = customerProfile.MetaData;
+            }
+
+            if (customerProfile.Labels != null)
+            {
+                existing.Labels = customerProfile.Labels;
+            }
+
+            existing.UpdateTimestamp = customerProfile.UpdateTimestamp;
+            existing.UpdateUser = customerProfile.UpdateUser;
+
+            var replaceResult = await customerProfiles.ReplaceOneAsync(filter, existing).ConfigureAwait(false);
             if (replaceResult.IsAcknowledged && replaceResult.ModifiedCount >= 0)
             {
                 return TaskOutcome.OK;

@@ -1,21 +1,38 @@
 @Api_HostAddress = https://localhost:7296/api/v1
 
-GET  {{Api_HostAddress}}/customers/Cus123/changes
+POST  {{Api_HostAddress}}/customers
+Content-Type: application/json
+nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
+nwp-client-id: AuthorisationServer
+{
+  "name": "my profile",
+  "customer_id": "ABC229",
+  "labels": ["interesting"],
+  "meta_data": {
+    "this_is": "interesting one"
+  },
+  "system_data": {
+    "this_is": "system data"
+  }
+}
+
+
+###
+GET  {{Api_HostAddress}}/customers/ABC226
 Accept: application/json
 nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
 nwp-client-id: Portal
 
 ###
-GET  {{Api_HostAddress}}/customers/Cus123/changes?legalEntityId=LE123456
-Accept: application/json
+
+PATCH  {{Api_HostAddress}}/customers/ABC229
+Content-Type: application/json
 nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
 nwp-client-id: Portal
-
-###
-
-POST  {{Api_HostAddress}}/customers/Cus123/submit-changes?legalEntityId=LE123456
-Accept: application/json
-nwp-correlation-id: ce84956f-85e7-4587-9976-865c780d6f6d
-nwp-client-id: Portal
-
+{
+  "name": "not by profile",
+  "meta_data": {
+    "something": "good"
+  }
+}
 ###

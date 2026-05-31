@@ -13,7 +13,11 @@
             {
                 Customer_id = customerProfile.CustomerId,
                 Name = customerProfile.Name,
-                Labels = customerProfile.Labels
+                Labels = customerProfile.Labels,
+                Created_by = customerProfile.CreatedUser,
+                Created = customerProfile.CreatedTimestamp.ToString(),
+                Updated = customerProfile.UpdateTimestamp.ToString(),
+                Updated_by = customerProfile.UpdateUser
             };
 
             if (customerProfile.MetaData != null)

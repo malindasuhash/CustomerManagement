@@ -10,16 +10,16 @@ namespace Api.Controllers
     [Route("api/v{version:apiVersion}/customers")]
     public class CustomerController : ControllerBase
     {
-        private readonly ICustomerDatabase customerDatabase;
+        private readonly ICustomerProfileRepository customerProfileRepository;
         private readonly ILogger<CustomerController> logger;
 
-        public CustomerController(ICustomerDatabase customerDatabase, ILogger<CustomerController> logger)
+        public CustomerController(ICustomerProfileRepository customerDatabase, ILogger<CustomerController> logger)
         {
-            this.customerDatabase = customerDatabase;
+            this.customerProfileRepository = customerDatabase;
             this.logger = logger;
         }
 
-        [HttpPost("profile")]
+        [HttpPost()]
         public async Task<ActionResult<ApiContract.EntityResponse_Customer>> CreateProfile(
             [FromBody] ApiContract.CreateCustomer customerProfile)
         {
@@ -27,7 +27,7 @@ namespace Api.Controllers
 
             var profile = ApiContractCreateCustomer_ToModelCustomerProfile.Convert(customerProfile);
 
-            var result = await customerDatabase.CreateCustomer(profile);
+            var result = await customerProfileRepository.Create(profile);
             if (result != TaskOutcome.OK)
             {
                 logger.LogError("Failed to create customer with Id {CustomerId}. Reason: {Reason}", customerProfile.Customer_id, result.Reason);
@@ -48,7 +48,7 @@ namespace Api.Controllers
         {
             logger.LogInformation("Getting customer profile for Id {CustomerId}", customerId);
 
-            var storedCustomer = await customerDatabase.GetCustomer(customerId);
+            var storedCustomer = await customerProfileRepository.Read(customerId);
 
             if (storedCustomer == null)
             {
@@ -74,7 +74,7 @@ namespace Api.Controllers
 
             var profile = ApiContractUpdateCustomer_ToModelCustomerProfile.Convert(customerId, customerProfile);
 
-            var result = await customerDatabase.UpdateCustomer(profile);
+            var result = await customerProfileRepository.Update(profile);
             if (result == TaskOutcome.NOT_FOUND)
             {
                 logger.LogWarning("Customer with Id {CustomerId} not found for update", customerId);
@@ -100,7 +100,8 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{customerId}")]
-        public async Task DeleteProfile([FromRoute] string customerId)
+        public async Task DeleteProfile(
+            [FromRoute] string customerId)
         {
             throw new NotImplementedException();
         }

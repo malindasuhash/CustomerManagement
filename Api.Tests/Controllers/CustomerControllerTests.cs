@@ -10,22 +10,22 @@ namespace Api.Tests.Controllers
     public class CustomerControllerTests
     {
         private readonly CustomerController customerController;
-        private readonly ICustomerDatabase customerDatabase;
+        private readonly ICustomerProfileRepository customerProfileRepository;
 
         private const string CustomerId = "test-customer-id";
         private const string CustomerName = "Test Customer";
 
         public CustomerControllerTests()
         {
-            customerDatabase = Substitute.For<ICustomerDatabase>();
-            customerController = new CustomerController(customerDatabase, Substitute.For<ILogger<CustomerController>>());
+            customerProfileRepository = Substitute.For<ICustomerProfileRepository>();
+            customerController = new CustomerController(customerProfileRepository, Substitute.For<ILogger<CustomerController>>());
         }
 
         [Fact]
         public void CreateProfile_WhenInvoked_ThenCreateCustomer()
         {
             // Arrange
-            customerDatabase.CreateCustomer(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
+            customerProfileRepository.Create(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
 
             var customerProfile = new ApiContract.CreateCustomer()
             {
@@ -37,7 +37,7 @@ namespace Api.Tests.Controllers
             var response = customerController.CreateProfile(customerProfile);
 
             // Assert
-            customerDatabase.Received(1).CreateCustomer(Arg.Is<CustomerProfile>(p => p.CustomerId.Equals(CustomerId) && p.Name.Equals(CustomerName)));
+            customerProfileRepository.Received(1).Create(Arg.Is<CustomerProfile>(p => p.CustomerId.Equals(CustomerId) && p.Name.Equals(CustomerName)));
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Api.Tests.Controllers
         {
             // Arrange
             var expectedProfile = new CustomerProfile() { CustomerId = CustomerId, Name = CustomerName };
-            customerDatabase.CreateCustomer(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
+            customerProfileRepository.Create(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
 
             var customerProfile = new ApiContract.CreateCustomer()
             {
@@ -57,15 +57,15 @@ namespace Api.Tests.Controllers
             await customerController.CreateProfile(customerProfile);
 
             // Assert
-            await customerDatabase.Received(1).GetCustomer(CustomerId);
+            await customerProfileRepository.Received(1).Read(CustomerId);
         }
 
         [Fact]
         public async Task CreateProfile_WhenInvoked_ThenCreateProfileAndReturnsExpectedResult()
         {
             // Arrange
-            customerDatabase.CreateCustomer(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
-            customerDatabase.GetCustomer(Arg.Any<string>()).Returns(new CustomerProfile() { CustomerId = CustomerId, Name = CustomerName });
+            customerProfileRepository.Create(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
+            customerProfileRepository.Read(Arg.Any<string>()).Returns(new CustomerProfile() { CustomerId = CustomerId, Name = CustomerName });
 
             // Act
             var customerProfile = new ApiContract.CreateCustomer()
@@ -86,7 +86,7 @@ namespace Api.Tests.Controllers
         public async Task CreateProfile_WhenCustomerProfileCannotBeCreated_ThenReturns500Message()
         {
             // Arrange
-            customerDatabase.CreateCustomer(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.FAILED);
+            customerProfileRepository.Create(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.FAILED);
 
             // Act
             var customerProfile = new ApiContract.CreateCustomer()
@@ -108,7 +108,7 @@ namespace Api.Tests.Controllers
         public async Task GetProfile_WhenCustomerIdIsSupplied_ThenReturnsCustomerProfile()
         {
             // Arrange
-            customerDatabase.GetCustomer(Arg.Any<string>()).Returns(new CustomerProfile() { CustomerId = CustomerId, Name = CustomerName });
+            customerProfileRepository.Read(Arg.Any<string>()).Returns(new CustomerProfile() { CustomerId = CustomerId, Name = CustomerName });
 
             // Act
             var storedCustomer = await customerController.GetProfile(CustomerId);
@@ -122,7 +122,7 @@ namespace Api.Tests.Controllers
         public async Task GetProfile_WhenCustomerIdIsSupplied_ThenReturnsNotFound()
         {
             // Arrange
-            customerDatabase.GetCustomer(Arg.Any<string>()).Returns((CustomerProfile)null);
+            customerProfileRepository.Read(Arg.Any<string>()).Returns((CustomerProfile)null);
 
             // Act
             var storedCustomer = await customerController.GetProfile(CustomerId);
@@ -137,8 +137,8 @@ namespace Api.Tests.Controllers
         public async Task UpdateProfile_WhenUpdating_ThenTakesLatestChangesAndAppliesThem()
         {
             // Arrange
-            customerDatabase.UpdateCustomer(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
-            customerDatabase.GetCustomer(CustomerId).Returns(new CustomerProfile() {  Name = CustomerName, CustomerId = CustomerId });
+            customerProfileRepository.Update(Arg.Any<CustomerProfile>()).Returns(TaskOutcome.OK);
+            customerProfileRepository.Read(CustomerId).Returns(new CustomerProfile() {  Name = CustomerName, CustomerId = CustomerId });
 
             // Act
             var result = await customerController.UpdateProfile(CustomerId, new ApiContract.UpdateCustomer()
@@ -153,8 +153,8 @@ namespace Api.Tests.Controllers
             // Assert
             result.Value.Customer_id.Should().Be(CustomerId);
             result.Value.Name.Should().Be(CustomerName);
-            await customerDatabase.Received(1).UpdateCustomer(Arg.Is<CustomerProfile>(a => a.MetaData.Any(b => b.Key.Equals("a"))));
-            await customerDatabase.Received(1).UpdateCustomer(Arg.Is<CustomerProfile>(a => a.MetaData.Any(b => b.Value.Equals("b"))));
+            await customerProfileRepository.Received(1).Update(Arg.Is<CustomerProfile>(a => a.MetaData.Any(b => b.Key.Equals("a"))));
+            await customerProfileRepository.Received(1).Update(Arg.Is<CustomerProfile>(a => a.MetaData.Any(b => b.Value.Equals("b"))));
         }
     }
 }

@@ -13,5 +13,9 @@ namespace StateManagment.Models
         public string[] Labels { get; set; }
         public MetaDataModel[] MetaData { get; set; }
         public SystemDataModel[] SystemData { get; set; }
+        public string? UpdateUser { get; set; }
+        public DateTime? UpdateTimestamp { get; set; }
+        public string? CreatedUser { get; set; }
+        public DateTime? CreatedTimestamp { get; set; }
     }
 }

@@ -37,6 +37,9 @@ namespace Api.Mappers
                 profile.SystemData = [.. systemDataList];
             }
 
+            profile.CreatedTimestamp = DateTime.UtcNow;
+            profile.CreatedUser = "SYSTEM"; // TODO: Resolve from Request context
+
             return profile;
         }
     }

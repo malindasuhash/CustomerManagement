@@ -40,6 +40,9 @@ namespace Api.Mappers
                 customer.MetaData = metaData.ToArray();
             }
 
+            customer.UpdateTimestamp = DateTime.Now;
+            customer.UpdateUser = "SYSTEM2"; // TODO: Resolve from Request
+
             return customer;
         }
     }
