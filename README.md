@@ -6,13 +6,14 @@
 
 # UNDER DEV
 - Basic implementation of authorisation and authentication with some permissions.
-- Add logging to areas that have been missed.
 
 # PENDING
 - Concept of operation data store as an event stream storage.
 - Runtime to host Contact orchestration.
 
 # DONE
+- Most logs are are in place now.
+- Created Customer endpoints (excluding delete) to create customer profiles.
 - Header client and correlation id for tracking requests across services.
 - Upgraded to new API Contract.
 - Model generation via NSawg and initial project scaffolding.
