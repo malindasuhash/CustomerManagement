@@ -232,7 +232,7 @@ namespace Infrastructure.EntityConfig
             var onUpdate = Builders<MessageEnvelop>.Update
             .Set(a => a.State, entityState)
             .Set(b => b.Feedback, feedbacks)
-            .Set(b => b.OrchestrationData, orchestrationData)
+            .Set(b => b.OrchestrationData, orchestrationData) // TODO: If orchestration data is null, then there is no need to overwrite existing data.
             .Set(a => a.UpdateTimestamp, DateTime.UtcNow)
             .Set(a => a.UpdateUser, updatedUser);
 

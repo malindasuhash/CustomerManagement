@@ -3,8 +3,7 @@
     "customer_profile": {
       "create": [
         { "ucm.customer_profile.create": "Creates a new customer profile entry." },
-        { "ucm.customer_profile.manage_system_data": "Allows creation of system data related to customer profile." },
-        { "ucm.customer_profile.manage_meta_data": "Allows creation of meta data related to customer profile." }
+        { "ucm.customer_profile.manage_system_data": "Allows creation of system data related to customer profile." }
       ]
     },
     "bank_account": {
@@ -25,13 +24,13 @@
         { "ucm.bank_account.view_basic": "Allows viewing of bank account data but account numbers are masked." },
         { "ucm.bank_account.view_standard": "Allows viewing of bank account details including unmasked bank account data." },
         { "ucm.bank_account.view_system_data": "Allows viewing of system data related to a bank account." },
-        { "ucm.bank_account.view_soft_deleted_data": "Allows viewing of a soft deleted bank account." }
+        { "ucm.bank_account.view_soft_deleted": "Allows viewing of a soft deleted bank account." }
       ],
       "update": [
         { "ucm.bank_account.update_basic": "Allows updating of bank account data without account number in draft." },
         { "ucm.bank_account.update_standard": "Allows management of bank account account data including bank account numbers." },
         { "ucm.bank_account.manage_system_data": "Allows management of system data related to bank accounts." },
-        { "ucm.bank_account.manage_soft_deleted_data": "Allows managing of a soft deleted bank account." }
+        { "ucm.bank_account.manage_soft_deleted": "Allows managing of a soft deleted bank account." }
       ]
     }
   }
