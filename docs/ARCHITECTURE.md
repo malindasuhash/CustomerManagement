@@ -21,13 +21,14 @@ The Customer Management System is a **.NET 9** distributed application that impl
 ### Key Technical Features
 
 - **Finite State Machine (FSM)** for entity lifecycle management
-- **Event-driven architecture** using Azure Service Bus
+- **Event-driven architecture** using in-process task queues and Azure Service Bus
 - **Distributed locking** for concurrency control
 - **Optimistic concurrency** using version numbering
 - **Draft/Submit pattern** for change management
 - **Chain of Responsibility** for validation rules
 - **Repository pattern** for data access abstraction
 - **Background service processing** for orchestration results
+- **Correlation tracking** across distributed systems
 
 ---
 
